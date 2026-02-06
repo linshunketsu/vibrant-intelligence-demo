@@ -1,0 +1,351 @@
+import React, { useState } from 'react';
+import { 
+  Globe, Plus, X, Copy, Edit2, Trash2, Calendar, 
+  Clock, Check, ChevronDown, Monitor, Mail, ArrowLeft,
+  Briefcase
+} from 'lucide-react';
+
+interface CalendarSettingsProps {
+  onBack: () => void;
+}
+
+const APPOINTMENT_TYPES = [
+  { id: 1, name: 'Checkup', color: 'bg-blue-400' },
+  { id: 2, name: 'Follow-Up', color: 'bg-teal-400' },
+  { id: 3, name: 'Initial Consultation', color: 'bg-purple-400' },
+  { id: 4, name: 'General', color: 'bg-amber-500' },
+];
+
+const DAYS = [
+  { id: 'sun', label: 'S', name: 'Sunday' },
+  { id: 'mon', label: 'M', name: 'Monday' },
+  { id: 'tue', label: 'T', name: 'Tuesday' },
+  { id: 'wed', label: 'W', name: 'Wednesday' },
+  { id: 'thu', label: 'T', name: 'Thursday' },
+  { id: 'fri', label: 'F', name: 'Friday' },
+  { id: 'sat', label: 'S', name: 'Saturday' },
+];
+
+export const CalendarSettings: React.FC<CalendarSettingsProps> = ({ onBack }) => {
+  // Weekly Hours State
+  const [schedule, setSchedule] = useState<{
+    [key: string]: { active: boolean; slots: { start: string; end: string }[] }
+  }>({
+    sun: { active: false, slots: [] },
+    mon: { active: true, slots: [{ start: '10:00 AM', end: '10:15 AM' }] },
+    tue: { active: true, slots: [{ start: '10:00 AM', end: '10:15 AM' }] },
+    wed: { active: true, slots: [{ start: '10:00 AM', end: '10:15 AM' }] },
+    thu: { active: true, slots: [{ start: '10:00 AM', end: '10:15 AM' }] },
+    fri: { active: true, slots: [{ start: '10:00 AM', end: '10:15 AM' }] },
+    sat: { active: false, slots: [] },
+  });
+
+  // Scheduling Window State
+  const [sooner, setSooner] = useState({ val: 24, unit: 'Hours' });
+  const [furthest, setFurthest] = useState({ val: 30, unit: 'Days' });
+
+  const toggleDay = (dayId: string) => {
+    setSchedule(prev => ({
+      ...prev,
+      [dayId]: {
+        active: !prev[dayId].active,
+        slots: !prev[dayId].active ? [{ start: '09:00 AM', end: '05:00 PM' }] : []
+      }
+    }));
+  };
+
+  return (
+    <div className="flex flex-col h-full bg-slate-50 overflow-y-auto custom-scrollbar relative">
+      {/* Header */}
+      <div className="bg-white border-b border-gray-200 px-8 py-4 sticky top-0 z-10 flex items-center justify-between shadow-sm">
+        <div className="flex items-center gap-4">
+          <button 
+            onClick={onBack}
+            className="p-2 hover:bg-slate-100 rounded-full text-slate-500 transition-colors"
+          >
+            <ArrowLeft size={20} />
+          </button>
+          <h1 className="text-xl font-bold text-slate-800">Calendar Settings</h1>
+        </div>
+      </div>
+
+      <div className="flex-1 p-8 max-w-6xl mx-auto w-full space-y-8 pb-20">
+        
+        {/* Time Zone */}
+        <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
+          <div className="flex items-start gap-3 mb-4">
+            <Globe className="text-slate-400 mt-1" size={20} />
+            <div className="flex-1">
+              <h3 className="text-base font-bold text-slate-800">Time Zone Settings</h3>
+              <p className="text-xs text-slate-500 mt-1">Your calendar and appointment times will follow this time zone.</p>
+            </div>
+          </div>
+          
+          <div className="ml-8 max-w-md">
+            <label className="block text-xs font-bold text-slate-500 mb-1.5 uppercase">Display my calendar in time zone:</label>
+            <div className="relative">
+              <select className="w-full appearance-none bg-slate-50 border border-gray-300 rounded-lg py-2.5 px-3 text-sm text-slate-700 focus:ring-2 focus:ring-[#0F4C81] outline-none">
+                <option>Auto update</option>
+                <option>(UTC-08:00) Pacific Time (US & Canada)</option>
+                <option>(UTC-05:00) Eastern Time (US & Canada)</option>
+              </select>
+              <ChevronDown className="absolute right-3 top-3 text-slate-400 pointer-events-none" size={16} />
+            </div>
+          </div>
+        </div>
+
+        {/* Weekly Hours & Overrides Grid */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          
+          {/* Weekly Hours */}
+          <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
+            <div className="flex justify-between items-start mb-6">
+              <div className="flex items-start gap-3">
+                <div className="mt-1 text-slate-400"><Clock size={20} /></div>
+                <div>
+                  <h3 className="text-base font-bold text-slate-800">Weekly hours</h3>
+                  <p className="text-xs text-slate-500 mt-1">Set when you are typically available for appointment</p>
+                </div>
+              </div>
+              <button className="px-6 py-2 bg-[#0F4C81] text-white text-sm font-bold rounded-lg hover:bg-[#09355E] transition-colors shadow-sm">
+                Save
+              </button>
+            </div>
+
+            <div className="space-y-4">
+              {DAYS.map(day => {
+                const dayState = schedule[day.id];
+                return (
+                  <div key={day.id} className="flex items-start gap-4 py-1">
+                    {/* Day Label */}
+                    <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold shrink-0 ${dayState.active ? 'bg-[#0F4C81] text-white' : 'bg-slate-100 text-slate-400'}`}>
+                      {day.label}
+                    </div>
+
+                    <div className="flex-1">
+                      {!dayState.active ? (
+                        <div className="flex items-center gap-3 h-8">
+                          <span className="text-sm text-slate-400 italic">Unavailable</span>
+                          <button onClick={() => toggleDay(day.id)} className="text-slate-400 hover:text-[#0F4C81] transition-colors">
+                            <Plus size={16} />
+                          </button>
+                        </div>
+                      ) : (
+                        <div className="space-y-2">
+                          {dayState.slots.map((slot, idx) => (
+                            <div key={idx} className="flex items-center gap-2">
+                              <div className="relative">
+                                <select className="appearance-none bg-slate-50 border border-gray-200 rounded px-2 py-1.5 text-sm text-slate-700 w-24 focus:border-[#0F4C81] outline-none">
+                                  <option>{slot.start}</option>
+                                  <option>09:00 AM</option>
+                                </select>
+                                <ChevronDown size={12} className="absolute right-2 top-2.5 text-slate-400 pointer-events-none" />
+                              </div>
+                              <span className="text-slate-400">-</span>
+                              <div className="relative">
+                                <select className="appearance-none bg-slate-50 border border-gray-200 rounded px-2 py-1.5 text-sm text-slate-700 w-24 focus:border-[#0F4C81] outline-none">
+                                  <option>{slot.end}</option>
+                                  <option>05:00 PM</option>
+                                </select>
+                                <ChevronDown size={12} className="absolute right-2 top-2.5 text-slate-400 pointer-events-none" />
+                              </div>
+                              
+                              <button className="p-1.5 text-slate-400 hover:text-slate-600">
+                                <X size={14} />
+                              </button>
+                              <button className="p-1.5 text-slate-400 hover:text-[#0F4C81]">
+                                <Plus size={14} />
+                              </button>
+                              <button className="p-1.5 text-slate-400 hover:text-[#0F4C81]">
+                                <Copy size={14} />
+                              </button>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+            
+            <div className="mt-6 pt-4 border-t border-gray-100">
+               <button className="flex items-center gap-1 text-xs text-[#0F4C81] font-medium hover:underline">
+                  (UTC-08:00) Pacific Time (US & Canada) <ChevronDown size={12} />
+               </button>
+            </div>
+          </div>
+
+          {/* Date Overrides */}
+          <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm h-fit">
+            <div className="flex justify-between items-start mb-6">
+              <div className="flex items-start gap-3">
+                <div className="mt-1 text-slate-400"><Calendar size={20} /></div>
+                <div>
+                  <h3 className="text-base font-bold text-slate-800">Date Overrides</h3>
+                  <p className="text-xs text-slate-500 mt-1">Overrides replace the default schedule for that date</p>
+                </div>
+              </div>
+              <button className="px-4 py-2 border border-slate-300 text-slate-700 text-sm font-bold rounded-lg hover:bg-slate-50 transition-colors">
+                Add Hours
+              </button>
+            </div>
+
+            <div className="space-y-2">
+              <div className="flex items-center justify-between p-3 bg-slate-50 rounded-lg border border-gray-100 hover:border-gray-200 transition-colors">
+                <div className="text-sm font-medium text-slate-700">Aug 25, 2025</div>
+                <div className="text-sm text-slate-600">10:00AM - 10:15 AM</div>
+                <div className="flex items-center gap-2">
+                   <button className="flex items-center gap-1 text-xs font-bold text-slate-500 hover:text-[#0F4C81] px-2 py-1 rounded">
+                      <Edit2 size={12} /> Edit
+                   </button>
+                   <button className="flex items-center gap-1 text-xs font-bold text-red-500 hover:text-red-700 px-2 py-1 rounded">
+                      <Trash2 size={12} /> Delete
+                   </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Scheduling Window */}
+        <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
+          <div className="flex justify-between items-start mb-6">
+            <div className="flex items-start gap-3">
+              <div className="mt-1 text-slate-400"><Calendar size={20} /></div>
+              <div>
+                <h3 className="text-base font-bold text-slate-800">Appointment Scheduling Window</h3>
+                <p className="text-xs text-slate-500 mt-1">Define how soon and how far out appointments can be booked on your calendar.</p>
+              </div>
+            </div>
+            <button className="px-6 py-2 bg-[#0F4C81] text-white text-sm font-bold rounded-lg hover:bg-[#09355E] transition-colors shadow-sm">
+              Save
+            </button>
+          </div>
+
+          <div className="max-w-lg space-y-6 ml-8">
+             <div className="flex items-center justify-between">
+                <label className="text-sm font-bold text-slate-700">Sooner available appointment</label>
+                <div className="flex gap-2">
+                   <input type="number" value={sooner.val} onChange={e => setSooner({...sooner, val: parseInt(e.target.value)})} className="w-16 border border-gray-300 rounded-lg px-3 py-2 text-sm text-center outline-none focus:border-[#0F4C81]" />
+                   <div className="relative">
+                      <select className="appearance-none bg-white border border-gray-300 rounded-lg px-3 py-2 pr-8 text-sm outline-none focus:border-[#0F4C81]">
+                         <option>Hours</option>
+                         <option>Days</option>
+                      </select>
+                      <ChevronDown size={14} className="absolute right-2 top-3 text-slate-400 pointer-events-none"/>
+                   </div>
+                </div>
+             </div>
+
+             <div className="flex items-center justify-between">
+                <label className="text-sm font-bold text-slate-700">Furthest available appointment</label>
+                <div className="flex gap-2">
+                   <input type="number" value={furthest.val} onChange={e => setFurthest({...furthest, val: parseInt(e.target.value)})} className="w-16 border border-gray-300 rounded-lg px-3 py-2 text-sm text-center outline-none focus:border-[#0F4C81]" />
+                   <div className="relative">
+                      <select className="appearance-none bg-white border border-gray-300 rounded-lg px-3 py-2 pr-8 text-sm outline-none focus:border-[#0F4C81]">
+                         <option>Days</option>
+                         <option>Weeks</option>
+                         <option>Months</option>
+                      </select>
+                      <ChevronDown size={14} className="absolute right-2 top-3 text-slate-400 pointer-events-none"/>
+                   </div>
+                </div>
+             </div>
+          </div>
+        </div>
+
+        {/* Appointment Types */}
+        <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
+          <div className="flex justify-between items-start mb-6">
+            <div className="flex items-start gap-3">
+              <div className="mt-1 text-slate-400"><Briefcase size={20} /></div>
+              <div>
+                <h3 className="text-base font-bold text-slate-800">Customize Appointment Type</h3>
+                <p className="text-xs text-slate-500 mt-1">Appointment types are managed at the practice level. Changes will affect all providers in this practice.</p>
+              </div>
+            </div>
+          </div>
+
+          <div className="space-y-3 ml-8 max-w-2xl">
+             {APPOINTMENT_TYPES.map(type => (
+                <div key={type.id} className="flex items-center justify-between py-2 border-b border-gray-50 last:border-0 hover:bg-slate-50 px-2 rounded-lg transition-colors">
+                   <span className="text-sm font-bold text-slate-700">{type.name}</span>
+                   <div className="flex items-center gap-4">
+                      <div className={`w-12 h-4 rounded ${type.color}`}></div>
+                      <div className="flex items-center gap-2">
+                        <button className="flex items-center gap-1 text-xs font-bold text-slate-500 hover:text-[#0F4C81] px-2 py-1 rounded">
+                            <Edit2 size={12} /> Edit
+                        </button>
+                        <button className="flex items-center gap-1 text-xs font-bold text-red-500 hover:text-red-700 px-2 py-1 rounded">
+                            <Trash2 size={12} /> Delete
+                        </button>
+                      </div>
+                   </div>
+                </div>
+             ))}
+             
+             <div className="pt-4">
+                <button className="px-4 py-2 border border-[#0F4C81] text-[#0F4C81] text-sm font-bold rounded-lg hover:bg-blue-50 transition-colors">
+                   Add New Appointment Type
+                </button>
+             </div>
+          </div>
+        </div>
+
+        {/* Integrations */}
+        <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
+          <div className="flex justify-between items-start mb-6">
+            <div className="flex items-start gap-3">
+              <div className="mt-1 text-slate-400"><Monitor size={20} /></div>
+              <div>
+                <h3 className="text-base font-bold text-slate-800">Calendar Sync</h3>
+                <p className="text-xs text-slate-500 mt-1">Connect your external calendar to display availability and prevent scheduling conflicts.</p>
+              </div>
+            </div>
+          </div>
+
+          <div className="space-y-6 ml-8 max-w-4xl">
+             {/* Outlook */}
+             <div className="flex items-center justify-between">
+                <div className="flex items-center gap-4">
+                   <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
+                      <Mail className="text-blue-600" size={20} />
+                   </div>
+                   <div>
+                      <div className="flex items-center gap-3">
+                         <span className="text-sm font-bold text-slate-800">Outlook</span>
+                         <span className="px-2 py-0.5 bg-gray-100 text-gray-500 text-[10px] font-bold rounded-full">Not Connected</span>
+                      </div>
+                   </div>
+                </div>
+                <button className="px-6 py-2 bg-[#0F4C81] text-white text-sm font-bold rounded-lg hover:bg-[#09355E] transition-colors shadow-sm">
+                   Connect
+                </button>
+             </div>
+
+             {/* Google */}
+             <div className="flex items-center justify-between">
+                <div className="flex items-center gap-4">
+                   <div className="w-10 h-10 bg-white border border-gray-200 rounded-lg flex items-center justify-center p-2">
+                      {/* Simple Google Calendar Icon Mock */}
+                      <div className="relative w-full h-full bg-white flex items-center justify-center font-bold text-blue-600 text-xs border-t-4 border-red-500 rounded-sm shadow-sm">31</div>
+                   </div>
+                   <div>
+                      <div className="flex items-center gap-3">
+                         <span className="text-sm font-bold text-slate-800">Google Calendar</span>
+                         <span className="px-2 py-0.5 bg-gray-100 text-gray-500 text-[10px] font-bold rounded-full">Not Connected</span>
+                      </div>
+                   </div>
+                </div>
+                <button className="px-6 py-2 bg-[#0F4C81] text-white text-sm font-bold rounded-lg hover:bg-[#09355E] transition-colors shadow-sm">
+                   Connect
+                </button>
+             </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  );
+};

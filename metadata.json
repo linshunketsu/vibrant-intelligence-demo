@@ -1,0 +1,5 @@
+{
+  "name": "Vibrant Intelligence Workflow Editor",
+  "description": "A drag-and-drop workflow builder for EHR systems allowing clinicians to manage patient programs with triggers, actions, and logic.",
+  "requestFramePermissions": []
+}
