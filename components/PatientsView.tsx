@@ -1460,7 +1460,7 @@ Dr. Johnson
     <CreateEventModal
       isOpen={showScheduleModal}
       onClose={() => setShowScheduleModal(false)}
-      initialDate={new Date().toISOString().split('T')[0]}
+      initialDate="2026-02-17"
       patient={{
         name: activePatient?.name ?? '',
         initials: activePatient?.name ? getPatientDisplayName(activePatient.name) : ''

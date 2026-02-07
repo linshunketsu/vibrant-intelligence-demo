@@ -128,7 +128,7 @@ export const CreateEventModal: React.FC<CreateEventModalProps> = ({
             >
               {/* Header with Title */}
               <div className="flex items-center justify-between border-b border-gray-200 px-6 py-4">
-                <h2 className="text-base font-semibold text-gray-900">{getModalTitle()}</h2>
+                <h2 className="text-base font-semibold text-gray-900">{selectedDate ? getFormattedHeaderDate() : getModalTitle()}</h2>
                 <motion.button
                   whileHover={{ scale: checkReducedMotion() ? 1 : 1.1, rotate: checkReducedMotion() ? 0 : 90 }}
                   whileTap={{ scale: checkReducedMotion() ? 1 : 0.9 }}
@@ -228,7 +228,7 @@ export const CreateEventModal: React.FC<CreateEventModalProps> = ({
                          whileTap={{ scale: checkReducedMotion() ? 1 : 0.98 }}
                          className="p-2 border-2 border-blue-500 bg-blue-50 rounded-lg text-left transition-all"
                        >
-                          <div className="text-[10px] font-bold text-blue-700">Today</div>
+                          <div className="text-[10px] font-bold text-blue-700">Tue Feb 17</div>
                           <div className="text-[10px] font-medium text-blue-600">{startTime} - {endTime}</div>
                        </motion.button>
                        <motion.button
@@ -236,7 +236,7 @@ export const CreateEventModal: React.FC<CreateEventModalProps> = ({
                          whileTap={{ scale: checkReducedMotion() ? 1 : 0.98 }}
                          className="p-2 border border-slate-200 rounded-lg text-left hover:bg-slate-50 transition-all opacity-60 hover:opacity-100"
                        >
-                          <div className="text-[10px] font-bold text-slate-700">Tomorrow</div>
+                          <div className="text-[10px] font-bold text-slate-700">Wed Feb 18</div>
                           <div className="text-[10px] font-medium text-slate-500">{startTime} - {endTime}</div>
                        </motion.button>
                        <motion.button
@@ -244,7 +244,7 @@ export const CreateEventModal: React.FC<CreateEventModalProps> = ({
                          whileTap={{ scale: checkReducedMotion() ? 1 : 0.98 }}
                          className="p-2 border border-slate-200 rounded-lg text-left hover:bg-slate-50 transition-all opacity-60 hover:opacity-100"
                        >
-                          <div className="text-[10px] font-bold text-slate-700">Next Week</div>
+                          <div className="text-[10px] font-bold text-slate-700">Thu Feb 19</div>
                           <div className="text-[10px] font-medium text-slate-500">{startTime} - {endTime}</div>
                        </motion.button>
                     </div>
