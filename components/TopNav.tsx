@@ -1,7 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Users, Calendar, Layout, Building2, ChevronRight } from 'lucide-react';
-import vibrantLogo from '../VibrantWellness_Logo.png';
+import vibrantLogo from '../Icon.svg';
 
 interface TopNavProps {
   activeTab: string;
@@ -23,14 +23,14 @@ export const TopNav: React.FC<TopNavProps> = ({ activeTab, onTabChange }) => {
 
   return (
     <div className="h-14 bg-white/80 backdrop-blur-md border-b border-gray-200/60 flex items-center justify-between px-6 shrink-0 z-30">
-      <div className="flex items-center gap-3">
-         <img src={vibrantLogo} alt="Vibrant Wellness" className="w-auto h-6 drop-shadow-sm" />
-         <motion.span
-           whileHover={{ x: checkReducedMotion() ? 0 : 2 }}
-           className="text-sm font-medium text-slate-500 flex items-center gap-1.5 px-3 py-1.5 rounded-full hover:bg-slate-100 transition-colors cursor-pointer"
+      <div className="flex items-center gap-4">
+         <img src={vibrantLogo} alt="Vibrant Wellness" className="w-auto h-9" />
+         <span
+           className="text-base font-semibold tracking-tight"
+           style={{ fontFamily: 'Inter, system-ui, sans-serif', color: '#00436E', letterSpacing: '-0.01em' }}
          >
-            Back to Portal <ChevronRight size={14} className="text-slate-400"/>
-         </motion.span>
+            Vibrant Intelligence
+         </span>
       </div>
 
       <div className="flex items-center h-full">
