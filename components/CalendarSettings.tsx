@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
-import { 
-  Globe, Plus, X, Copy, Edit2, Trash2, Calendar, 
+import React, { useState, useEffect } from 'react';
+import {
+  Globe, Plus, X, Copy, Edit2, Trash2, Calendar,
   Clock, Check, ChevronDown, Monitor, Mail, ArrowLeft,
-  Briefcase
+  Briefcase, Eye
 } from 'lucide-react';
+import { PublicBookingPagePreview } from './PublicBookingPagePreview';
 
 interface CalendarSettingsProps {
   onBack: () => void;
@@ -27,22 +28,32 @@ const DAYS = [
 ];
 
 export const CalendarSettings: React.FC<CalendarSettingsProps> = ({ onBack }) => {
-  // Weekly Hours State
+  // Weekly Hours State - More realistic schedule
   const [schedule, setSchedule] = useState<{
     [key: string]: { active: boolean; slots: { start: string; end: string }[] }
   }>({
     sun: { active: false, slots: [] },
-    mon: { active: true, slots: [{ start: '10:00 AM', end: '10:15 AM' }] },
-    tue: { active: true, slots: [{ start: '10:00 AM', end: '10:15 AM' }] },
-    wed: { active: true, slots: [{ start: '10:00 AM', end: '10:15 AM' }] },
-    thu: { active: true, slots: [{ start: '10:00 AM', end: '10:15 AM' }] },
-    fri: { active: true, slots: [{ start: '10:00 AM', end: '10:15 AM' }] },
-    sat: { active: false, slots: [] },
+    mon: { active: true, slots: [{ start: '09:00 AM', end: '05:00 PM' }] }, // Full day
+    tue: { active: true, slots: [{ start: '09:00 AM', end: '05:00 PM' }] },
+    wed: { active: true, slots: [{ start: '09:00 AM', end: '05:00 PM' }] }, // Available now
+    thu: { active: true, slots: [{ start: '10:00 AM', end: '06:00 PM' }] }, // Late start, late end
+    fri: { active: true, slots: [{ start: '09:00 AM', end: '03:00 PM' }] }, // Half day
+    sat: { active: false, slots: [] }, // Not available
   });
 
   // Scheduling Window State
   const [sooner, setSooner] = useState({ val: 24, unit: 'Hours' });
   const [furthest, setFurthest] = useState({ val: 30, unit: 'Days' });
+
+  // Public Booking Page Preview State
+  const [showPublicPagePreview, setShowPublicPagePreview] = useState(false);
+  const [showToast, setShowToast] = useState(false);
+
+  // Handle copy link with toast
+  const handleCopyLink = () => {
+    setShowToast(true);
+    setTimeout(() => setShowToast(false), 3000);
+  };
 
   const toggleDay = (dayId: string) => {
     setSchedule(prev => ({
@@ -91,6 +102,32 @@ export const CalendarSettings: React.FC<CalendarSettingsProps> = ({ onBack }) =>
               </select>
               <ChevronDown className="absolute right-3 top-3 text-slate-400 pointer-events-none" size={16} />
             </div>
+          </div>
+        </div>
+
+        {/* Public Booking Page Preview */}
+        <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
+          <div className="flex items-start gap-3">
+            <Eye className="text-slate-400 mt-1" size={20} />
+            <div className="flex-1">
+              <h3 className="text-base font-bold text-slate-800">Public Booking Page</h3>
+              <p className="text-xs text-slate-500 mt-1">Preview and share your public scheduling page with patients.</p>
+            </div>
+          </div>
+          <div className="ml-8 mt-4 flex items-center gap-3">
+            <button
+              onClick={() => setShowPublicPagePreview(true)}
+              className="px-4 py-2 bg-[#0F4C81] text-white text-sm font-bold rounded-lg hover:bg-[#09355E] transition-colors shadow-sm"
+            >
+              View Public Booking Page
+            </button>
+            <button
+              onClick={handleCopyLink}
+              className="px-4 py-2 border border-slate-300 text-slate-700 text-sm font-bold rounded-lg hover:bg-slate-50 transition-colors flex items-center gap-2"
+            >
+              <Copy size={14} />
+              Copy Link
+            </button>
           </div>
         </div>
 
@@ -346,6 +383,24 @@ export const CalendarSettings: React.FC<CalendarSettingsProps> = ({ onBack }) =>
         </div>
 
       </div>
+
+      {/* Public Booking Page Preview Modal */}
+      <PublicBookingPagePreview
+        isOpen={showPublicPagePreview}
+        onClose={() => setShowPublicPagePreview(false)}
+        clinicianName="Dr. Irene Hoffman"
+        clinicianPhoto="https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=200&h=200&fit=crop&crop=face"
+        practiceName="Vibrant Health Clinic"
+        schedule={schedule}
+        appointmentTypes={APPOINTMENT_TYPES}
+      />
+
+      {/* Toast Notification */}
+      {showToast && (
+        <div className="fixed bottom-8 left-1/2 transform -translate-x-1/2 bg-slate-800 text-white px-6 py-3 rounded-lg shadow-lg z-[60] animate-in fade-in slide-in-from-bottom-4">
+          Link copied to clipboard
+        </div>
+      )}
     </div>
   );
 };

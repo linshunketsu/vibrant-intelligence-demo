@@ -25,45 +25,45 @@ interface CalendarEvent {
 
 const WEEK_EVENTS: CalendarEvent[] = [
   // --- All Day ---
-  { id: 'ad1', title: 'Labor Day', date: '2025-09-01', allDay: true, color: 'bg-[#1e3a5f]' },
-  { id: 'ad2', title: 'Medical Conference', date: '2025-09-02', allDay: true, color: 'bg-[#1e3a5f]' },
-  { id: 'ad3', title: 'Staff Training', date: '2025-09-03', allDay: true, color: 'bg-[#1e3a5f]' },
+  { id: 'ad1', title: 'Labor Day', date: '2025-09-01', allDay: true, color: 'bg-slate-600' },
+  { id: 'ad2', title: 'Medical Conference', date: '2025-09-02', allDay: true, color: 'bg-slate-600' },
+  { id: 'ad3', title: 'Staff Training', date: '2025-09-03', allDay: true, color: 'bg-slate-500' },
 
   // --- Monday 9/1 ---
-  { id: 101, title: 'Morning Rounds', start: '8:00 AM', end: '9:00 AM', date: '2025-09-01', color: 'bg-[#1e3a5f]' },
-  { id: 102, title: 'Acute Visit - J. Doe', start: '10:30 AM', end: '11:00 AM', date: '2025-09-01', color: 'bg-[#d97706]' },
-  { id: 103, title: 'Telehealth Block', start: '1:00 PM', end: '3:00 PM', date: '2025-09-01', color: 'bg-[#60a5fa]' },
-  { id: 104, title: 'Wrap up', start: '4:45 PM', end: '5:15 PM', date: '2025-09-01', color: 'bg-[#2dd4bf]' },
+  { id: 101, title: 'Morning Rounds', start: '8:00 AM', end: '9:00 AM', date: '2025-09-01', color: 'bg-slate-500' },
+  { id: 102, title: 'Acute Visit - J. Doe', start: '10:30 AM', end: '11:00 AM', date: '2025-09-01', color: 'bg-amber-500' },
+  { id: 103, title: 'Telehealth Block', start: '1:00 PM', end: '3:00 PM', date: '2025-09-01', color: 'bg-sky-400' },
+  { id: 104, title: 'Wrap up', start: '4:45 PM', end: '5:15 PM', date: '2025-09-01', color: 'bg-teal-400' },
 
   // --- Tuesday 9/2 ---
-  { id: 201, title: 'New Patient - S. Smith', start: '9:00 AM', end: '10:00 AM', date: '2025-09-02', color: 'bg-[#c084fc]' },
-  { id: 202, title: 'Lab Review', start: '11:00 AM', end: '11:30 AM', date: '2025-09-02', color: 'bg-[#2dd4bf]' },
+  { id: 201, title: 'New Patient - S. Smith', start: '9:00 AM', end: '10:00 AM', date: '2025-09-02', color: 'bg-cyan-500' },
+  { id: 202, title: 'Lab Review', start: '11:00 AM', end: '11:30 AM', date: '2025-09-02', color: 'bg-teal-400' },
   { id: 203, title: 'Lunch w/ Dr. Lee', start: '12:00 PM', end: '1:00 PM', date: '2025-09-02', color: 'bg-slate-400' },
-  { id: 204, title: 'Follow-up', start: '2:30 PM', end: '2:45 PM', date: '2025-09-02', color: 'bg-[#2dd4bf]' },
-  { id: 205, title: 'Urgent Care Slot', start: '3:00 PM', end: '4:00 PM', date: '2025-09-02', color: 'bg-[#d97706]' },
+  { id: 204, title: 'Follow-up', start: '2:30 PM', end: '2:45 PM', date: '2025-09-02', color: 'bg-teal-400' },
+  { id: 205, title: 'Urgent Care Slot', start: '3:00 PM', end: '4:00 PM', date: '2025-09-02', color: 'bg-amber-500' },
 
   // --- Wednesday 9/3 ---
-  { id: 1, title: 'Checkup - Daniel A.', start: '10:00 AM', end: '10:15 AM', date: '2025-09-03', color: 'bg-[#60a5fa]' },
-  { id: 3, title: 'Follow-up - Michael', start: '12:00 PM', end: '12:15 PM', date: '2025-09-03', color: 'bg-[#2dd4bf]' },
+  { id: 1, title: 'Checkup - Daniel A.', start: '10:00 AM', end: '10:15 AM', date: '2025-09-03', color: 'bg-sky-400' },
+  { id: 3, title: 'Follow-up - Michael', start: '12:00 PM', end: '12:15 PM', date: '2025-09-03', color: 'bg-teal-400' },
   { id: 301, title: 'Admin Time', start: '12:30 PM', end: '1:30 PM', date: '2025-09-03', color: 'bg-slate-400' },
-  { id: 5, title: 'Initial Cons - Emily', start: '2:00 PM', end: '2:45 PM', date: '2025-09-03', color: 'bg-[#c084fc]' },
-  { id: 302, title: 'Pediatric Check', start: '3:30 PM', end: '4:00 PM', date: '2025-09-03', color: 'bg-[#60a5fa]' },
+  { id: 5, title: 'Initial Cons - Emily', start: '2:00 PM', end: '2:45 PM', date: '2025-09-03', color: 'bg-cyan-500' },
+  { id: 302, title: 'Pediatric Check', start: '3:30 PM', end: '4:00 PM', date: '2025-09-03', color: 'bg-sky-400' },
 
   // --- Thursday 9/4 ---
-  { id: 401, title: 'Team Huddle', start: '8:30 AM', end: '9:00 AM', date: '2025-09-04', color: 'bg-[#1e3a5f]' },
-  { id: 2, title: 'Follow-up', start: '10:30 AM', end: '11:00 AM', date: '2025-09-04', color: 'bg-[#2dd4bf]' },
-  { id: 4, title: 'General Checkup', start: '1:00 PM', end: '1:30 PM', date: '2025-09-04', color: 'bg-[#d97706]' },
-  { id: 402, title: 'Vaccination Block', start: '2:00 PM', end: '4:00 PM', date: '2025-09-04', color: 'bg-[#60a5fa]' },
-  { id: 7, title: 'Update diagnosis for...', start: '5:00 PM', end: '6:00 PM', date: '2025-09-04', color: 'bg-[#1e3a5f]' },
+  { id: 401, title: 'Team Huddle', start: '8:30 AM', end: '9:00 AM', date: '2025-09-04', color: 'bg-slate-500' },
+  { id: 2, title: 'Follow-up', start: '10:30 AM', end: '11:00 AM', date: '2025-09-04', color: 'bg-teal-400' },
+  { id: 4, title: 'General Checkup', start: '1:00 PM', end: '1:30 PM', date: '2025-09-04', color: 'bg-amber-500' },
+  { id: 402, title: 'Vaccination Block', start: '2:00 PM', end: '4:00 PM', date: '2025-09-04', color: 'bg-sky-400' },
+  { id: 7, title: 'Update diagnosis for...', start: '5:00 PM', end: '6:00 PM', date: '2025-09-04', color: 'bg-slate-500' },
 
   // --- Friday 9/5 ---
-  { id: 501, title: 'Procedure - Minor', start: '9:00 AM', end: '10:30 AM', date: '2025-09-05', color: 'bg-[#1e3a5f]' },
-  { id: 502, title: 'Post-op Check', start: '11:00 AM', end: '11:15 AM', date: '2025-09-05', color: 'bg-[#2dd4bf]' },
-  { id: 503, title: 'Sick Visit', start: '1:15 PM', end: '1:45 PM', date: '2025-09-05', color: 'bg-[#d97706]' },
-  { id: 6, title: 'Review patient logs', start: '4:00 PM', end: '4:30 PM', date: '2025-09-05', color: 'bg-[#1e3a5f]' },
+  { id: 501, title: 'Procedure - Minor', start: '9:00 AM', end: '10:30 AM', date: '2025-09-05', color: 'bg-teal-500' },
+  { id: 502, title: 'Post-op Check', start: '11:00 AM', end: '11:15 AM', date: '2025-09-05', color: 'bg-teal-400' },
+  { id: 503, title: 'Sick Visit', start: '1:15 PM', end: '1:45 PM', date: '2025-09-05', color: 'bg-amber-500' },
+  { id: 6, title: 'Review patient logs', start: '4:00 PM', end: '4:30 PM', date: '2025-09-05', color: 'bg-slate-500' },
 
   // --- Saturday 9/6 ---
-  { id: 601, title: 'On Call - Urgent Only', start: '9:00 AM', end: '1:00 PM', date: '2025-09-06', color: 'bg-[#d97706]' },
+  { id: 601, title: 'On Call - Urgent Only', start: '9:00 AM', end: '1:00 PM', date: '2025-09-06', color: 'bg-amber-500' },
 ];
 
 const DAYS_HEADER = [

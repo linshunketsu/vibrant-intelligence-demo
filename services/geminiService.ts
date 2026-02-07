@@ -16,9 +16,9 @@ export const generateAIResponse = async (
   history: {role: string, content: string}[]
 ) => {
   try {
-    const apiKey = process.env.API_KEY;
+    const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
     if (!apiKey) {
-      throw new Error("API Key not found");
+      throw new Error("VITE_GEMINI_API_KEY not found");
     }
 
     const ai = new GoogleGenAI({ apiKey });

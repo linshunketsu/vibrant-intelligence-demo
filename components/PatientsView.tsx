@@ -150,48 +150,60 @@ const ExceptionCard: React.FC<{ title: string; reason: string; suggestion: strin
 
 const WorkflowProgressBar: React.FC<{ status: 'on-track' | 'exception' | 'completed' }> = ({ status }) => {
     const steps = [
-        { label: 'Order Placed', state: 'completed' },
-        { label: 'Kit Shipped', state: 'completed' },
-        { label: 'Sample Received', state: status === 'completed' ? 'completed' : (status === 'exception' ? 'error' : 'active') },
-        { label: 'Lab Processing', state: status === 'completed' ? 'completed' : 'pending' },
-        { label: 'Results Ready', state: status === 'completed' ? 'completed' : 'pending' }
+        { label: 'Order Placed', state: 'completed', shortLabel: 'Order' },
+        { label: 'Kit Shipped', state: 'completed', shortLabel: 'Shipped' },
+        { label: 'Sample Received', state: 'completed', shortLabel: 'Received' },
+        { label: 'Lab Processing', state: status === 'completed' ? 'completed' : (status === 'exception' ? 'error' : 'active'), shortLabel: 'Processing' },
+        { label: 'Results Ready', state: status === 'completed' ? 'completed' : 'pending', shortLabel: 'Results' }
     ];
 
+    // Calculate progress: 3 steps are always completed (60%)
+    const getProgressConfig = () => {
+        if (status === 'completed') return { width: '100%', color: 'bg-emerald-500' };
+        if (status === 'exception') return { width: '60%', color: 'bg-emerald-500' };
+        return { width: '60%', color: 'bg-emerald-500' }; // on-track
+    };
+
+    const progressConfig = getProgressConfig();
+
     return (
-        <div className="w-full bg-white border-b border-gray-200 px-12 py-6">
+        <div className="bg-white border-b border-gray-200 px-8 py-4">
             <div className="relative">
-                <div className="absolute left-0 top-1/2 -translate-y-1/2 w-full h-1 bg-gray-100 rounded-full"></div>
-                <div 
-                    className={`absolute left-0 top-1/2 -translate-y-1/2 h-1 rounded-full transition-all duration-1000 ease-out ${status === 'exception' ? 'bg-red-200' : 'bg-emerald-500'}`} 
-                    style={{ width: status === 'completed' ? '100%' : '50%' }}
+                {/* Progress bar background */}
+                <div className="absolute top-4 left-0 right-0 h-1.5 bg-gray-100 rounded-full"></div>
+                {/* Progress bar fill */}
+                <div
+                    className={`absolute top-4 left-0 h-1.5 rounded-full transition-all duration-700 ease-out ${progressConfig.color}`}
+                    style={{ width: progressConfig.width }}
                 ></div>
 
+                {/* Step indicators */}
                 <div className="flex justify-between relative z-10">
                     {steps.map((step, i) => {
-                         let icon = <div className="w-2 h-2 bg-gray-300 rounded-full" />;
-                         let baseClasses = "w-8 h-8 rounded-full flex items-center justify-center border-2 transition-all duration-500 bg-white border-gray-200 text-gray-300";
-                         let labelClasses = "text-[10px] font-bold uppercase mt-2 transition-colors duration-500 text-gray-400";
-                         
+                         let icon = <div className="w-2.5 h-2.5 bg-gray-300 rounded-full" />;
+                         let circleClasses = "w-9 h-9 rounded-full flex items-center justify-center border-2.5 transition-all duration-500 bg-white border-gray-200";
+                         let labelClasses = "text-[11px] font-medium mt-2.5 transition-colors duration-500 text-gray-400";
+
                          if (step.state === 'completed') {
-                             baseClasses = "w-8 h-8 rounded-full flex items-center justify-center border-2 transition-all duration-500 bg-emerald-500 border-emerald-500 text-white shadow-md shadow-emerald-200";
-                             icon = <Check size={14} strokeWidth={3} />;
-                             labelClasses = "text-[10px] font-bold uppercase mt-2 transition-colors duration-500 text-emerald-600";
+                             circleClasses = "w-9 h-9 rounded-full flex items-center justify-center border-2.5 transition-all duration-500 bg-emerald-500 border-emerald-500 text-white shadow-sm";
+                             icon = <Check size={16} strokeWidth={2.5} />;
+                             labelClasses = "text-[11px] font-medium mt-2.5 transition-colors duration-500 text-emerald-600";
                          } else if (step.state === 'active') {
-                             baseClasses = "w-8 h-8 rounded-full flex items-center justify-center border-2 transition-all duration-500 bg-white border-blue-500 text-blue-500 ring-4 ring-blue-50";
-                             icon = <div className="w-2.5 h-2.5 bg-blue-500 rounded-full animate-pulse" />;
-                             labelClasses = "text-[10px] font-bold uppercase mt-2 transition-colors duration-500 text-blue-600";
+                             circleClasses = "w-9 h-9 rounded-full flex items-center justify-center border-2.5 transition-all duration-500 bg-white border-blue-500 text-blue-500 ring-3 ring-blue-100";
+                             icon = <div className="w-3 h-3 bg-blue-500 rounded-full animate-pulse" />;
+                             labelClasses = "text-[11px] font-medium mt-2.5 transition-colors duration-500 text-blue-600 font-semibold";
                          } else if (step.state === 'error') {
-                             baseClasses = "w-8 h-8 rounded-full flex items-center justify-center border-2 transition-all duration-500 bg-red-500 border-red-500 text-white shadow-md shadow-red-200";
-                             icon = <X size={14} strokeWidth={3} />;
-                             labelClasses = "text-[10px] font-bold uppercase mt-2 transition-colors duration-500 text-red-600";
+                             circleClasses = "w-9 h-9 rounded-full flex items-center justify-center border-2.5 transition-all duration-500 bg-red-500 border-red-500 text-white shadow-sm";
+                             icon = <X size={16} strokeWidth={2.5} />;
+                             labelClasses = "text-[11px] font-medium mt-2.5 transition-colors duration-500 text-red-600 font-semibold";
                          }
 
                          return (
                              <div key={i} className="flex flex-col items-center">
-                                 <div className={baseClasses}>
+                                 <div className={circleClasses}>
                                      {icon}
                                  </div>
-                                 <span className={labelClasses}>{step.label}</span>
+                                 <span className={labelClasses}>{step.shortLabel}</span>
                              </div>
                          );
                     })}
