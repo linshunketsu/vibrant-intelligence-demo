@@ -1,20 +1,74 @@
 <div align="center">
-<img width="1200" height="475" alt="GHBanner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
+  <h1>Vibrant Intelligence</h1>
+  <p>An AI-powered, lab-integrated platform built for how clinics actually work.</p>
 </div>
 
-# Run and deploy your AI Studio app
+## Overview
 
-This contains everything you need to run your app locally.
+Vibrant Intelligence is a demo prototype showcasing a modern clinical workflow platform with:
 
-View your app in AI Studio: https://ai.studio/apps/drive/1cJGdnSmdqoB7lA6X3upUoRwKj3rMfJuY
+- **Patient Management** - Comprehensive patient records with workflow tracking
+- **Encounter Notes & AI Composer** - AI-assisted clinical documentation with real-time transcription
+- **Form Builder** - Drag-and-drop form creator with AI-powered field generation and EHR mapping
+- **Practice Management** - Dashboard for clinic metrics, appointments, and resources
+- **Workbench** - Workflow editor with visual automation tools
 
-## Run Locally
+## Tech Stack
 
-**Prerequisites:**  Node.js
+- React + TypeScript
+- Vite
+- Tailwind CSS
+- Google Gemini API (AI features)
 
+## Getting Started
+
+**Prerequisites:** Node.js
 
 1. Install dependencies:
-   `npm install`
-2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
+   ```bash
+   npm install
+   ```
+
+2. Set the `GEMINI_API_KEY` in [`.env.local`](.env.local) to your Gemini API key
+
 3. Run the app:
-   `npm run dev`
+   ```bash
+   npm run dev
+   ```
+
+4. Open http://localhost:3001
+
+## Features
+
+### My Patients
+- Patient list with workflow status tracking
+- Peg board for quick access to active patients
+- Pin important patient records
+
+### Encounter Notes
+- Real-time transcription capture
+- AI Composer for generating clinical summaries
+- Smart templates (SOAP notes, progress notes, etc.)
+- Clinical objects integration (eRx, orders, workflows)
+
+### Form Builder
+- Drag-and-drop form creation
+- AI-powered form generation
+- Auto EHR field mapping suggestions
+- Composite field components (Personal Info, Health Insurance, Vitals)
+- Template library
+
+### My Practice
+- Dashboard with key metrics
+- Appointment management
+- Resource and tools shortcuts
+- Provider settings
+
+### My Workbench
+- Visual workflow editor
+- Automation triggers and actions
+- Integration with clinical systems
+
+## License
+
+Demo prototype for Vibrant Wellness.
