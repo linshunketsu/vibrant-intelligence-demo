@@ -1,8 +1,9 @@
 import React, { useRef, useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { WorkflowNode, NodeType, BlockType } from '../types';
 import { TOOLBAR_ITEMS, ICON_MAP } from '../constants';
-import { 
-  LayoutGrid, Plus, Trash2, Edit2, AlertTriangle, Check, 
+import {
+  LayoutGrid, Plus, Trash2, Edit2, AlertTriangle, Check,
   MoreHorizontal, Calendar, Info, Settings, Sparkles, X
 } from 'lucide-react';
 
@@ -258,9 +259,23 @@ export const Canvas: React.FC<CanvasProps> = ({
                   </div>
                </div>
             ) : (
-               nodes.map((node) => (
-                 <div
+               <AnimatePresence mode="popLayout">
+               {nodes.map((node, index) => (
+                 <motion.div
                    key={node.id}
+                   initial={{ opacity: 0, scale: 0.8, y: -20 }}
+                   animate={{
+                     opacity: 1,
+                     scale: selectedNodeId === node.id ? 1.02 : 1,
+                     y: 0,
+                   }}
+                   exit={{ opacity: 0, scale: 0.8, y: 20 }}
+                   transition={{
+                     type: 'spring',
+                     stiffness: 300,
+                     damping: 25,
+                     delay: index * 0.05,
+                   }}
                    style={{
                      position: 'absolute',
                      left: node.position.x,
@@ -270,9 +285,10 @@ export const Canvas: React.FC<CanvasProps> = ({
                    }}
                    onMouseDown={(e) => handleMouseDown(e, node.id, node.position)}
                  >
-                    <NodeCard 
-                      node={node} 
+                    <NodeCard
+                      node={node}
                       isSelected={selectedNodeId === node.id}
+                      isDragging={draggingNodeId === node.id}
                       onClick={(e) => {
                          onNodeSelect(node.id);
                       }}
@@ -282,8 +298,9 @@ export const Canvas: React.FC<CanvasProps> = ({
                       }}
                       onUpdate={(updates) => onUpdateNode(node.id, updates)}
                     />
-                 </div>
-               ))
+                 </motion.div>
+               ))}
+               </AnimatePresence>
             )}
          </div>
       </div>
@@ -296,19 +313,39 @@ export const Canvas: React.FC<CanvasProps> = ({
 const NodeCard: React.FC<{
   node: WorkflowNode;
   isSelected: boolean;
+  isDragging?: boolean;
   onClick: (e: React.MouseEvent) => void;
   onDelete: (e: React.MouseEvent) => void;
   onUpdate: (updates: Partial<WorkflowNode>) => void;
-}> = ({ node, isSelected, onClick, onDelete, onUpdate }) => {
+}> = ({ node, isSelected, isDragging = false, onClick, onDelete, onUpdate }) => {
+  const checkReducedMotion = () => {
+    return typeof window !== 'undefined' &&
+      window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  };
   
   // Temporary Node Styling Overlay
   const isTemp = node.isTemporary;
   const tempStyle = isTemp ? 'border-dashed border-[#0F4C81] ring-2 ring-blue-200 bg-blue-50/50' : '';
-  
+
   const TempBadge = () => isTemp ? (
-    <div className="absolute -top-3 -right-2 bg-[#0F4C81] text-white text-[10px] font-bold px-2 py-0.5 rounded-full flex items-center gap-1 shadow-sm z-20 animate-in fade-in duration-300">
-      <Sparkles size={10} /> AI Generated
-    </div>
+    <motion.div
+      initial={{ opacity: 0, scale: 0.5, y: -5 }}
+      animate={{ opacity: 1, scale: 1, y: 0 }}
+      transition={{
+        type: 'spring',
+        stiffness: 400,
+        damping: 20,
+      }}
+      className="absolute -top-3 -right-2 bg-[#0F4C81] text-white text-[10px] font-bold px-2 py-0.5 rounded-full flex items-center gap-1 shadow-sm z-20"
+    >
+      <motion.div
+        animate={{ rotate: [0, 10, -10, 0] }}
+        transition={{ duration: 2, repeat: Infinity, repeatDelay: 1 }}
+      >
+        <Sparkles size={10} />
+      </motion.div>
+      AI Generated
+    </motion.div>
   ) : null;
 
   // 1. TRIGGER NODE DESIGN
@@ -364,13 +401,15 @@ const NodeCard: React.FC<{
         </div>
 
         {/* Footer */}
-        <button 
+        <motion.button
           onMouseDown={(e) => e.stopPropagation()} // Prevent drag start on button click
           onClick={onDelete}
+          whileHover={{ scale: checkReducedMotion() ? 1 : 1.02 }}
+          whileTap={{ scale: checkReducedMotion() ? 1 : 0.98 }}
           className="w-full py-2 rounded-lg border border-red-200 text-red-600 text-xs font-bold bg-white hover:bg-red-50 flex items-center justify-center gap-2 transition-colors shadow-sm"
         >
            <Trash2 size={14} /> Delete
-        </button>
+        </motion.button>
       </div>
     );
   }

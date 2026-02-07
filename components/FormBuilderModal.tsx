@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { 
+import { AnimatePresence, motion } from 'framer-motion';
+import {
   X, Sparkles, Plus, Trash2, Settings2
 } from 'lucide-react';
 
@@ -105,11 +106,34 @@ export const FormBuilderModal: React.FC<FormBuilderModalProps> = ({ isOpen, onCl
     handleUpdateField(selectedField.id, { options: newOptions });
   };
 
+  const checkReducedMotion = () => {
+    return typeof window !== 'undefined' &&
+      window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  };
+
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center p-4">
-      <div className="bg-slate-50 w-full max-w-[1400px] h-[90vh] rounded-xl shadow-2xl flex overflow-hidden animate-in fade-in zoom-in duration-200 border border-slate-200">
+    <AnimatePresence>
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        transition={{ duration: checkReducedMotion() ? 0 : 0.2 }}
+        className="fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center p-4"
+      >
+        <motion.div
+          initial={{ opacity: 0, scale: 0.95, y: 10 }}
+          animate={{ opacity: 1, scale: 1, y: 0 }}
+          exit={{ opacity: 0, scale: 0.95, y: 10 }}
+          transition={{
+            type: 'spring',
+            stiffness: 300,
+            damping: 25,
+            duration: checkReducedMotion() ? 0 : undefined
+          }}
+          className="bg-slate-50 w-full max-w-[1400px] h-[90vh] rounded-xl shadow-2xl flex overflow-hidden border border-slate-200"
+        >
         
         {/* LEFT SIDEBAR: ELEMENTS */}
         <div className="w-72 bg-white border-r border-gray-200 flex flex-col shrink-0 overflow-hidden">
@@ -200,10 +224,14 @@ export const FormBuilderModal: React.FC<FormBuilderModalProps> = ({ isOpen, onCl
                      <p>Click elements on the left to add them to your form</p>
                    </div>
                  )}
-                 {fields.map((field) => (
-                    <div 
+                 {fields.map((field, index) => (
+                    <motion.div
                       key={field.id}
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: index * 0.03 }}
                       onClick={() => setSelectedFieldId(field.id)}
+                      layout
                       className={`
                         relative group rounded-lg p-4 -mx-4 cursor-pointer transition-all border-2
                         ${selectedFieldId === field.id ? 'border-blue-500 bg-blue-50/30' : 'border-transparent hover:bg-gray-50'}
@@ -221,7 +249,7 @@ export const FormBuilderModal: React.FC<FormBuilderModalProps> = ({ isOpen, onCl
                             </button>
                          </div>
                        )}
-                    </div>
+                    </motion.div>
                  ))}
               </div>
            </div>
@@ -337,8 +365,9 @@ export const FormBuilderModal: React.FC<FormBuilderModalProps> = ({ isOpen, onCl
            </div>
         </div>
 
-      </div>
-    </div>
+        </motion.div>
+      </motion.div>
+    </AnimatePresence>
   );
 };
 
@@ -358,15 +387,24 @@ const Section: React.FC<{ title: string; children: React.ReactNode }> = ({ title
   </div>
 );
 
-const ElementButton: React.FC<{ emoji: string; label: string; onClick: () => void }> = ({ emoji, label, onClick }) => (
-  <button 
-    onClick={onClick}
-    className="w-full flex items-center gap-3 px-3 py-2 text-left bg-gray-50 border border-gray-200 rounded-md hover:border-blue-300 hover:bg-blue-50/50 hover:text-blue-700 transition-all group"
-  >
-    <span className="text-lg leading-none">{emoji}</span>
-    <span className="text-sm font-medium text-gray-700 group-hover:text-blue-700">{label}</span>
-  </button>
-);
+const ElementButton: React.FC<{ emoji: string; label: string; onClick: () => void }> = ({ emoji, label, onClick }) => {
+  const checkReducedMotion = () => {
+    return typeof window !== 'undefined' &&
+      window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  };
+
+  return (
+    <motion.button
+      whileHover={{ scale: checkReducedMotion() ? 1 : 1.02, x: checkReducedMotion() ? 0 : 4 }}
+      whileTap={{ scale: checkReducedMotion() ? 1 : 0.98 }}
+      onClick={onClick}
+      className="w-full flex items-center gap-3 px-3 py-2 text-left bg-gray-50 border border-gray-200 rounded-md hover:border-blue-300 hover:bg-blue-50/50 hover:text-blue-700 transition-colors group"
+    >
+      <span className="text-lg leading-none">{emoji}</span>
+      <span className="text-sm font-medium text-gray-700 group-hover:text-blue-700">{label}</span>
+    </motion.button>
+  );
+};
 
 const RenderField: React.FC<{ field: FormField }> = ({ field }) => {
   const label = (

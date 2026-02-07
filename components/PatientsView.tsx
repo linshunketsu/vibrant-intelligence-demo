@@ -16,7 +16,7 @@ import { EncounterNotesEditor } from './EncounterNotesEditor';
 import { NotificationCenter } from './NotificationCenter';
 import { SidebarAiAssistant } from './SidebarAiAssistant';
 import { OrderDiagnosticTestsModal } from './OrderDiagnosticTestsModal';
-import { ScheduleAppointmentModal } from './ScheduleAppointmentModal';
+import { CreateEventModal } from './CreateEventModal';
 
 // --- Interfaces ---
 
@@ -1446,16 +1446,16 @@ Dr. Johnson
       }}
     />
 
-    {/* Schedule Appointment Modal */}
-    <ScheduleAppointmentModal
+    {/* Schedule Appointment Modal - reuses CreateEventModal from Calendar */}
+    <CreateEventModal
       isOpen={showScheduleModal}
       onClose={() => setShowScheduleModal(false)}
-      onSchedule={(data) => {
-        console.log('Scheduled appointment:', data);
-      }}
+      initialDate={new Date().toISOString().split('T')[0]}
       patient={{
-        name: activePatient?.name ?? 'Patient'
+        name: activePatient?.name ?? '',
+        initials: activePatient?.initials ?? ''
       }}
+      appointmentType="Follow-up"
     />
   </>
   );
