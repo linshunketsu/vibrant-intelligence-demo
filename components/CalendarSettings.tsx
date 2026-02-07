@@ -230,7 +230,7 @@ export const CalendarSettings: React.FC<CalendarSettingsProps> = ({ onBack }) =>
 
             <div className="space-y-2">
               <div className="flex items-center justify-between p-3 bg-gradient-to-r from-slate-50 to-gray-50 rounded-lg border border-gray-100/80 hover:border-gray-200/80 hover:shadow-sm transition-all duration-200">
-                <div className="text-sm font-medium text-slate-700">Aug 25, 2025</div>
+                <div className="text-sm font-medium text-slate-700">Feb 17, 2026</div>
                 <div className="text-sm text-slate-600">10:00AM - 10:15 AM</div>
                 <div className="flex items-center gap-2">
                    <button className="flex items-center gap-1 text-xs font-semibold text-slate-500 hover:text-[#0F4C81] px-2 py-1 rounded transition-colors">

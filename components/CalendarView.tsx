@@ -8,9 +8,9 @@ import { CalendarSettings } from './CalendarSettings';
 
 // Mock Data
 const REQUESTS = [
-  { id: 1, name: 'Daniel Anderson', time: 'Sep 12, 2025 10:00AM - 10:15AM', status: 'Available' },
-  { id: 2, name: 'Michael Johnson', time: 'Sep 14, 2025 11:00AM - 11:15AM', status: 'Time Conflict' },
-  { id: 3, name: 'Emily Thompson', time: 'Sep 15, 2025 10:00AM - 10:15AM', status: 'Available' },
+  { id: 1, name: 'Daniel Anderson', time: 'Feb 23, 2026 10:00AM - 10:15AM', status: 'Available' },
+  { id: 2, name: 'Michael Johnson', time: 'Feb 25, 2026 11:00AM - 11:15AM', status: 'Time Conflict' },
+  { id: 3, name: 'Emily Thompson', time: 'Feb 26, 2026 10:00AM - 10:15AM', status: 'Available' },
 ];
 
 interface CalendarEvent {
@@ -25,55 +25,55 @@ interface CalendarEvent {
 
 const WEEK_EVENTS: CalendarEvent[] = [
   // --- All Day ---
-  { id: 'ad1', title: 'Labor Day', date: '2025-09-01', allDay: true, color: 'bg-slate-600' },
-  { id: 'ad2', title: 'Medical Conference', date: '2025-09-02', allDay: true, color: 'bg-slate-600' },
-  { id: 'ad3', title: 'Staff Training', date: '2025-09-03', allDay: true, color: 'bg-slate-500' },
+  { id: 'ad1', title: ' Presidents Day', date: '2026-02-16', allDay: true, color: 'bg-slate-600' },
+  { id: 'ad2', title: 'Medical Conference', date: '2026-02-17', allDay: true, color: 'bg-slate-600' },
+  { id: 'ad3', title: 'Staff Training', date: '2026-02-18', allDay: true, color: 'bg-slate-500' },
 
-  // --- Monday 9/1 ---
-  { id: 101, title: 'Morning Rounds', start: '8:00 AM', end: '9:00 AM', date: '2025-09-01', color: 'bg-slate-500' },
-  { id: 102, title: 'Acute Visit - J. Doe', start: '10:30 AM', end: '11:00 AM', date: '2025-09-01', color: 'bg-amber-500' },
-  { id: 103, title: 'Telehealth Block', start: '1:00 PM', end: '3:00 PM', date: '2025-09-01', color: 'bg-sky-400' },
-  { id: 104, title: 'Wrap up', start: '4:45 PM', end: '5:15 PM', date: '2025-09-01', color: 'bg-teal-400' },
+  // --- Monday 2/16 ---
+  { id: 101, title: 'Morning Rounds', start: '8:00 AM', end: '9:00 AM', date: '2026-02-16', color: 'bg-slate-500' },
+  { id: 102, title: 'Acute Visit - J. Doe', start: '10:30 AM', end: '11:00 AM', date: '2026-02-16', color: 'bg-amber-500' },
+  { id: 103, title: 'Telehealth Block', start: '1:00 PM', end: '3:00 PM', date: '2026-02-16', color: 'bg-sky-400' },
+  { id: 104, title: 'Wrap up', start: '4:45 PM', end: '5:15 PM', date: '2026-02-16', color: 'bg-teal-400' },
 
-  // --- Tuesday 9/2 ---
-  { id: 201, title: 'New Patient - S. Smith', start: '9:00 AM', end: '10:00 AM', date: '2025-09-02', color: 'bg-cyan-500' },
-  { id: 202, title: 'Lab Review', start: '11:00 AM', end: '11:30 AM', date: '2025-09-02', color: 'bg-teal-400' },
-  { id: 203, title: 'Lunch w/ Dr. Lee', start: '12:00 PM', end: '1:00 PM', date: '2025-09-02', color: 'bg-slate-400' },
-  { id: 204, title: 'Follow-up', start: '2:30 PM', end: '2:45 PM', date: '2025-09-02', color: 'bg-teal-400' },
-  { id: 205, title: 'Urgent Care Slot', start: '3:00 PM', end: '4:00 PM', date: '2025-09-02', color: 'bg-amber-500' },
+  // --- Tuesday 2/17 ---
+  { id: 201, title: 'New Patient - S. Smith', start: '9:00 AM', end: '10:00 AM', date: '2026-02-17', color: 'bg-cyan-500' },
+  { id: 202, title: 'Lab Review', start: '11:00 AM', end: '11:30 AM', date: '2026-02-17', color: 'bg-teal-400' },
+  { id: 203, title: 'Lunch w/ Dr. Lee', start: '12:00 PM', end: '1:00 PM', date: '2026-02-17', color: 'bg-slate-400' },
+  { id: 204, title: 'Follow-up', start: '2:30 PM', end: '2:45 PM', date: '2026-02-17', color: 'bg-teal-400' },
+  { id: 205, title: 'Urgent Care Slot', start: '3:00 PM', end: '4:00 PM', date: '2026-02-17', color: 'bg-amber-500' },
 
-  // --- Wednesday 9/3 ---
-  { id: 1, title: 'Checkup - Daniel A.', start: '10:00 AM', end: '10:15 AM', date: '2025-09-03', color: 'bg-sky-400' },
-  { id: 3, title: 'Follow-up - Michael', start: '12:00 PM', end: '12:15 PM', date: '2025-09-03', color: 'bg-teal-400' },
-  { id: 301, title: 'Admin Time', start: '12:30 PM', end: '1:30 PM', date: '2025-09-03', color: 'bg-slate-400' },
-  { id: 5, title: 'Initial Cons - Emily', start: '2:00 PM', end: '2:45 PM', date: '2025-09-03', color: 'bg-cyan-500' },
-  { id: 302, title: 'Pediatric Check', start: '3:30 PM', end: '4:00 PM', date: '2025-09-03', color: 'bg-sky-400' },
+  // --- Wednesday 2/18 ---
+  { id: 1, title: 'Checkup - Daniel A.', start: '10:00 AM', end: '10:15 AM', date: '2026-02-18', color: 'bg-sky-400' },
+  { id: 3, title: 'Follow-up - Michael', start: '12:00 PM', end: '12:15 PM', date: '2026-02-18', color: 'bg-teal-400' },
+  { id: 301, title: 'Admin Time', start: '12:30 PM', end: '1:30 PM', date: '2026-02-18', color: 'bg-slate-400' },
+  { id: 5, title: 'Initial Cons - Emily', start: '2:00 PM', end: '2:45 PM', date: '2026-02-18', color: 'bg-cyan-500' },
+  { id: 302, title: 'Pediatric Check', start: '3:30 PM', end: '4:00 PM', date: '2026-02-18', color: 'bg-sky-400' },
 
-  // --- Thursday 9/4 ---
-  { id: 401, title: 'Team Huddle', start: '8:30 AM', end: '9:00 AM', date: '2025-09-04', color: 'bg-slate-500' },
-  { id: 2, title: 'Follow-up', start: '10:30 AM', end: '11:00 AM', date: '2025-09-04', color: 'bg-teal-400' },
-  { id: 4, title: 'General Checkup', start: '1:00 PM', end: '1:30 PM', date: '2025-09-04', color: 'bg-amber-500' },
-  { id: 402, title: 'Vaccination Block', start: '2:00 PM', end: '4:00 PM', date: '2025-09-04', color: 'bg-sky-400' },
-  { id: 7, title: 'Update diagnosis for...', start: '5:00 PM', end: '6:00 PM', date: '2025-09-04', color: 'bg-slate-500' },
+  // --- Thursday 2/19 ---
+  { id: 401, title: 'Team Huddle', start: '8:30 AM', end: '9:00 AM', date: '2026-02-19', color: 'bg-slate-500' },
+  { id: 2, title: 'Follow-up', start: '10:30 AM', end: '11:00 AM', date: '2026-02-19', color: 'bg-teal-400' },
+  { id: 4, title: 'General Checkup', start: '1:00 PM', end: '1:30 PM', date: '2026-02-19', color: 'bg-amber-500' },
+  { id: 402, title: 'Vaccination Block', start: '2:00 PM', end: '4:00 PM', date: '2026-02-19', color: 'bg-sky-400' },
+  { id: 7, title: 'Update diagnosis for...', start: '5:00 PM', end: '6:00 PM', date: '2026-02-19', color: 'bg-slate-500' },
 
-  // --- Friday 9/5 ---
-  { id: 501, title: 'Procedure - Minor', start: '9:00 AM', end: '10:30 AM', date: '2025-09-05', color: 'bg-teal-500' },
-  { id: 502, title: 'Post-op Check', start: '11:00 AM', end: '11:15 AM', date: '2025-09-05', color: 'bg-teal-400' },
-  { id: 503, title: 'Sick Visit', start: '1:15 PM', end: '1:45 PM', date: '2025-09-05', color: 'bg-amber-500' },
-  { id: 6, title: 'Review patient logs', start: '4:00 PM', end: '4:30 PM', date: '2025-09-05', color: 'bg-slate-500' },
+  // --- Friday 2/20 ---
+  { id: 501, title: 'Procedure - Minor', start: '9:00 AM', end: '10:30 AM', date: '2026-02-20', color: 'bg-teal-500' },
+  { id: 502, title: 'Post-op Check', start: '11:00 AM', end: '11:15 AM', date: '2026-02-20', color: 'bg-teal-400' },
+  { id: 503, title: 'Sick Visit', start: '1:15 PM', end: '1:45 PM', date: '2026-02-20', color: 'bg-amber-500' },
+  { id: 6, title: 'Review patient logs', start: '4:00 PM', end: '4:30 PM', date: '2026-02-20', color: 'bg-slate-500' },
 
-  // --- Saturday 9/6 ---
-  { id: 601, title: 'On Call - Urgent Only', start: '9:00 AM', end: '1:00 PM', date: '2025-09-06', color: 'bg-amber-500' },
+  // --- Saturday 2/21 ---
+  { id: 601, title: 'On Call - Urgent Only', start: '9:00 AM', end: '1:00 PM', date: '2026-02-21', color: 'bg-amber-500' },
 ];
 
 const DAYS_HEADER = [
-  { day: 'Sun', date: '8/31', fullDate: '2025-08-31' },
-  { day: 'Mon', date: '9/1', fullDate: '2025-09-01' },
-  { day: 'Tue', date: '9/2', fullDate: '2025-09-02' },
-  { day: 'Wed', date: '9/3', fullDate: '2025-09-03' },
-  { day: 'Thu', date: '9/4', fullDate: '2025-09-04' },
-  { day: 'Fri', date: '9/5', fullDate: '2025-09-05' },
-  { day: 'Sat', date: '9/6', fullDate: '2025-09-06' },
+  { day: 'Sun', date: '2/15', fullDate: '2026-02-15' },
+  { day: 'Mon', date: '2/16', fullDate: '2026-02-16' },
+  { day: 'Tue', date: '2/17', fullDate: '2026-02-17' },
+  { day: 'Wed', date: '2/18', fullDate: '2026-02-18' },
+  { day: 'Thu', date: '2/19', fullDate: '2026-02-19' },
+  { day: 'Fri', date: '2/20', fullDate: '2026-02-20' },
+  { day: 'Sat', date: '2/21', fullDate: '2026-02-21' },
 ];
 
 export const CalendarView: React.FC = () => {
@@ -117,7 +117,7 @@ export const CalendarView: React.FC = () => {
         <div className="p-4 border-b border-gray-100/80">
            <div className="flex items-center justify-between mb-4">
               <button className="p-1.5 hover:bg-slate-100 rounded-lg transition-all duration-200"><ChevronLeft size={16} /></button>
-              <span className="font-semibold text-slate-700">September 2025</span>
+              <span className="font-semibold text-slate-700">February 2026</span>
               <button className="p-1.5 hover:bg-slate-100 rounded-lg transition-all duration-200"><ChevronRight size={16} /></button>
            </div>
            {/* Simple Grid for Mini Calendar */}
@@ -131,12 +131,26 @@ export const CalendarView: React.FC = () => {
               <span className="text-gray-400">S</span>
            </div>
            <div className="grid grid-cols-7 gap-1 text-center text-sm">
-              {/* Padding days */}
-              <span className="p-1"></span>
-              {[1, 2].map(d => <span key={d} className="w-8 h-8 flex items-center justify-center text-slate-700 hover:bg-slate-100 rounded-full cursor-pointer mx-auto transition-all duration-200">{d}</span>)}
-              <span className="w-8 h-8 flex items-center justify-center bg-[#0F4C81] text-white rounded-full font-semibold mx-auto shadow-sm">3</span>
-              {Array.from({length: 27}, (_, i) => i + 4).map(d => (
-                 <span key={d} className="w-8 h-8 flex items-center justify-center text-slate-700 hover:bg-slate-100 rounded-full cursor-pointer mx-auto transition-all duration-200">{d}</span>
+              {/* Padding days for Feb 2026 (starts on Sunday) */}
+              {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(d => (
+                <span key={d} className="w-8 h-8 flex items-center justify-center text-slate-700 hover:bg-slate-100 rounded-full cursor-pointer mx-auto transition-all duration-200">{d}</span>
+              ))}
+              <span className="w-8 h-8 flex items-center justify-center text-slate-700 hover:bg-slate-100 rounded-full cursor-pointer mx-auto transition-all duration-200">16</span>
+              <span className="w-8 h-8 flex items-center justify-center text-slate-700 hover:bg-slate-100 rounded-full cursor-pointer mx-auto transition-all duration-200">17</span>
+              <span className="w-8 h-8 flex items-center justify-center text-slate-700 hover:bg-slate-100 rounded-full cursor-pointer mx-auto transition-all duration-200">18</span>
+              <span className="w-8 h-8 flex items-center justify-center text-slate-700 hover:bg-slate-100 rounded-full cursor-pointer mx-auto transition-all duration-200">19</span>
+              <span className="w-8 h-8 flex items-center justify-center bg-[#0F4C81] text-white rounded-full font-semibold mx-auto shadow-sm">20</span>
+              <span className="w-8 h-8 flex items-center justify-center text-slate-700 hover:bg-slate-100 rounded-full cursor-pointer mx-auto transition-all duration-200">21</span>
+              <span className="w-8 h-8 flex items-center justify-center text-slate-700 hover:bg-slate-100 rounded-full cursor-pointer mx-auto transition-all duration-200">22</span>
+              <span className="w-8 h-8 flex items-center justify-center text-slate-700 hover:bg-slate-100 rounded-full cursor-pointer mx-auto transition-all duration-200">23</span>
+              <span className="w-8 h-8 flex items-center justify-center text-slate-700 hover:bg-slate-100 rounded-full cursor-pointer mx-auto transition-all duration-200">24</span>
+              <span className="w-8 h-8 flex items-center justify-center text-slate-700 hover:bg-slate-100 rounded-full cursor-pointer mx-auto transition-all duration-200">25</span>
+              <span className="w-8 h-8 flex items-center justify-center text-slate-700 hover:bg-slate-100 rounded-full cursor-pointer mx-auto transition-all duration-200">26</span>
+              <span className="w-8 h-8 flex items-center justify-center text-slate-700 hover:bg-slate-100 rounded-full cursor-pointer mx-auto transition-all duration-200">27</span>
+              <span className="w-8 h-8 flex items-center justify-center text-slate-700 hover:bg-slate-100 rounded-full cursor-pointer mx-auto transition-all duration-200">28</span>
+              {/* March days */}
+              {Array.from({length: 7}, (_, i) => i + 1).map(d => (
+                 <span key={`mar-${d}`} className="w-8 h-8 flex items-center justify-center text-slate-300">{d}</span>
               ))}
            </div>
         </div>
@@ -219,7 +233,7 @@ export const CalendarView: React.FC = () => {
                </div>
                <button className="px-4 py-2 border border-[#0F4C81] bg-[#0F4C81] text-white rounded-lg text-sm font-semibold transition-all duration-200 shadow-sm hover:shadow-md">Today</button>
                <h2 className="text-2xl font-medium text-slate-700">
-                  {view === 'Week' ? 'Aug 31 - Sep 6, 2025' : 'September 3, 2025'}
+                  {view === 'Week' ? 'Feb 15 - Feb 21, 2026' : 'February 18, 2026'}
                </h2>
             </div>
 

@@ -74,7 +74,7 @@ const ExceptionCard: React.FC<{ title: string; reason: string; suggestion: strin
                     </div>
                     <div className="flex-1">
                         <h4 className="text-emerald-900 font-bold">Exception Resolved</h4>
-                        <p className="text-emerald-700 text-sm">Redraw order #20251219-RD created successfully. Patient notified.</p>
+                        <p className="text-emerald-700 text-sm">Redraw order #20260219-RD created successfully. Patient notified.</p>
                         {isYolo && (
                             <div className="mt-2 flex items-center gap-1 text-xs text-emerald-600 font-medium">
                                 <Zap size={12} fill="currentColor" /> AI Autonomy preference saved for future TNP events.
@@ -432,11 +432,11 @@ const MOCK_DETAILS: Record<string, any> = {
         financial: { billing: 'As Default', card: '***1111', shipping: 'Ship to Patient' },
         medications: ['Lisinopril 10mg - Daily', 'Metformin 500mg - BID'],
         allergies: [{name: 'Penicillin', severity: 'Severe'}, {name: 'Sulfa', severity: 'Moderate'}],
-        notes: { date: 'Jan-01-2025', preview: 'The patient passed by and came in to say hi, patient mentioned feeling much better after the new protocol.' },
+        notes: { date: 'Feb-01-2026', preview: 'The patient passed by and came in to say hi, patient mentioned feeling much better after the new protocol.' },
         docs: { count: 11, types: ['3 Medical Reports', '4 Encounter Notes'] },
-        upcoming: { event: 'Follow-up Consultation', date: 'Dec 15, 2025 at 2:00 PM' },
-        past: { event: 'Initial Consultation', date: 'Oct 05, 2025' },
-        billing: { balance: '$150.00', date: 'Dec 10', invoice: 'INV-2025-003', status: 'Due Now' },
+        upcoming: { event: 'Follow-up Consultation', date: 'Feb 27, 2026 at 2:00 PM' },
+        past: { event: 'Initial Consultation', date: 'Jan 15, 2026' },
+        billing: { balance: '$150.00', date: 'Feb 10', invoice: 'INV-2026-003', status: 'Due Now' },
         pinned: ['med-active', 'basics-demo', 'med-tags'],
         program: {
             name: 'Signature Program - Body Sculpt 90',
@@ -458,11 +458,11 @@ const MOCK_DETAILS: Record<string, any> = {
         financial: { billing: 'Insurance', card: '***4421', shipping: 'Home' },
         medications: ['Levothyroxine 50mcg'],
         allergies: [{ name: 'Peanuts', severity: 'Mild' }],
-        notes: { date: 'Dec 10, 2025', preview: 'Review of systems negative. Patient reports feeling energetic. TSH levels normalized.' },
+        notes: { date: 'Feb 10, 2026', preview: 'Review of systems negative. Patient reports feeling energetic. TSH levels normalized.' },
         docs: { count: 5, types: ['Lab Report', 'Consent Form'] },
         upcoming: null,
-        past: { event: 'Results Review', date: 'Dec 12, 2025' },
-        billing: { balance: '$0.00', date: 'Dec 12', invoice: 'INV-2025-001', status: 'Paid' },
+        past: { event: 'Results Review', date: 'Feb 12, 2026' },
+        billing: { balance: '$0.00', date: 'Feb 12', invoice: 'INV-2026-001', status: 'Paid' },
         pinned: ['basics-demo', 'med-docs', 'cal-past'],
         program: null
     },
@@ -471,11 +471,11 @@ const MOCK_DETAILS: Record<string, any> = {
         financial: { billing: 'Self-Pay', card: '***9988', shipping: 'Office' },
         medications: [],
         allergies: [],
-        notes: { date: 'Dec 14, 2025', preview: 'Requesting reschedule due to work conflict. Patient has limited availability.' },
+        notes: { date: 'Feb 14, 2026', preview: 'Requesting reschedule due to work conflict. Patient has limited availability.' },
         docs: { count: 2, types: ['Intake Form'] },
-        upcoming: { event: 'Physical Exam', date: 'Dec 20, 2025 at 9:00 AM' },
-        past: { event: 'Intro Call', date: 'Dec 01, 2025' },
-        billing: { balance: '$50.00', date: 'Dec 01', invoice: 'INV-2025-009', status: 'Unpaid' },
+        upcoming: { event: 'Physical Exam', date: 'Feb 25, 2026 at 9:00 AM' },
+        past: { event: 'Intro Call', date: 'Feb 01, 2026' },
+        billing: { balance: '$50.00', date: 'Feb 01', invoice: 'INV-2026-009', status: 'Unpaid' },
         pinned: ['cal-upcoming', 'basics-contact'],
         program: null
     }
@@ -488,11 +488,11 @@ const getPatientDetails = (id: string, patient: Patient) => {
         financial: { billing: 'Default', card: `***${1000 + parseInt(id)}`, shipping: 'Home' },
         medications: [],
         allergies: [],
-        notes: { date: 'Nov 20, 2025', preview: 'Routine check-up. No major complaints reported.' },
+        notes: { date: 'Jan 20, 2026', preview: 'Routine check-up. No major complaints reported.' },
         docs: { count: 1, types: ['Intake Form'] },
         upcoming: null,
-        past: { event: 'Initial Visit', date: 'Nov 01, 2025' },
-        billing: { balance: '$0.00', date: 'Nov 01', invoice: `INV-2025-0${id}`, status: 'Paid' },
+        past: { event: 'Initial Visit', date: 'Jan 05, 2026' },
+        billing: { balance: '$0.00', date: 'Jan 05', invoice: `INV-2026-0${id}`, status: 'Paid' },
         pinned: ['basics-demo', 'med-tags']
     };
 };
@@ -1006,7 +1006,7 @@ Dr. Johnson
                         <p className="text-slate-700"><strong>Current workflow status:</strong> {activePatient?.workflowStatus?.toUpperCase() ?? 'UNKNOWN'}</p>
                         <p className="text-slate-600 text-sm">Recent activity:</p>
                         <ul className="text-sm text-slate-600 space-y-1">
-                            <li>• Lab order #2025120101 processed</li>
+                            <li>• Lab order #2026020101 processed</li>
                             <li>• Kit delivered and returned</li>
                             <li>• Sample received at lab intake</li>
                         </ul>
@@ -1225,9 +1225,9 @@ Dr. Johnson
   };
 
   const getPatientHistory = (id: string) => {
-      const defaultFlow = [{ type: 'separator', date: '12-01-2025' }, { type: 'event', icon: ShoppingCart, title: 'Order Created: Gut Zoomer 3.0', variant: 'success', date: '12-01-2025 09:15 AM', details: 'Order placed via Portal. Workflow instantiated.' }, { type: 'event', icon: Truck, title: 'Kit Delivered', variant: 'success', date: '12-05-2025 02:22 PM', details: 'Delivered to front porch.' }, { type: 'separator', date: 'Today' }, { type: 'event', icon: Package, title: 'Kit Returned to Lab', variant: 'neutral', date: '10:05 AM', details: 'Sample received at intake.' }];
-      if (id === '3') return [{ type: 'separator', date: '12-01-2025' }, { type: 'event', icon: ShoppingCart, title: 'Order Created: Gut Zoomer 3.0', variant: 'success', date: '12-01-2025 09:15 AM', details: 'Order #2025120101 placed.' }, { type: 'separator', date: '12-05-2025' }, { type: 'event', icon: Truck, title: 'Kit Delivered', variant: 'success', date: '12-05-2025 02:22 PM', details: 'FedEx Tracking #1Z999...' }, { type: 'separator', date: '12-08-2025' }, { type: 'event', icon: Package, title: 'Kit Returned to Lab', variant: 'success', date: '12-08-2025 11:05 AM', details: 'Sample scanned at Lab Intake.' }, { type: 'separator', date: 'Today' }, { type: 'event', icon: FlaskConical, title: 'Lab Processing Started', variant: 'neutral', date: '10:30 AM', details: 'Sample prepared for analysis.' }, { type: 'exception', title: 'Test Not Performed (TNP)', reason: 'Sample Rejected: Gross Hemolysis detected during centrifugation.', suggestion: 'A redraw is required to proceed with this workflow.' }];
-      if (id === '1') return [{ type: 'separator', date: '12-01-2025' }, { type: 'event', icon: ShoppingCart, title: 'Order Created', variant: 'success', date: '09:00 AM', details: 'Standard Panel' }, { type: 'separator', date: '12-10-2025' }, { type: 'event', icon: FlaskConical, title: 'Lab Processing Started', variant: 'success', date: '08:30 AM', details: 'Analysis in progress.' }, { type: 'separator', date: 'Today' }, { type: 'event', icon: ClipboardCheck, title: 'Report Ready', variant: 'success', date: '10:30 AM', details: 'Results released to patient portal.' }, { type: 'event', icon: Activity, title: 'Next Step: Follow-up Appointment', variant: 'info', date: '', details: 'Scheduled for Dec 15, 2025 at 2:00 PM', actionLabel: 'View Details' }];
+      const defaultFlow = [{ type: 'separator', date: '02-01-2026' }, { type: 'event', icon: ShoppingCart, title: 'Order Created: Gut Zoomer 3.0', variant: 'success', date: '02-01-2026 09:15 AM', details: 'Order placed via Portal. Workflow instantiated.' }, { type: 'event', icon: Truck, title: 'Kit Delivered', variant: 'success', date: '02-05-2026 02:22 PM', details: 'Delivered to front porch.' }, { type: 'separator', date: 'Today' }, { type: 'event', icon: Package, title: 'Kit Returned to Lab', variant: 'neutral', date: '10:05 AM', details: 'Sample received at intake.' }];
+      if (id === '3') return [{ type: 'separator', date: '02-01-2026' }, { type: 'event', icon: ShoppingCart, title: 'Order Created: Gut Zoomer 3.0', variant: 'success', date: '02-01-2026 09:15 AM', details: 'Order #2026020101 placed.' }, { type: 'separator', date: '02-05-2026' }, { type: 'event', icon: Truck, title: 'Kit Delivered', variant: 'success', date: '02-05-2026 02:22 PM', details: 'FedEx Tracking #1Z999...' }, { type: 'separator', date: '02-08-2026' }, { type: 'event', icon: Package, title: 'Kit Returned to Lab', variant: 'success', date: '02-08-2026 11:05 AM', details: 'Sample scanned at Lab Intake.' }, { type: 'separator', date: 'Today' }, { type: 'event', icon: FlaskConical, title: 'Lab Processing Started', variant: 'neutral', date: '10:30 AM', details: 'Sample prepared for analysis.' }, { type: 'exception', title: 'Test Not Performed (TNP)', reason: 'Sample Rejected: Gross Hemolysis detected during centrifugation.', suggestion: 'A redraw is required to proceed with this workflow.' }];
+      if (id === '1') return [{ type: 'separator', date: '02-01-2026' }, { type: 'event', icon: ShoppingCart, title: 'Order Created', variant: 'success', date: '09:00 AM', details: 'Standard Panel' }, { type: 'separator', date: '02-10-2026' }, { type: 'event', icon: FlaskConical, title: 'Lab Processing Started', variant: 'success', date: '08:30 AM', details: 'Analysis in progress.' }, { type: 'separator', date: 'Today' }, { type: 'event', icon: ClipboardCheck, title: 'Report Ready', variant: 'success', date: '10:30 AM', details: 'Results released to patient portal.' }, { type: 'event', icon: Activity, title: 'Next Step: Follow-up Appointment', variant: 'info', date: '', details: 'Scheduled for Feb 27, 2026 at 2:00 PM', actionLabel: 'View Details' }];
       return defaultFlow;
   };
 
