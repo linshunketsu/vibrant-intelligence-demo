@@ -566,16 +566,16 @@ const NodeCard: React.FC<{
   // 4. LOGIC NODE DESIGN
   if (node.type === NodeType.LOGIC) {
     return (
-      <div 
+      <div
         onClick={onClick}
         className={`
-          w-40 h-auto rounded-2xl p-3 border-2 relative transition-all duration-200 shadow-sm hover:shadow-md flex flex-col items-center justify-center text-center bg-purple-50
-          ${isSelected ? 'border-purple-600 ring-1 ring-purple-600 shadow-lg scale-[1.01]' : 'border-purple-200 hover:border-purple-300'}
+          w-40 h-auto rounded-2xl p-3 border-2 relative transition-all duration-200 shadow-sm hover:shadow-md flex flex-col items-center justify-center text-center bg-blue-50
+          ${isSelected ? 'border-blue-600 ring-1 ring-blue-600 shadow-lg scale-[1.01]' : 'border-blue-200 hover:border-blue-300'}
           ${tempStyle}
         `}
       >
         <TempBadge />
-         <div className="w-10 h-10 rounded-lg bg-purple-600 text-white flex items-center justify-center mb-2 shadow-sm">
+         <div className="w-10 h-10 rounded-lg bg-blue-600 text-white flex items-center justify-center mb-2 shadow-sm">
              {React.createElement(ICON_MAP[node.blockType === BlockType.WAIT ? 'Clock' : 'ShieldCheck'] || AlertTriangle, { size: 20 })}
          </div>
          <span className="text-xs font-bold text-slate-800 leading-tight">

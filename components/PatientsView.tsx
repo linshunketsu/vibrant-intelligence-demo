@@ -826,7 +826,7 @@ Plan:
                 {/* Tabs */}
                 <div className="flex bg-[#0a355c]/40 shrink-0">
                     <button onClick={() => setPegBoardTab('cards')} className={`flex-1 py-4 text-[10px] font-bold uppercase tracking-widest transition-all ${pegBoardTab === 'cards' ? 'bg-[#0F4C81] text-white border-b-2 border-white' : 'text-white/40 hover:text-white hover:bg-white/5'}`}>Pin Board</button>
-                    <button onClick={() => setPegBoardTab('ai')} className={`flex-1 py-4 text-[10px] font-bold uppercase tracking-widest transition-all flex items-center justify-center gap-2 ${pegBoardTab === 'ai' ? 'bg-[#0F4C81] text-white border-b-2 border-white' : 'text-white/40 hover:text-white hover:bg-white/5'}`}><Sparkles size={12} className={pegBoardTab === 'ai' ? 'animate-pulse' : ''} /> AI Agent</button>
+                    <button onClick={() => setPegBoardTab('ai')} className={`flex-1 py-4 text-[10px] font-bold uppercase tracking-widest transition-all flex items-center justify-center gap-2 ${pegBoardTab === 'ai' ? 'bg-[#0F4C81] text-white border-b-2 border-white' : 'text-white/40 hover:text-white hover:bg-white/5'}`}><Sparkles size={12} className={pegBoardTab === 'ai' ? 'animate-pulse' : ''} /> AI Composer</button>
                 </div>
 
                 {pegBoardTab === 'cards' ? (

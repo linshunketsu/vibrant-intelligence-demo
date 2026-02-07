@@ -1,5 +1,6 @@
 import React from 'react';
 import { Users, Calendar, Layout, Building2, LogOut, ChevronRight, UserCircle } from 'lucide-react';
+import vibrantLogo from '../VibrantWellness_Logo.png';
 
 interface TopNavProps {
   activeTab: string;
@@ -17,9 +18,7 @@ export const TopNav: React.FC<TopNavProps> = ({ activeTab, onTabChange }) => {
   return (
     <div className="h-14 bg-white border-b border-gray-200 flex items-center justify-between px-4 shrink-0 z-30">
       <div className="flex items-center gap-2">
-         <div className="w-6 h-6 text-blue-600">
-            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2L2 7l10 5 10-5-10-5zm0 9l2.5-1.25L12 8.5l-2.5 1.25L12 11zm0 2.5l-5-2.5-5 2.5L12 22l10-8.5-5-2.5-5 2.5z"/></svg>
-         </div>
+         <img src={vibrantLogo} alt="Vibrant Wellness" className="w-auto h-5" />
          <span className="font-semibold text-slate-700 text-sm flex items-center gap-1">
             Back to Portal <ChevronRight size={14} className="text-slate-400"/>
          </span>

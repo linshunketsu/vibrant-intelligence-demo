@@ -8,11 +8,14 @@ import { FormBuilderModal } from './FormBuilderModal';
 import { TestRunModal } from './TestRunModal';
 import { ManageUsageModal } from './ManageUsageModal';
 import { WorkflowNode, NodeType, BlockType } from '../types';
-import { 
-  Search, Plus, LayoutGrid, DollarSign, FileText, 
-  GitBranch, Archive, Edit3, Trash2, Move, UserCircle2, 
+import { FormTemplate, FormField } from '../formTypes';
+import { FormTemplatesHome } from './form/FormTemplatesHome';
+import { FormBuilder } from './form/FormBuilder';
+import {
+  Search, Plus, LayoutGrid, DollarSign, FileText,
+  GitBranch, Archive, Edit3, Trash2, Move, UserCircle2,
   Building2, ChevronLeft, ChevronRight, Settings, ListFilter,
-  Users, User, FileSpreadsheet, ShoppingCart
+  Users, User, FileSpreadsheet, ShoppingCart, Key
 } from 'lucide-react';
 
 const uuid = () => Math.random().toString(36).substr(2, 9);
@@ -136,6 +139,24 @@ export const WorkbenchView: React.FC = () => {
   const [isTestRunOpen, setIsTestRunOpen] = useState(false);
   const [isManageUsageOpen, setIsManageUsageOpen] = useState(false);
   const [currentFormName, setCurrentFormName] = useState('');
+
+  // Document Template / Form Builder State
+  const [formBuilderView, setFormBuilderView] = useState<'home' | 'builder'>('home');
+  const [existingForms, setExistingForms] = useState<FormTemplate[]>([]);
+  const [currentFormFields, setCurrentFormFields] = useState<FormField[]>([]);
+  const [editingFormId, setEditingFormId] = useState<string | null>(null);
+  const [geminiApiKey, setGeminiApiKey] = useState<string>(() => {
+    const stored = localStorage.getItem('gemini_api_key');
+    const envKey = import.meta.env.VITE_GEMINI_API_KEY;
+    const processEnvKey = process.env.GEMINI_API_KEY;
+    console.log('API Key sources:', {
+      stored: stored ? 'FOUND' : 'NOT_FOUND',
+      envKey: envKey ? 'FOUND' : 'NOT_FOUND',
+      processEnvKey: processEnvKey ? 'FOUND' : 'NOT_FOUND'
+    });
+    return stored || envKey || processEnvKey || '';
+  });
+  const [showApiKeyModal, setShowApiKeyModal] = useState(false);
 
   // Handle Drop on Canvas
   const handleDrop = useCallback((e: React.DragEvent, position: { x: number, y: number }) => {
@@ -289,10 +310,44 @@ export const WorkbenchView: React.FC = () => {
       active: 0,
       icon: 'GitBranch'
     };
-    
+
     // Add new workflow to the top of the list
     setWorkflows(prev => [newWorkflow, ...prev]);
     setViewMode('home');
+  };
+
+  // Form Builder Handlers
+  const handleSaveForm = (form: FormTemplate) => {
+    if (editingFormId) {
+      setExistingForms(prev => prev.map(f => f.id === editingFormId ? form : form));
+    } else {
+      setExistingForms(prev => [...prev, form]);
+    }
+    setFormBuilderView('home');
+    setCurrentFormFields([]);
+    setEditingFormId(null);
+  };
+
+  const handleDeleteForm = (formId: string) => {
+    setExistingForms(prev => prev.filter(f => f.id !== formId));
+  };
+
+  const handleNavigateToFormBuilder = (view: 'builder', fields?: FormField[], formId?: string) => {
+    if (fields) setCurrentFormFields(fields);
+    if (formId) setEditingFormId(formId);
+    setFormBuilderView(view);
+  };
+
+  const handleCancelFormBuilder = () => {
+    setFormBuilderView('home');
+    setCurrentFormFields([]);
+    setEditingFormId(null);
+  };
+
+  const handleSaveApiKey = (apiKey: string) => {
+    setGeminiApiKey(apiKey);
+    localStorage.setItem('gemini_api_key', apiKey);
+    setShowApiKeyModal(false);
   };
 
   // Handler for AI to generate the demo workflow
@@ -402,9 +457,85 @@ export const WorkbenchView: React.FC = () => {
   }
 
   // --- List / Home View ---
+  // Render Document Template View
+  if (sidebarTab === 'template') {
+    if (formBuilderView === 'builder') {
+      return (
+        <div className="h-full bg-white">
+          <FormBuilder
+            initialFields={currentFormFields}
+            onSaveForm={handleSaveForm}
+            editingFormId={editingFormId}
+            existingForms={existingForms}
+            onCancel={handleCancelFormBuilder}
+            geminiApiKey={geminiApiKey}
+            onApiKeyRequired={() => setShowApiKeyModal(true)}
+          />
+          {/* API Key Modal */}
+          {showApiKeyModal && (
+            <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
+              <div className="bg-white rounded-lg shadow-xl max-w-md w-full p-6">
+                <h3 className="text-lg font-bold text-slate-800 mb-4">Gemini API Key Required</h3>
+                <p className="text-sm text-slate-600 mb-4">
+                  To use AI form generation, please enter your Gemini API key.
+                </p>
+                <input
+                  type="password"
+                  placeholder="Enter your Gemini API key"
+                  className="w-full px-3 py-2 border border-slate-300 rounded-md text-sm mb-4"
+                  defaultValue={geminiApiKey}
+                  id="gemini-api-input"
+                />
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => {
+                      const input = document.getElementById('gemini-api-input') as HTMLInputElement;
+                      if (input?.value) handleSaveApiKey(input.value);
+                    }}
+                    className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+                  >
+                    Save Key
+                  </button>
+                  <button
+                    onClick={() => setShowApiKeyModal(false)}
+                    className="px-4 py-2 bg-slate-200 text-slate-700 rounded-md hover:bg-slate-300"
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
+      );
+    }
+
+    return (
+      <div className="flex h-full bg-slate-50">
+        {/* App Sidebar */}
+        <div className="w-20 bg-white border-r border-gray-200 flex flex-col items-center py-4 shrink-0 z-20 space-y-2">
+          <SidebarIcon icon={DollarSign} label="eZ-Bill" active={sidebarTab === 'ezbill'} onClick={() => setSidebarTab('ezbill')} />
+          <SidebarIcon icon={FileText} label="Document Template" active={sidebarTab === 'template'} onClick={() => setSidebarTab('template')} />
+          <SidebarIcon icon={GitBranch} label="Workflow" active={sidebarTab === 'workflow'} onClick={() => setSidebarTab('workflow')} />
+          <SidebarIcon icon={FileSpreadsheet} label="Report Format" active={sidebarTab === 'report'} onClick={() => setSidebarTab('report')} />
+          <SidebarIcon icon={Archive} label="Archive" active={sidebarTab === 'archive'} onClick={() => setSidebarTab('archive')} />
+        </div>
+
+        <div className="flex-1 overflow-y-auto bg-slate-50 p-8">
+          <FormTemplatesHome
+            onNavigate={handleNavigateToFormBuilder}
+            existingForms={existingForms}
+            onDeleteForm={handleDeleteForm}
+          />
+        </div>
+      </div>
+    );
+  }
+
+  // Default Workflow View
   return (
     <div className="flex h-full bg-slate-50">
-      
+
       {/* App Sidebar (Specific to Workbench) */}
       <div className="w-20 bg-white border-r border-gray-200 flex flex-col items-center py-4 shrink-0 z-20 space-y-2">
         <SidebarIcon icon={DollarSign} label="eZ-Bill" active={sidebarTab === 'ezbill'} onClick={() => setSidebarTab('ezbill')} />
@@ -449,14 +580,14 @@ export const WorkbenchView: React.FC = () => {
 
              <div className="flex items-center gap-3">
                 <div className="relative">
-                   <input 
-                     type="text" 
-                     placeholder="Search workflows" 
+                   <input
+                     type="text"
+                     placeholder="Search workflows"
                      className="w-64 pl-9 pr-4 py-2 bg-white border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                    />
                    <Search size={16} className="absolute left-3 top-2.5 text-gray-400" />
                 </div>
-                <button 
+                <button
                   onClick={handleCreateNew}
                   className="px-4 py-2 bg-[#0F4C81] text-white text-sm font-bold rounded-md shadow-sm hover:bg-[#09355E] flex items-center gap-2 transition-colors"
                 >
@@ -472,15 +603,15 @@ export const WorkbenchView: React.FC = () => {
         {/* Content - Cards Grid */}
         <div className="flex-1 overflow-y-auto p-8 bg-white">
            <div className="max-w-7xl space-y-4">
-              {workflows.map((wf, idx) => (
+              {workflows.map((wf) => (
                  <div key={wf.id} className="bg-white border border-gray-200 rounded-xl p-6 flex items-start gap-6 shadow-sm hover:shadow-md transition-shadow group">
                     <div className="w-12 h-12 bg-teal-50 text-teal-600 rounded-lg flex items-center justify-center shrink-0 border border-teal-100">
-                       {wf.icon === 'User' ? <User size={24} /> : 
+                       {wf.icon === 'User' ? <User size={24} /> :
                         wf.icon === 'LayoutGrid' ? <LayoutGrid size={24} /> :
                         wf.icon === 'ShoppingCart' ? <ShoppingCart size={24} /> :
                         <GitBranch size={24} />}
                     </div>
-                    
+
                     <div className="flex-1">
                        <h3 className="text-lg font-bold text-gray-900 mb-1">{wf.title}</h3>
                        <p className="text-sm text-gray-500 mb-3">{wf.description}</p>
@@ -492,7 +623,7 @@ export const WorkbenchView: React.FC = () => {
                     </div>
 
                     <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                       <button 
+                       <button
                           onClick={() => handleEditWorkflow(wf.id)}
                           className="p-2 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
                           title="Edit Workflow"

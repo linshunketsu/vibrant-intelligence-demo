@@ -13,7 +13,7 @@ export const SidebarAiAssistant: React.FC<SidebarAiAssistantProps> = ({
   history,
   isProcessing,
   onSendMessage,
-  placeholder = "Tell AI what to do...",
+  placeholder = "Tell AI Composer what to do...",
   emptyStateMessage = "Ask me to review reports, draft treatment plans, or summarize today's visit."
 }) => {
   const [prompt, setPrompt] = useState('');
@@ -43,7 +43,7 @@ export const SidebarAiAssistant: React.FC<SidebarAiAssistantProps> = ({
             {history.length === 0 && (
                 <div className="flex flex-col items-center justify-center h-full text-center px-4">
                     <Sparkles size={32} className="text-blue-600 mb-4 opacity-50" />
-                    <h4 className="font-bold text-slate-800 text-sm">Vibrant AI</h4>
+                    <h4 className="font-bold text-slate-800 text-sm">AI Composer</h4>
                     <p className="text-xs text-slate-500 mt-2 leading-relaxed">{emptyStateMessage}</p>
                 </div>
             )}
@@ -53,7 +53,7 @@ export const SidebarAiAssistant: React.FC<SidebarAiAssistantProps> = ({
                         {msg.role === 'assistant' && (
                             <div className="flex items-center gap-1.5 mb-1.5 opacity-50">
                                 <Bot size={12} />
-                                <span className="text-[10px] font-bold uppercase tracking-wider">Vibrant AI</span>
+                                <span className="text-[10px] font-bold uppercase tracking-wider">AI Composer</span>
                             </div>
                         )}
                         {msg.text}

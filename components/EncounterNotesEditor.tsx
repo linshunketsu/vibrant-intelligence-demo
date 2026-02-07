@@ -844,7 +844,7 @@ export const EncounterNotesEditor: React.FC<EncounterNotesEditorProps> = ({ onBa
                                                     <div className="w-16 h-16 bg-blue-50 rounded-full flex items-center justify-center mb-4">
                                                         <Sparkles size={24} className="text-[#0F4C81]" />
                                                     </div>
-                                                    <h3 className="text-base font-bold text-gray-900 mb-2">Generate AI Summary</h3>
+                                                    <h3 className="text-base font-bold text-gray-900 mb-2">Generate AI Composer Summary</h3>
                                                     <p className="text-sm text-gray-500 mb-6 max-w-xs">Select a template format to generate a clinical summary from this recording.</p>
                                                     
                                                     <div className="w-full space-y-3">
@@ -964,7 +964,7 @@ export const EncounterNotesEditor: React.FC<EncounterNotesEditorProps> = ({ onBa
       <div className="w-80 bg-[#0F4C81] flex flex-col shrink-0 text-slate-800 border-l border-[#0a355c]">
          <div className="flex bg-[#0a355c]/40 shrink-0">
             <button onClick={() => setPegBoardTab('cards')} className={`flex-1 py-4 text-[10px] font-bold uppercase tracking-widest transition-all ${pegBoardTab === 'cards' ? 'bg-[#0F4C81] text-white border-b-2 border-white' : 'text-white/40 hover:text-white hover:bg-white/5'}`}>Peg Board</button>
-            <button onClick={() => setPegBoardTab('ai')} className={`flex-1 py-4 text-[10px] font-bold uppercase tracking-widest transition-all flex items-center justify-center gap-2 ${pegBoardTab === 'ai' ? 'bg-[#0F4C81] text-white border-b-2 border-white' : 'text-white/40 hover:text-white hover:bg-white/5'}`}><Sparkles size={12} className={pegBoardTab === 'ai' ? 'animate-pulse' : ''} /> AI Agent</button>
+            <button onClick={() => setPegBoardTab('ai')} className={`flex-1 py-4 text-[10px] font-bold uppercase tracking-widest transition-all flex items-center justify-center gap-2 ${pegBoardTab === 'ai' ? 'bg-[#0F4C81] text-white border-b-2 border-white' : 'text-white/40 hover:text-white hover:bg-white/5'}`}><Sparkles size={12} className={pegBoardTab === 'ai' ? 'animate-pulse' : ''} /> AI Composer</button>
          </div>
          {pegBoardTab === 'cards' ? (
             <div className="flex-1 overflow-y-auto p-4 space-y-3 custom-scrollbar">

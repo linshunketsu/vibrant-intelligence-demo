@@ -1,0 +1,5 @@
+{
+  "name": "Vibrant Intelligence Form Builder",
+  "description": "An intelligent form builder for Electronic Health Records (EHR) that allows users to create forms manually with a drag-and-drop composer, automatically with AI based on descriptions, or by using and customizing pre-built templates.",
+  "requestFramePermissions": []
+}

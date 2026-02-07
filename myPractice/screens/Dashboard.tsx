@@ -1077,7 +1077,7 @@ const Dashboard: React.FC<DashboardProps> = ({ onOpenSettings, currentUserRole, 
           <Card title="Resources & Tools">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   {[
-                      { title: "FedEx Pickup", desc: "Schedule a pickup", icon: TruckIcon, color: "text-purple-600", bg: "bg-purple-100" },
+                      { title: "FedEx Pickup", desc: "Schedule a pickup", icon: TruckIcon, color: "text-blue-600", bg: "bg-blue-100" },
                       { title: "Price Calculator", desc: "Estimate lab costs", icon: CalculatorIcon, color: "text-green-600", bg: "bg-green-100" },
                       { title: "Blood Draw Center", desc: "Find a phlebotomy location", icon: BeakerIcon, color: "text-blue-600", bg: "bg-blue-100" },
                       { title: "Unassigned Orders", desc: "Review pending orders", icon: ClipboardIcon, color: "text-red-600", bg: "bg-red-100" },

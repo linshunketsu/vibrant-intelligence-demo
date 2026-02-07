@@ -603,7 +603,7 @@ export const RightSidebar: React.FC<RightSidebarProps> = ({
     if (selectedNode.blockType === BlockType.REVIEW_APPROVAL) {
       return (
          <div className="space-y-5">
-            <div className="p-3 bg-purple-50 rounded-lg border border-purple-100 text-xs text-purple-800">
+            <div className="p-3 bg-blue-50 rounded-lg border border-blue-100 text-xs text-blue-800">
                <strong>Review & Approval</strong> will allow the Actions to be executed when you reviewed and approved to process even if the Trigger grants the connected actions.
             </div>
             
