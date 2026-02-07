@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { 
-  Search, Plus, User, Calendar, CreditCard, FileText, 
-  MapPin, Phone, Mail, Pin, Image as ImageIcon, Clock, 
+import {
+  Search, Plus, User, Calendar, CreditCard, FileText,
+  MapPin, Phone, Mail, Pin, Image as ImageIcon, Clock,
   Package, GitBranch, CheckCheck, Send, MoreVertical,
   Mars, Venus, CheckSquare, ClipboardList, UserCircle2,
   ShoppingCart, Truck, FlaskConical, ClipboardCheck, ArrowRight,
@@ -10,7 +10,7 @@ import {
   Copy, ArrowUp, RefreshCw, File, Download, Eye, Link as LinkIcon,
   ChevronDown, ChevronUp, DollarSign, Receipt, Shield, Smartphone,
   BriefcaseMedical, ShieldAlert, Notebook, Move, GripVertical, MessageSquare,
-  Tag, X, Sparkles
+  Tag, X, Sparkles, Target, TrendingUp, CalendarDays, Stethoscope
 } from 'lucide-react';
 import { EncounterNotesEditor } from './EncounterNotesEditor';
 import { NotificationCenter } from './NotificationCenter';
@@ -37,10 +37,10 @@ interface Patient {
 
 interface PinnedItem {
     id: string;
-    type: 'demographics' | 'contact' | 'financial' | 'medication' | 'allergy' | 'note' | 'document' | 'calendar' | 'billing' | 'tags';
+    type: 'demographics' | 'contact' | 'financial' | 'medication' | 'allergy' | 'note' | 'document' | 'calendar' | 'billing' | 'tags' | 'program';
     title: string;
-    iconName: string; 
-    data: any; 
+    iconName: string;
+    data: any;
 }
 
 interface SystemEventCardProps {
@@ -237,6 +237,7 @@ const PinnedCardRenderer: React.FC<{ item: PinnedItem; onUnpin: () => void }> = 
     if (item.type === 'calendar') Icon = Clock;
     if (item.type === 'billing') Icon = DollarSign;
     if (item.type === 'tags') Icon = Tag;
+    if (item.type === 'program') Icon = Target;
 
     return (
         <div className="bg-white rounded-md p-3 shadow-sm relative group hover:shadow-md transition-shadow">
@@ -255,6 +256,7 @@ const PinnedCardRenderer: React.FC<{ item: PinnedItem; onUnpin: () => void }> = 
                  {item.type === 'calendar' && (<div className="mt-1"><div className="text-sm font-bold text-gray-900">{item.data.event}</div><div className="text-xs text-gray-500 mt-0.5">{item.data.date}</div></div>)}
                  {item.type === 'billing' && (<div className="mt-1">{item.data.amount && <div className="text-lg font-bold text-gray-900">{item.data.amount}</div>}{item.data.invoice && <div className="text-sm font-bold text-gray-900">{item.data.invoice}</div>}<div className="text-[10px] text-red-500 font-bold mt-0.5">{item.data.status || 'Due Now'}</div></div>)}
                  {item.type === 'tags' && (<div className="mt-1 flex flex-wrap gap-1">{item.data.tags?.slice(0, 5).map((tag: string, i: number) => (<span key={i} className="px-2 py-0.5 bg-slate-100 text-slate-600 border border-slate-200 rounded-full text-[9px] font-bold">{tag}</span>))}{(item.data.tags?.length || 0) > 5 && (<span className="text-[9px] text-gray-400 font-medium">+{item.data.tags.length - 5}</span>)}</div>)}
+                 {item.type === 'program' && (<div className="mt-1 space-y-1.5"><div className="text-sm font-bold text-gray-900 leading-tight">{item.data.name}</div><div className="text-[10px] text-gray-500">{item.data.subtitle}</div><div className="w-full h-1.5 bg-gray-100 rounded-full overflow-hidden mt-1"><div className="h-full bg-gradient-to-r from-[#0F4C81] to-blue-500 rounded-full" style={{ width: `${item.data.progress}%` }}></div></div><div className="flex justify-between items-center"><span className="text-[9px] text-gray-400">{item.data.progress}% complete</span><TrendingUp size={10} className="text-emerald-500" /></div></div>)}
               </div>
            </div>
         </div>
@@ -425,7 +427,7 @@ const PATIENTS: Patient[] = [
 ];
 
 const MOCK_DETAILS: Record<string, any> = {
-    '3': { 
+    '3': {
         contact: { phone: '+1 123-456-7890', email: 'skaufman@outlook.com', address: '911 Schoolhouse Dr. Nanuet, NY' },
         financial: { billing: 'As Default', card: '***1111', shipping: 'Ship to Patient' },
         medications: ['Lisinopril 10mg - Daily', 'Metformin 500mg - BID'],
@@ -435,7 +437,21 @@ const MOCK_DETAILS: Record<string, any> = {
         upcoming: { event: 'Follow-up Consultation', date: 'Dec 15, 2025 at 2:00 PM' },
         past: { event: 'Initial Consultation', date: 'Oct 05, 2025' },
         billing: { balance: '$150.00', date: 'Dec 10', invoice: 'INV-2025-003', status: 'Due Now' },
-        pinned: ['med-active', 'basics-demo', 'med-tags']
+        pinned: ['med-active', 'basics-demo', 'med-tags'],
+        program: {
+            name: 'Signature Program - Body Sculpt 90',
+            subtitle: '12-Week Lifestyle Reset',
+            joinedDate: 'Jan-01-2026',
+            progress: 66,
+            nextCheckIn: 'Feb-20-2026',
+            paymentPlan: 'Paid in Full',
+            phases: [
+                { name: 'Baseline Testing', touchpoints: 5, dateRange: 'Jan 1-7', status: 'completed' },
+                { name: 'Results Debrief', touchpoints: 3, dateRange: 'Jan 15-18', status: 'completed' },
+                { name: 'Training Sprint', touchpoints: 8, dateRange: 'Jan 22 - Feb 13', status: 'in-progress' },
+                { name: 'Supplement Fulfillment', touchpoints: 4, dateRange: 'Feb 14-26', status: 'pending' }
+            ]
+        }
     },
     '1': {
         contact: { phone: '(555) 123-4567', email: 'amanda.lee@example.com', address: '42 Pine St, Austin, TX' },
@@ -447,7 +463,8 @@ const MOCK_DETAILS: Record<string, any> = {
         upcoming: null,
         past: { event: 'Results Review', date: 'Dec 12, 2025' },
         billing: { balance: '$0.00', date: 'Dec 12', invoice: 'INV-2025-001', status: 'Paid' },
-        pinned: ['basics-demo', 'med-docs', 'cal-past']
+        pinned: ['basics-demo', 'med-docs', 'cal-past'],
+        program: null
     },
     '2': {
         contact: { phone: '(555) 987-6543', email: 'jess.patel@example.com', address: '88 Oak Ave, Dallas, TX' },
@@ -459,7 +476,8 @@ const MOCK_DETAILS: Record<string, any> = {
         upcoming: { event: 'Physical Exam', date: 'Dec 20, 2025 at 9:00 AM' },
         past: { event: 'Intro Call', date: 'Dec 01, 2025' },
         billing: { balance: '$50.00', date: 'Dec 01', invoice: 'INV-2025-009', status: 'Unpaid' },
-        pinned: ['cal-upcoming', 'basics-contact']
+        pinned: ['cal-upcoming', 'basics-contact'],
+        program: null
     }
 };
 
@@ -496,7 +514,7 @@ export const PatientsView: React.FC = () => {
 
   const [tabLayouts, setTabLayouts] = useState<{ [key: string]: string[] }>({
       basics: ['basics-demo', 'basics-contact', 'basics-financial'],
-      health: ['med-tags', 'med-active', 'med-allergies', 'med-notes', 'med-docs'],
+      health: ['med-program', 'med-tags', 'med-active', 'med-allergies', 'med-notes', 'med-docs'],
       calendar: ['cal-upcoming', 'cal-past'],
       billing: ['bill-balance', 'bill-invoices']
   });
@@ -542,6 +560,7 @@ export const PatientsView: React.FC = () => {
           else if (key === 'cal-past' && patientDetails.past) newPinned.push({ id: 'cal-past', type: 'calendar', title: 'Past Events', iconName: 'CheckCircle2', data: patientDetails.past });
           else if (key === 'bill-balance' && patientDetails.billing) newPinned.push({ id: 'bill-balance', type: 'billing', title: 'Outstanding Balance', iconName: 'DollarSign', data: { amount: patientDetails.billing.balance, date: patientDetails.billing.date, status: patientDetails.billing.status } });
           else if (key === 'med-tags' && activePatient.tags && activePatient.tags.length > 0) newPinned.push({ id: 'med-tags', type: 'tags', title: 'Patient Tags', iconName: 'Tag', data: { tags: activePatient.tags } });
+          else if (key === 'med-program' && patientDetails.program) newPinned.push({ id: 'med-program', type: 'program', title: 'Program Progress', iconName: 'Target', data: patientDetails.program });
       });
 
       setPinnedItems(newPinned);
@@ -603,98 +622,436 @@ export const PatientsView: React.FC = () => {
 
   // --- AI Diff Logic ---
 
-  const AiDiffCard: React.FC<{ original?: string, modified: string, onAccept: () => void, onReject?: () => void, onModify?: () => void }> = ({ original, modified, onAccept, onReject, onModify }) => (
-    <div className="mt-2 border border-slate-200 rounded-lg bg-white overflow-hidden w-full shadow-sm">
-      <div className="grid grid-cols-2 divide-x divide-slate-200 text-[10px] bg-slate-50 border-b border-slate-200">
-          <div className="p-2 font-bold text-slate-500 text-center uppercase tracking-wider">Original</div>
-          <div className="p-2 font-bold text-blue-600 text-center uppercase tracking-wider">AI Proposed</div>
+  // Interactive diff view component with structured content
+  const AiDiffCard: React.FC<{ original?: string, modified: string, onAccept: () => void, onReject?: () => void, onModify?: () => void }> = ({ original, modified, onAccept, onReject, onModify }) => {
+    const [expandedSection, setExpandedSection] = useState<string | null>(null);
+
+    // Icon component helper that safely handles undefined icons
+    const getIconForSection = (title: string) => {
+      const upperTitle = title.toUpperCase();
+      if (upperTitle.includes('PATIENT')) return User;
+      if (upperTitle.includes('TEST') || upperTitle.includes('LAB')) return FlaskConical;
+      if (upperTitle.includes('SPECIMEN')) return Package;
+      if (upperTitle.includes('DIAGNOSIS') || upperTitle.includes('INDICATION')) return Stethoscope;
+      if (upperTitle.includes('BILLING')) return DollarSign;
+      if (upperTitle.includes('FOLLOW')) return Calendar;
+      if (upperTitle.includes('PLAN')) return ClipboardCheck;
+      if (upperTitle.includes('CHIEF') || upperTitle.includes('COMPLAINT')) return Activity;
+      if (upperTitle.includes('VITALS')) return Activity;
+      if (upperTitle.includes('ASSESSMENT')) return FileText;
+      if (upperTitle.includes('HISTORY')) return Notebook;
+      if (upperTitle.includes('DATE') || upperTitle.includes('SERVICE')) return Clock;
+      return FileText; // Default fallback
+    };
+
+    // Parse content into structured sections
+    const parseContent = (text: string) => {
+      const sections: { title: string; items: string[]; icon?: any }[] = [];
+      const lines = text.split('\n');
+      let currentSection: { title: string; items: string[]; icon?: any } | null = null;
+
+      for (const line of lines) {
+        const trimmed = line.trim();
+        if (!trimmed) continue;
+
+        // Check if this is a section header (ends with colon and not a bullet)
+        if (trimmed.endsWith(':') && !trimmed.startsWith('•')) {
+          if (currentSection) {
+            sections.push(currentSection);
+          }
+          const sectionTitle = trimmed.replace(':', '');
+          currentSection = {
+            title: sectionTitle,
+            items: [],
+            icon: getIconForSection(sectionTitle)
+          };
+        } else if (trimmed.startsWith('•') || /^\d+\./.test(trimmed)) {
+          const itemText = trimmed.replace(/^[•\d+\.]\s*/, '');
+          if (currentSection) {
+            currentSection.items.push(itemText);
+          }
+        } else if (currentSection) {
+          // Add non-bullet lines to current section
+          currentSection.items.push(trimmed);
+        } else {
+          // Create default section for content before first header
+          currentSection = { title: 'Details', items: [trimmed], icon: FileText };
+        }
+      }
+      if (currentSection) {
+        sections.push(currentSection);
+      }
+      return sections;
+    };
+
+    const sections = parseContent(modified);
+
+    return (
+      <div className="mt-3 border border-slate-200 rounded-2xl bg-white overflow-hidden w-full shadow-lg shadow-slate-200/50">
+        {/* Header with status indicator */}
+        <div className="bg-gradient-to-r from-[#0F4C81] to-blue-600 px-4 py-3 flex items-center justify-between">
+            <div className="flex items-center gap-3">
+                <div className="p-2 bg-white/20 rounded-xl backdrop-blur-sm">
+                    <Sparkles size={16} className="text-white animate-pulse" />
+                </div>
+                <div>
+                    <span className="text-[12px] font-bold text-white block">Proposed Action</span>
+                    <span className="text-[9px] text-blue-100">AI Generated - Ready for Review</span>
+                </div>
+            </div>
+            <button
+                onClick={() => setExpandedSection(expandedSection === 'all' ? null : 'all')}
+                className="px-2 py-1 bg-white/20 hover:bg-white/30 rounded-lg transition-colors"
+            >
+                {expandedSection === 'all' ? <ChevronUp size={16} className="text-white" /> : <ChevronDown size={16} className="text-white" />}
+            </button>
+        </div>
+
+        {/* Interactive sections */}
+        <div className="p-3 space-y-2 max-h-72 overflow-y-auto">
+            {sections.map((section, idx) => {
+                const Icon = section.icon;
+                const isExpanded = expandedSection === `section-${idx}` || expandedSection === 'all';
+                const sectionId = `section-${idx}`;
+
+                return (
+                    <div key={idx} className="border border-slate-100 rounded-xl overflow-hidden bg-white shadow-sm">
+                        <button
+                            onClick={() => setExpandedSection(isExpanded ? null : sectionId)}
+                            className="w-full px-3 py-2.5 bg-gradient-to-r from-slate-50 to-white hover:from-blue-50 hover:to-white flex items-center justify-between transition-all"
+                        >
+                            <div className="flex items-center gap-2">
+                                <div className="p-1.5 bg-blue-100 rounded-lg">
+                                    <Icon size={12} className="text-blue-600" />
+                                </div>
+                                <span className="text-[11px] font-bold text-slate-700">{section.title}</span>
+                                <span className="px-1.5 py-0.5 bg-slate-200 text-slate-500 text-[9px] font-bold rounded-full">{section.items.length}</span>
+                            </div>
+                            <ChevronDown size={14} className={`text-slate-400 transition-transform ${isExpanded ? 'rotate-180' : ''}`} />
+                        </button>
+                        {isExpanded && (
+                            <div className="px-3 py-2.5 bg-white border-t border-slate-100 animate-in slide-in-from-top-1 duration-200">
+                                {section.items.map((item, itemIdx) => (
+                                    <div key={itemIdx} className="flex items-start gap-2 py-1">
+                                        <div className="w-1.5 h-1.5 rounded-full bg-blue-400 mt-1.5 shrink-0"></div>
+                                        <span className="text-[11px] text-slate-600 leading-snug">{item}</span>
+                                    </div>
+                                ))}
+                            </div>
+                        )}
+                    </div>
+                );
+            })}
+        </div>
+
+        {/* Action Buttons - Fixed padding and spacing */}
+        <div className="p-3 bg-gradient-to-b from-slate-50 to-white border-t border-slate-200">
+            <div className="flex gap-2 mb-2">
+                <button onClick={onReject} className="flex-1 py-2.5 px-3 text-[11px] font-bold text-slate-600 bg-white border border-slate-200 hover:border-red-300 hover:text-red-600 hover:bg-red-50 transition-all rounded-xl flex items-center justify-center gap-2 group shadow-sm">
+                    <div className="p-1 bg-slate-100 group-hover:bg-red-100 rounded-md transition-colors">
+                        <X size={12} />
+                    </div>
+                    Discard
+                </button>
+                <button onClick={onModify} className="flex-1 py-2.5 px-3 text-[11px] font-bold text-slate-600 bg-white border border-slate-200 hover:border-blue-300 hover:text-blue-600 hover:bg-blue-50 transition-all rounded-xl flex items-center justify-center gap-2 group shadow-sm">
+                    <div className="p-1 bg-slate-100 group-hover:bg-blue-100 rounded-md transition-colors">
+                        <FileText size={12} />
+                    </div>
+                    Edit
+                </button>
+            </div>
+            <button onClick={onAccept} className="w-full py-3 px-3 text-[11px] font-bold text-white bg-gradient-to-r from-[#0F4C81] to-blue-600 hover:from-[#09355E] hover:to-blue-700 transition-all rounded-xl flex items-center justify-center gap-2 shadow-md shadow-blue-500/20">
+                <div className="p-1 bg-white/20 rounded-md">
+                    <Check size={12} />
+                </div>
+                Approve
+            </button>
+        </div>
       </div>
-      <div className="grid grid-cols-2 divide-x divide-slate-200">
-          <div className="p-2 text-[10px] text-slate-400 bg-slate-50/50 italic min-h-[100px] flex items-center justify-center text-center">
-              {original || "(New Draft)"}
-          </div>
-          <div className="p-2 text-[10px] text-slate-700 bg-blue-50/20 font-mono whitespace-pre-wrap leading-relaxed relative">
-              <div className="absolute top-1 right-1 p-1">
-                  <Sparkles size={10} className="text-blue-500 animate-pulse" />
-              </div>
-              {modified}
-          </div>
-      </div>
-      {/* Actions */}
-      <div className="flex border-t border-slate-200 divide-x divide-slate-200 bg-white">
-          <button onClick={onReject} className="flex-1 py-2 text-[10px] font-bold text-slate-500 hover:text-red-600 hover:bg-red-50 transition-colors">Reject</button>
-          <button onClick={onModify} className="flex-1 py-2 text-[10px] font-bold text-slate-500 hover:text-blue-600 hover:bg-slate-50 transition-colors">Modify</button>
-          <button onClick={onAccept} className="flex-1 py-2 text-[10px] font-bold text-white bg-[#0F4C81] hover:bg-[#09355E] transition-colors">Accept</button>
-      </div>
-    </div>
-  );
+    );
+  };
 
   const handleAiAction = (action: 'accept' | 'reject' | 'modify') => {
-      // Demo logic: Just append a success message on accept
+      // Demo logic: Show appropriate response
       if (action === 'accept') {
-          setAiChatHistory(prev => [...prev, { role: 'assistant', text: "Draft accepted and saved to Encounter Notes." }]);
+          setAiChatHistory(prev => [...prev, {
+              role: 'assistant',
+              text: (
+                  <div className="flex items-center gap-2 text-emerald-700">
+                      <div className="p-1.5 bg-emerald-100 rounded-full">
+                          <Check size={14} />
+                      </div>
+                      <span>
+                          <span className="font-bold">Draft accepted!</span> Saved to Encounter Notes.
+                      </span>
+                  </div>
+              )
+          }]);
       } else if (action === 'reject') {
-          setAiChatHistory(prev => [...prev, { role: 'assistant', text: "Draft discarded." }]);
+          setAiChatHistory(prev => [...prev, {
+              role: 'assistant',
+              text: (
+                  <div className="flex items-center gap-2 text-slate-500">
+                      <div className="p-1.5 bg-slate-100 rounded-full">
+                          <X size={14} />
+                      </div>
+                      <span>Draft discarded. Let me know if you'd like me to try again.</span>
+                  </div>
+              )
+          }]);
       } else {
-          setAiChatHistory(prev => [...prev, { role: 'assistant', text: "Opening editor for modification..." }]);
+          setAiChatHistory(prev => [...prev, {
+              role: 'assistant',
+              text: (
+                  <div className="flex items-center gap-2 text-blue-700">
+                      <FileText size={14} />
+                      <span>Opening editor for modification...</span>
+                  </div>
+              )
+          }]);
       }
   };
 
   const handleAiMessage = (msg: string) => {
-    setAiChatHistory(prev => [...prev, { role: 'user', text: msg }]);
+    // Safety check: ensure msg is a valid string
+    const safeMsg = msg || '';
+    setAiChatHistory(prev => [...prev, { role: 'user', text: safeMsg }]);
     setIsAiProcessing(true);
-    
-    // DEMO TRIGGER: Check for keywords related to the diabetes consult demo
-    const lowerMsg = msg.toLowerCase();
-    const isDemoTrigger = (lowerMsg.includes('diabetes') || lowerMsg.includes('note')) && (lowerMsg.includes('follow-up') || lowerMsg.includes('consultation'));
+
+    // DEMO TRIGGER: Enhanced demo scenarios
+    const lowerMsg = safeMsg.toLowerCase();
+
+    // Scenario 1: Diabetes consultation follow-up note
+    const isDiabetesDemo = (lowerMsg.includes('diabetes') || lowerMsg.includes('a1c')) && (lowerMsg.includes('follow-up') || lowerMsg.includes('consultation') || lowerMsg.includes('note'));
+
+    // Scenario 2: Send message/follow-up
+    const isFollowUpMsg = (lowerMsg.includes('send') || lowerMsg.includes('message')) && (lowerMsg.includes('follow-up') || lowerMsg.includes('patient'));
+
+    // Scenario 3: Summarize visit
+    const isSummarizeDemo = lowerMsg.includes('summarize') || (lowerMsg.includes('summary') && lowerMsg.includes('visit'));
+
+    // Scenario 4: Order lab test
+    const isOrderLabDemo = (lowerMsg.includes('order') && (lowerMsg.includes('lab') || lowerMsg.includes('test') || lowerMsg.includes('gut')));
 
     setTimeout(() => {
         setIsAiProcessing(false);
-        
-        if (isDemoTrigger) {
-             const draftedNote = `Subject: Diabetes Consultation Follow-up
 
-Summary:
-Patient presented for routine diabetes management.
-Current A1C: 7.2% (Improved from 7.8%)
-Vitals: BP 120/80, HR 72, Wt 185lbs
+        if (isOrderLabDemo) {
+            const labOrder = `LAB ORDER REQUEST
+Patient: ${activePatient?.name || 'Patient'}
+DOB: ${activePatient?.dob || 'N/A'}
+Ordering Provider: Dr. Johnson
+
+Test Details:
+• Test: Gut Zoomer 3.0
+• CPT Code: 87491
+• ICD-10: R19.8 (Other specified symptoms and signs involving the digestive system)
+
+Specimen: Stool
+Collection Method: At-home kit
+Fasting Required: No
+Special Instructions: Ship within 24 hours of collection
+
+Diagnosis/Indication:
+Patient presents with gastrointestinal symptoms including bloating and irregular bowel habits. Comprehensive gut microbiome analysis recommended.
+
+Billing:
+• Test Cost: $399.00
+• Insurance: Will be billed to patient's insurance on file
+• Patient Responsibility: Per insurance benefits
+
+Follow-up:
+Results expected in 10-14 business days. Schedule follow-up telehealth visit to review results.`;
+
+            const diffContent = (
+                <AiDiffCard
+                   modified={labOrder}
+                   onAccept={() => handleAiAction('accept')}
+                   onReject={() => handleAiAction('reject')}
+                   onModify={() => handleAiAction('modify')}
+                />
+            );
+
+            setAiChatHistory(prev => [...prev, {
+                role: 'assistant',
+                text: (
+                   <div>
+                       <span className="font-medium text-blue-800">I've prepared the Gut Zoomer 3.0 lab order for your review:</span>
+                       {diffContent}
+                   </div>
+                )
+            }]);
+
+        } else if (isDiabetesDemo) {
+            const draftedNote = `Subject: Diabetes Consultation - Follow-Up Visit
+
+Date of Service: ${new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
+
+Chief Complaint:
+Routine diabetes management follow-up.
+
+History of Present Illness:
+Patient presents for 3-month diabetes follow-up. Reports good adherence to medication regimen and dietary recommendations. No hypoglycemic episodes reported.
+
+Vitals:
+BP: 120/80 mmHg
+HR: 72 bpm
+Weight: 185 lbs (↓3 lbs from last visit)
+BMI: 26.4
+
+Lab Results:
+• A1C: 7.2% (↓ from 7.8% - Excellent progress!)
+• Fasting Glucose: 105 mg/dL (Normal)
+• Lipid Panel: TC 185, LDL 98, HDL 52, TG 128
+
+Assessment:
+Type 2 Diabetes Mellitus - Well controlled
+Showing excellent improvement in glycemic control.
 
 Plan:
-1. Continue Metformin 1000mg BID.
-2. Dietary counseling scheduled.
-3. Follow-up in 3 months.`;
+1. Continue Metformin 1000mg BID
+2. Maintain current diabetic diet
+3. Continue home glucose monitoring 2x weekly
+4. Dietary counseling referral sent
+5. Follow-up in 3 months with repeat A1C
+6. Patient encouraged to continue weight loss efforts
 
-             const diffContent = (
-                 <AiDiffCard 
-                    modified={draftedNote} 
-                    onAccept={() => handleAiAction('accept')} 
-                    onReject={() => handleAiAction('reject')}
-                    onModify={() => handleAiAction('modify')}
-                 />
-             );
-             
-             setAiChatHistory(prev => [...prev, { 
-                 role: 'assistant', 
-                 text: (
-                    <div>
-                        <span>I've drafted the follow-up note based on the latest encounter and results. Please review:</span>
-                        {diffContent}
+Follow-up: ${new Date(Date.now() + 90 * 24 * 60 * 60 * 1000).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}`;
+
+            const diffContent = (
+                <AiDiffCard
+                   modified={draftedNote}
+                   onAccept={() => handleAiAction('accept')}
+                   onReject={() => handleAiAction('reject')}
+                   onModify={() => handleAiAction('modify')}
+                />
+            );
+
+            setAiChatHistory(prev => [...prev, {
+                role: 'assistant',
+                text: (
+                   <div>
+                       <span className="font-medium text-blue-800">I've drafted a comprehensive encounter note based on today's consultation. Please review:</span>
+                       {diffContent}
+                   </div>
+                )
+            }]);
+        } else if (isFollowUpMsg) {
+            const patientMessage = `Subject: Following Up on Your Recent Visit
+
+Dear ${activePatient?.name?.split(' ')[0] || 'Patient'},
+
+Thank you for visiting Vibrant Wellness Center today. I wanted to follow up on our discussion about your care plan.
+
+Key Takeaways:
+• Your A1C has improved to 7.2% - great progress!
+• Continue with your current medication
+• Schedule lab work in 3 months
+
+If you have any questions between visits, don't hesitate to reach out through the patient portal.
+
+Best regards,
+Dr. Johnson
+
+---
+
+📅 Action Required: Please schedule your next follow-up visit for ${new Date(Date.now() + 90 * 24 * 60 * 60 * 1000).toLocaleDateString('en-US', { month: 'long', day: 'numeric' })} via the patient portal.`;
+
+            const diffContent = (
+                <AiDiffCard
+                   modified={patientMessage}
+                   onAccept={() => handleAiAction('accept')}
+                   onReject={() => handleAiAction('reject')}
+                   onModify={() => handleAiAction('modify')}
+                />
+            );
+
+            setAiChatHistory(prev => [...prev, {
+                role: 'assistant',
+                text: (
+                   <div>
+                       <span className="font-medium text-blue-800">I've prepared a patient follow-up message. Review and send:</span>
+                       {diffContent}
+                   </div>
+                )
+            }]);
+        } else if (isSummarizeDemo) {
+            setAiChatHistory(prev => [...prev, {
+                role: 'assistant',
+                text: (
+                    <div className="space-y-2">
+                        <div className="font-medium text-blue-800">Visit Summary for {activePatient?.name || 'Patient'}:</div>
+                        <div className="space-y-1.5 text-slate-700">
+                            <div>• <span className="font-semibold">Patient:</span> {activePatient?.age ?? '-'}yo {activePatient?.gender ?? '-'}</div>
+                            <div>• <span className="font-semibold">Status:</span> {activePatient?.workflowStatus === 'completed' ? 'Results Ready' : activePatient?.workflowStatus ?? 'Unknown'}</div>
+                            <div>• <span className="font-semibold">Recent Activity:</span></div>
+                            <div className="pl-4 space-y-1">
+                                <div>– Lab results completed and reviewed</div>
+                                <div>– Medications updated as needed</div>
+                                <div>– Follow-up scheduled for 3 months</div>
+                            </div>
+                            <div className="mt-2 p-2 bg-blue-50 rounded-lg text-blue-800 text-[11px]">
+                                <span className="font-semibold">Quick Action:</span> Would you like me to draft the encounter note?
+                            </div>
+                        </div>
                     </div>
-                 )
-             }]);
+                )
+            }]);
         } else {
-            // Standard fallback response logic
-            let response = "";
-            if (lowerMsg.includes('summarize') || lowerMsg.includes('summary')) {
-                response = `Here is a summary for ${activePatient.name}:\n• ${activePatient.age}yo ${activePatient.gender}\n• Status: ${activePatient.workflowStatus}\n• Recent activity includes lab results and questionnaire completion.`;
-            } else if (lowerMsg.includes('status') || lowerMsg.includes('workflow')) {
-                response = `Current workflow status is: ${activePatient.workflowStatus.toUpperCase()}.\nThere are pending actions in the queue.`;
+            // Standard fallback response logic - use JSX to avoid newline issues
+            let response: React.ReactNode = "";
+            if (lowerMsg.includes('status') || lowerMsg.includes('workflow')) {
+                response = (
+                    <div className="space-y-2">
+                        <p className="text-slate-700"><strong>Current workflow status:</strong> {activePatient?.workflowStatus?.toUpperCase() ?? 'UNKNOWN'}</p>
+                        <p className="text-slate-600 text-sm">Recent activity:</p>
+                        <ul className="text-sm text-slate-600 space-y-1">
+                            <li>• Lab order #2025120101 processed</li>
+                            <li>• Kit delivered and returned</li>
+                            <li>• Sample received at lab intake</li>
+                        </ul>
+                    </div>
+                );
+            } else if (lowerMsg.includes('lab') || lowerMsg.includes('test')) {
+                response = (
+                    <div className="space-y-2">
+                        <p className="text-slate-700"><strong>Latest Lab Results:</strong></p>
+                        <ul className="text-sm text-slate-600 space-y-1">
+                            <li>• Gut Zoomer 3.0 - Completed</li>
+                            <li>• Pending review and action</li>
+                        </ul>
+                        <p className="text-slate-700 mt-2">Would you like me to draft a summary of the results for the patient?</p>
+                    </div>
+                );
+            } else if (lowerMsg.includes('schedule') || lowerMsg.includes('appointment')) {
+                response = (
+                    <div className="space-y-2">
+                        <p className="text-slate-700">I can help schedule an appointment. Would you like me to:</p>
+                        <ol className="text-sm text-slate-600 space-y-1 list-decimal list-inside">
+                            <li>Draft a message to the patient about scheduling</li>
+                            <li>Check available time slots</li>
+                        </ol>
+                        <p className="text-slate-600 text-sm mt-2">Just let me know!</p>
+                    </div>
+                );
             } else {
-                response = `I can help you manage ${activePatient.name}'s care. Try asking to "summarize patient" or "check workflow status", or ask me to draft a note.`;
+                response = (
+                    <div className="space-y-2">
+                        <p className="text-slate-700">I have access to {activePatient?.name || 'this patient'}'s entire chart. I can help you:</p>
+                        <ul className="text-sm text-slate-600 space-y-1">
+                            <li>• Draft encounter notes</li>
+                            <li>• Send patient messages</li>
+                            <li>• Summarize visit history</li>
+                            <li>• Review lab results</li>
+                            <li>• Check workflow status</li>
+                        </ul>
+                        <p className="text-slate-600 text-sm mt-2">Try asking me to "draft a follow-up note" or "summarize today's visit".</p>
+                    </div>
+                );
             }
             setAiChatHistory(prev => [...prev, { role: 'assistant', text: response }]);
         }
-    }, 1500);
+    }, 1800);
   };
 
   const renderCard = (cardId: string) => {
@@ -714,6 +1071,155 @@ Plan:
           case 'cal-past': return (<><div className="flex justify-between items-start mb-2"><div className="flex items-center gap-2"><div className="p-1.5 bg-gray-200 text-gray-500 rounded-lg"><CheckCircle2 size={14} /></div><span className="text-xs font-bold text-gray-500">Past Events</span></div><div className="flex gap-1 items-center"><button onClick={() => togglePin(createPinProps('calendar', 'Past Events', 'CheckCircle2', patientDetails.past))} className={`${isPinned(cardId) ? 'text-blue-500' : 'text-gray-400 hover:text-gray-600'}`}><Pin size={14} fill={isPinned(cardId) ? "currentColor" : "none"} /></button><div className="text-gray-400 hover:text-gray-600 cursor-move drag-handle p-1"><Move size={14} /></div></div></div><div className="pl-9"><div className="font-bold text-gray-800 text-sm">{patientDetails.past.event}</div><div className="text-xs text-gray-500 mt-1">{patientDetails.past.date}</div><div className="text-[10px] text-green-600 font-medium mt-1 flex items-center gap-1"><CheckCheck size={10}/> Completed</div></div></>);
           case 'bill-balance': return (<><div className="flex justify-between items-start mb-2"><div className="flex items-center gap-2"><div className="p-1.5 bg-rose-50 text-rose-500 rounded-lg"><DollarSign size={14} /></div><span className="text-xs font-bold text-gray-600">Outstanding Balance</span></div><div className="flex gap-1 items-center"><button onClick={() => togglePin(createPinProps('billing', 'Outstanding Balance', 'DollarSign', { amount: patientDetails.billing.balance, date: patientDetails.billing.date, status: patientDetails.billing.status }))} className={`${isPinned(cardId) ? 'text-blue-500' : 'text-gray-400 hover:text-gray-600'}`}><Pin size={14} fill={isPinned(cardId) ? "currentColor" : "none"} /></button><div className="text-gray-400 hover:text-gray-600 cursor-move drag-handle p-1"><Move size={14} /></div></div></div><div className="pl-9 pb-1"><div className="text-2xl font-bold text-gray-900">{patientDetails.billing.balance}</div><div className="text-[10px] text-red-500 mt-1 font-medium mb-3">{patientDetails.billing.status || 'Payment Due'}</div><button className="w-full px-4 py-1.5 bg-blue-600 text-white text-xs font-bold rounded-lg shadow-sm hover:bg-blue-700 transition-colors">Pay Now</button></div></>);
           case 'bill-invoices': return (<><div className="flex justify-between items-start mb-2"><div className="flex items-center gap-2"><div className="p-1.5 bg-slate-50 text-slate-500 rounded-lg"><Receipt size={14} /></div><span className="text-xs font-bold text-gray-600">Recent Invoices</span></div><div className="flex gap-1 items-center"><button onClick={() => togglePin(createPinProps('billing', 'Invoices', 'Receipt', { invoice: patientDetails.billing.invoice, status: patientDetails.billing.status }))} className={`${isPinned(cardId) ? 'text-blue-500' : 'text-gray-400 hover:text-gray-600'}`}><Pin size={14} fill={isPinned(cardId) ? "currentColor" : "none"} /></button><div className="text-gray-400 hover:text-gray-600 cursor-move drag-handle p-1"><Move size={14} /></div></div></div><div className="pl-9 space-y-3"><div className="flex justify-between items-center"><div><div className="text-xs font-bold text-gray-700">{patientDetails.billing.invoice}</div><div className="text-[10px] text-gray-500">{patientDetails.billing.date}</div></div><div className="text-right"><div className="text-xs font-bold text-gray-900">{patientDetails.billing.balance}</div><span className="inline-block px-1.5 py-0.5 bg-amber-100 text-amber-700 text-[9px] font-bold rounded">{patientDetails.billing.status}</span></div></div></div></>);
+          case 'med-program': return (
+              patientDetails.program ? (
+                  <>
+                  <div className="flex justify-between items-start mb-2">
+                      <div className="flex items-center gap-2">
+                          <div className="p-1.5 bg-gradient-to-br from-[#0F4C81] to-blue-600 text-white rounded-lg shadow-sm">
+                              <Target size={14} />
+                          </div>
+                          <span className="text-xs font-bold text-gray-600">Program Progress</span>
+                      </div>
+                      <div className="flex gap-1 items-center">
+                          <button onClick={() => togglePin(createPinProps('program', 'Program Progress', 'Target', patientDetails.program))} className={`${isPinned(cardId) ? 'text-blue-500' : 'text-gray-400 hover:text-gray-600'}`}><Pin size={14} fill={isPinned(cardId) ? "currentColor" : "none"} /></button>
+                          <div className="text-gray-400 hover:text-gray-600 cursor-move drag-handle p-1"><Move size={14} /></div>
+                      </div>
+                  </div>
+                  <div className="pl-9 space-y-2">
+                      {/* Program Header */}
+                      <div className="flex items-start justify-between">
+                          <div>
+                              <div className="font-bold text-gray-900 text-xs">{patientDetails.program.name}</div>
+                              <div className="text-[10px] text-gray-500 mt-0.5">{patientDetails.program.subtitle}</div>
+                          </div>
+                          <div className="text-right">
+                              <div className="text-lg font-bold text-[#0F4C81]">{patientDetails.program.progress}%</div>
+                              <div className="text-[9px] text-gray-400 font-medium">Complete</div>
+                          </div>
+                      </div>
+
+                      {/* Bar Chart - Phase Visualization */}
+                      <div className="bg-gradient-to-br from-slate-50 to-blue-50/30 rounded-lg p-2.5 border border-gray-100/80">
+                          <div className="flex justify-between items-center mb-2">
+                              <span className="text-[10px] font-semibold text-gray-700">Phase Progress</span>
+                              <span className="text-[8px] text-gray-400">Height = touchpoints</span>
+                          </div>
+
+                          {/* Bar Chart */}
+                          <div className="relative h-12 w-full flex items-end justify-center gap-2 px-1">
+                              {patientDetails.program.phases.map((phase: any, idx: number) => {
+                                  const isCompleted = phase.status === 'completed';
+                                  const isInProgress = phase.status === 'in-progress';
+                                  const maxTouchpoints = 8;
+                                  // Completed phases are 100% full, in-progress based on touchpoints, pending minimal
+                                  const barHeight = isCompleted ? 100 : phase.status === 'pending' ? 8 : (phase.touchpoints / maxTouchpoints) * 85;
+
+                                  // Color based on status
+                                  const barColor = isCompleted ? 'bg-emerald-400' : isInProgress ? 'bg-[#0F4C81]' : 'bg-gray-300';
+
+                                  return (
+                                      <div key={idx} className="flex flex-col items-center gap-1 flex-1 max-w-12">
+                                          {/* Bar container */}
+                                          <div className="w-full h-9 bg-gray-100 rounded-t-md relative flex items-end overflow-hidden">
+                                              {/* The bar */}
+                                              <div
+                                                  className={`w-full ${barColor} rounded-t-sm transition-all duration-500`}
+                                                  style={{ height: `${barHeight}%` }}
+                                              >
+                                                  {/* Highlight effect for in-progress */}
+                                                  {isInProgress && (
+                                                      <div className="absolute top-0 left-0 right-0 h-0.5 bg-white/50 animate-pulse"></div>
+                                                  )}
+                                              </div>
+                                              {/* Touchpoints count inside bar */}
+                                              <span className={`absolute bottom-0.5 left-0 right-0 text-center text-[7px] font-bold ${
+                                                  isInProgress ? 'text-white' : isCompleted ? 'text-emerald-700' : 'text-gray-500'
+                                              }`}>
+                                                  {phase.touchpoints}
+                                              </span>
+                                          </div>
+                                          {/* Phase name */}
+                                          <span className={`text-[7px] font-medium text-center leading-tight ${isInProgress ? 'text-[#0F4C81] font-semibold' : isCompleted ? 'text-gray-400' : 'text-gray-500'}`}>
+                                              {phase.name.split(' ')[0]}
+                                          </span>
+                                      </div>
+                                  );
+                              })}
+                          </div>
+
+                          {/* Legend */}
+                          <div className="flex items-center justify-center gap-4 mt-2 pt-2 border-t border-gray-200/60">
+                              <div className="flex items-center gap-1">
+                                  <div className="w-2 h-2 rounded bg-emerald-400"></div>
+                                  <span className="text-[8px] text-gray-600 font-medium">Done</span>
+                              </div>
+                              <div className="flex items-center gap-1">
+                                  <div className="w-2 h-2 rounded bg-[#0F4C81]"></div>
+                                  <span className="text-[8px] text-gray-600 font-medium">Active</span>
+                              </div>
+                              <div className="flex items-center gap-1">
+                                  <div className="w-2 h-2 rounded bg-gray-300"></div>
+                                  <span className="text-[8px] text-gray-600 font-medium">Pending</span>
+                              </div>
+                          </div>
+                      </div>
+
+                      {/* Phase Details - Compact Timeline */}
+                      <div className="space-y-1">
+                          {patientDetails.program.phases.map((phase: any, idx: number) => {
+                              const isCompleted = phase.status === 'completed';
+                              const isInProgress = phase.status === 'in-progress';
+
+                              return (
+                                  <div key={idx} className="flex items-center gap-2">
+                                      <div className={`w-1.5 h-1.5 rounded-full shrink-0 ${
+                                          isCompleted ? 'bg-emerald-500' : isInProgress ? 'bg-[#0F4C81]' : 'bg-gray-300'
+                                      }`}></div>
+                                      <div className="flex-1 flex items-center justify-between">
+                                          <span className={`text-[10px] ${isCompleted ? 'text-gray-400' : isInProgress ? 'text-gray-900 font-semibold' : 'text-gray-500'}`}>
+                                              {phase.name}
+                                          </span>
+                                          <span className="text-[9px] text-gray-400">{phase.dateRange}</span>
+                                      </div>
+                                  </div>
+                              );
+                          })}
+                      </div>
+
+                      {/* Next Check-in */}
+                      {patientDetails.program.nextCheckIn && (
+                          <div className="flex items-center gap-2 px-2 py-1.5 bg-gradient-to-r from-blue-50 to-sky-50 rounded-md border border-blue-100">
+                              <div className="p-0.5 bg-[#0F4C81] rounded-md">
+                                  <CalendarDays size={10} className="text-white" />
+                              </div>
+                              <div className="flex-1">
+                                  <span className="text-[9px] text-gray-500 block">Next Check-in</span>
+                                  <span className="text-[10px] font-semibold text-gray-800">{patientDetails.program.nextCheckIn}</span>
+                              </div>
+                          </div>
+                      )}
+                  </div>
+                  </>
+              ) : (
+                  <>
+                  <div className="flex justify-between items-start mb-2">
+                      <div className="flex items-center gap-2">
+                          <div className="p-1.5 bg-gray-100 text-gray-400 rounded-lg">
+                              <Target size={14} />
+                          </div>
+                          <span className="text-xs font-bold text-gray-500">Program Progress</span>
+                      </div>
+                      <div className="flex gap-1 items-center">
+                          <div className="text-gray-300 cursor-not-allowed p-1"><Move size={14} /></div>
+                      </div>
+                  </div>
+                  <div className="pl-9">
+                      <p className="text-xs text-gray-400 italic">No active program enrolled.</p>
+                  </div>
+                  </>
+              )
+          );
           default: return <div className="text-xs text-gray-400">{cardId}</div>;
       }
   };
@@ -758,7 +1264,7 @@ Plan:
 
   return (
     <>
-    <div className="flex h-full bg-white overflow-hidden">
+    <div className="flex h-full bg-white">
       
       {/* 1. Left Sidebar: Patient List */}
       <div className="w-80 bg-white border-r border-gray-200 flex flex-col shrink-0">
@@ -803,12 +1309,12 @@ Plan:
           <>
             {/* Center: Detail Area */}
             <div className="flex-1 flex flex-col bg-white min-w-0 relative">
-                
+
                 {/* Patient Header */}
                 <div className="px-8 pt-6 pb-0 shrink-0 bg-white z-40 relative shadow-sm">
                     <div className="flex items-start gap-4 mb-6">
-                        <div className="w-14 h-14 rounded-full bg-slate-600 flex items-center justify-center text-white text-xl font-bold overflow-hidden shadow-sm">{activePatient.avatar ? <img src={activePatient.avatar} className="w-full h-full object-cover"/> : activePatient.initials}</div>
-                        <div><h2 className="text-xl font-bold text-gray-900">{activePatient.name}</h2><div className="flex items-center gap-3 text-xs text-gray-500 mt-1"><span className="flex items-center gap-1">Bio Gender: <span className="font-medium text-gray-700">{activePatient.gender}</span></span><span className="text-gray-300">|</span><span className="flex items-center gap-1">DOB: <span className="font-medium text-gray-700">{activePatient.dob}</span></span></div></div>
+                        <div className="w-14 h-14 rounded-full bg-slate-600 flex items-center justify-center text-white text-xl font-bold overflow-hidden shadow-sm">{activePatient?.avatar ? <img src={activePatient.avatar} className="w-full h-full object-cover"/> : activePatient?.initials ?? '??'}</div>
+                        <div><h2 className="text-xl font-bold text-gray-900">{activePatient?.name ?? 'Patient'}</h2><div className="flex items-center gap-3 text-xs text-gray-500 mt-1"><span className="flex items-center gap-1">Bio Gender: <span className="font-medium text-gray-700">{activePatient?.gender ?? '-'}</span></span><span className="text-gray-300">|</span><span className="flex items-center gap-1">DOB: <span className="font-medium text-gray-700">{activePatient?.dob ?? '-'}</span></span></div></div>
                     </div>
                     <div className="flex items-center gap-2 border-b border-gray-200">
                         <TabButton ref={el => tabRefs.current['basics'] = el} label="Basics" icon={User} active={activeTab === 'basics'} onClick={() => handleTabToggle('basics')} isDropdown />
@@ -819,8 +1325,8 @@ Plan:
                 </div>
 
                 {/* Container for content below header */}
-                <div className="flex-1 flex flex-col relative overflow-hidden" ref={centerContainerRef}>
-                    <div className={`absolute top-0 z-30 mt-2 transition duration-200 ease-out origin-top-left ${activeTab ? 'scale-100 opacity-100' : 'scale-95 opacity-0 invisible pointer-events-none'}`} style={{ left: panelLeft }}><div className="w-[340px] bg-white rounded-xl shadow-2xl border border-gray-100 overflow-hidden flex flex-col max-h-[calc(100vh-250px)]"><div className="h-1 bg-[#0F4C81] w-full shrink-0"></div> <div className="flex-1 overflow-y-auto bg-slate-50 p-4 space-y-3 custom-scrollbar">{renderDropdownContent()}</div></div></div>
+                <div className="flex-1 flex flex-col relative" ref={centerContainerRef}>
+                    <div className={`absolute top-0 z-50 mt-2 transition duration-200 ease-out origin-top-left ${activeTab ? 'scale-100 opacity-100' : 'scale-95 opacity-0 invisible pointer-events-none'}`} style={{ left: panelLeft }}><div className="w-[520px] bg-white rounded-xl shadow-2xl border border-gray-100 overflow-hidden flex flex-col max-h-[calc(100vh-250px)]"><div className="h-1 bg-[#0F4C81] w-full shrink-0"></div> <div className="flex-1 overflow-y-auto bg-slate-50 p-4 space-y-3 custom-scrollbar">{renderDropdownContent()}</div></div></div>
                     <WorkflowProgressBar status={activePatient.workflowStatus} />
                     <div className="flex-1 overflow-y-auto px-8 py-6 space-y-8 bg-slate-50/50">{renderActivityStream()}</div>
                     <div className="p-6 pt-4 shrink-0 bg-white border-t border-gray-200 z-10 relative">
@@ -838,7 +1344,7 @@ Plan:
             </div>
 
             {/* 3. Right Sidebar: Peg Board - TABBED INTERFACE */}
-            <div className="w-80 bg-[#0F4C81] flex flex-col shrink-0 text-slate-800 border-l border-[#0a355c]">
+            <div className="w-80 bg-[#0F4C81] flex flex-col shrink-0 text-slate-800 border-l border-[#0a355c] relative z-0">
                 
                 {/* Tabs */}
                 <div className="flex bg-[#0a355c]/40 shrink-0">
@@ -907,7 +1413,7 @@ Plan:
                         history={aiChatHistory}
                         isProcessing={isAiProcessing}
                         onSendMessage={handleAiMessage}
-                        emptyStateMessage={`I have access to ${activePatient.name}'s entire chart. Ask me to check workflow status, summarize history, or review latest labs.`}
+                        emptyStateMessage={`I have access to ${activePatient?.name || 'this patient'}'s entire chart. Ask me to check workflow status, summarize history, or review latest labs.`}
                     />
                 )}
             </div>
@@ -933,10 +1439,10 @@ Plan:
         };
       }}
       patient={{
-        name: activePatient.name,
-        dob: activePatient.dob,
-        age: activePatient.age,
-        gender: activePatient.gender
+        name: activePatient?.name ?? 'Patient',
+        dob: activePatient?.dob ?? '',
+        age: activePatient?.age ?? 0,
+        gender: activePatient?.gender ?? 'Male'
       }}
     />
 
@@ -948,7 +1454,7 @@ Plan:
         console.log('Scheduled appointment:', data);
       }}
       patient={{
-        name: activePatient.name
+        name: activePatient?.name ?? 'Patient'
       }}
     />
   </>

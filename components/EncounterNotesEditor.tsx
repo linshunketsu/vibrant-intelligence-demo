@@ -620,46 +620,422 @@ export const EncounterNotesEditor: React.FC<EncounterNotesEditorProps> = ({ onBa
   };
 
   const handleAiMessage = (msg: string) => {
-    setAiChatHistory(prev => [...prev, { role: 'user', text: msg }]);
-    const currentPrompt = msg.toLowerCase();
+    // Safety check: ensure msg is a valid string
+    const safeMsg = msg || '';
+    setAiChatHistory(prev => [...prev, { role: 'user', text: safeMsg }]);
+    const currentPrompt = safeMsg.toLowerCase();
     setIsAiProcessing(true);
 
     setTimeout(() => {
         setIsAiProcessing(false);
-        if (currentPrompt.includes('cardiac markers') || currentPrompt.includes('treatment plan')) {
-            const explanation = "I've flagged elevated Troponin levels from the latest panel. Given the HPI, I've drafted a standard cardiac intervention plan for your review.";
-            const content = `Proposed Cardiac Treatment Plan
-• Bedside Cardiac Monitoring
-• Serial Troponin every 4h
-• Cardiology consult requested
-• Increase Aspirin to 325mg`;
-            const diffData = { explanation, content };
+
+        // Helper function to create inline proposal with diff
+        const createInlineProposal = (title: string, items: string[], badgeColor: string = 'blue', onApprove?: () => void) => {
+            const explanation = `I've analyzed the request and prepared the following ${title.toLowerCase()} for your review.`;
+            const content = `${title}\n${items.map(i => `• ${i}`).join('\n')}`;
+            const diffData = { explanation, content, items };
             setAiProposedDiff(diffData);
             pendingAiDiffRef.current = diffData;
             setAiChatHistory(prev => [...prev, { role: 'assistant', text: explanation }]);
+
             if (editorRef.current) {
                 const proposalContainer = document.createElement('div');
                 proposalContainer.id = 'ai-inline-proposal';
                 proposalContainer.className = "ai-proposal-wrapper border-2 border-dashed border-blue-300 bg-slate-50/40 rounded-lg p-5 my-6 animate-in slide-in-from-top-2 duration-500 relative";
                 proposalContainer.contentEditable = "false";
-                const linesHtml = content.split('\n').map(line => {
-                    const isHeader = line.includes('Proposed Cardiac Treatment Plan');
-                    return `<div class="flex gap-3 text-sm mb-1 px-2 py-0.5 rounded bg-emerald-100/50 text-emerald-900 border-l-4 border-emerald-500 ${isHeader ? 'font-bold' : ''}">
-                        <span class="font-bold opacity-40 text-emerald-700">+</span>
+
+                const colorClasses = badgeColor === 'emerald' ? 'bg-emerald-100/50 text-emerald-900 border-emerald-500' :
+                                     badgeColor === 'amber' ? 'bg-amber-100/50 text-amber-900 border-amber-500' :
+                                     badgeColor === 'purple' ? 'bg-purple-100/50 text-purple-900 border-purple-500' :
+                                     'bg-emerald-100/50 text-emerald-900 border-emerald-500';
+
+                const linesHtml = items.map((line, idx) => `
+                    <div class="flex gap-3 text-sm mb-1 px-2 py-0.5 rounded ${colorClasses} border-l-4">
+                        <span class="font-bold opacity-40 text-${badgeColor}-700">+</span>
                         <span>${line}</span>
+                    </div>`).join('');
+
+                proposalContainer.innerHTML = `
+                    <div class="absolute -top-3 left-4 bg-blue-600 text-white px-3 py-0.5 rounded-full text-[9px] font-bold uppercase tracking-widest flex items-center gap-1.5 shadow-sm">
+                        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"/></svg>
+                        AI Suggested Actions
+                    </div>
+                    <div class="space-y-1">${linesHtml}</div>
+                    <div class="mt-5 pt-4 border-t border-slate-200 flex justify-end gap-2">
+                        <button id="inline-ai-discard" class="px-3 py-1.5 bg-white border border-slate-200 text-slate-500 text-[11px] font-bold rounded hover:bg-slate-50">Discard</button>
+                        <button id="inline-ai-approve" class="px-4 py-1.5 bg-blue-600 text-white text-[11px] font-bold rounded hover:bg-blue-700 shadow-sm flex items-center gap-1.5">
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                            Approve All
+                        </button>
                     </div>`;
-                }).join('');
-                proposalContainer.innerHTML = `<div class="absolute -top-3 left-4 bg-blue-600 text-white px-3 py-0.5 rounded-full text-[9px] font-bold uppercase tracking-widest flex items-center gap-1.5 shadow-sm"><Sparkles size={10} /> AI Suggested Edits</div><div class="space-y-1">${linesHtml}</div><div class="mt-5 pt-4 border-t border-slate-200 flex justify-end gap-2"><button id="inline-ai-discard" class="px-3 py-1.5 bg-white border border-slate-200 text-slate-500 text-[11px] font-bold rounded hover:bg-slate-50">Discard</button><button id="inline-ai-approve" class="px-4 py-1.5 bg-blue-600 text-white text-[11px] font-bold rounded hover:bg-blue-700 shadow-sm flex items-center gap-1.5"><Check size={12} strokeWidth={3} /> Approve and Apply</button></div>`;
+
                 editorRef.current.appendChild(proposalContainer);
+
                 const discardBtn = document.getElementById('inline-ai-discard');
                 const approveBtn = document.getElementById('inline-ai-approve');
-                if (discardBtn) discardBtn.onclick = (ev) => { ev.stopPropagation(); setAiProposedDiff(null); proposalContainer.remove(); };
-                if (approveBtn) approveBtn.onclick = (ev) => { ev.stopPropagation(); handleApproveAi(); };
+
+                if (discardBtn) discardBtn.onclick = (ev: any) => { ev.stopPropagation(); setAiProposedDiff(null); proposalContainer.remove(); };
+                if (approveBtn) approveBtn.onclick = (ev: any) => {
+                    ev.stopPropagation();
+                    // Execute the approved actions
+                    setAiChatHistory(prev => [...prev, {
+                        role: 'assistant',
+                        text: (
+                            <div className="space-y-2">
+                                <p className="text-slate-700">✓ All actions completed successfully:</p>
+                                <ul className="text-sm text-slate-600 space-y-1">
+                                    {items.map((item, i) => <li key={i} className="flex items-center gap-2"><span className="text-emerald-500">✓</span> {item}</li>)}
+                                </ul>
+                            </div>
+                        )
+                    }]);
+                    setAiProposedDiff(null);
+                    proposalContainer.remove();
+                    onApprove?.();
+                };
             }
-        } else {
-            setAiChatHistory(prev => [...prev, { role: 'assistant', text: "I've analyzed the data. Specify how I can assist." }]);
+        };
+
+        // LAB ORDERS - must come before report/analyze to catch "order" first
+        // Check for explicit "order" keyword with any lab-related term
+        const hasOrderKeyword = currentPrompt.includes('order');
+        const hasLabTerm = currentPrompt.includes('lab') || currentPrompt.includes('gut') || currentPrompt.includes('test') ||
+                            currentPrompt.includes('food') || currentPrompt.includes('hormone') || currentPrompt.includes('neural') ||
+                            currentPrompt.includes('toxin') || currentPrompt.includes('nutrient') || currentPrompt.includes('cellular') ||
+                            currentPrompt.includes('cbc') || currentPrompt.includes('thyroid') || currentPrompt.includes('blood') ||
+                            currentPrompt.includes('zoomer') || currentPrompt.includes('diagnostic');
+
+        // Important: This must come BEFORE the report/analyze check
+        if (hasOrderKeyword && hasLabTerm) {
+            const tests = [];
+            if (currentPrompt.includes('gut')) tests.push('Gut Zoomer 3.0 - Microbiome analysis ($550)');
+            if (currentPrompt.includes('food') || currentPrompt.includes('sensitivity')) tests.push('Food Sensitivity Complete - Reactivity profile ($700)');
+            if (currentPrompt.includes('hormone')) tests.push('Hormone Zoomer - Hormonal balance panel ($500)');
+            if (currentPrompt.includes('neural')) tests.push('Neural Zoomer - Neurological markers ($450)');
+            if (currentPrompt.includes('toxin')) tests.push('Toxin Zoomer - Toxin exposure panel ($700)');
+            if (currentPrompt.includes('nutrient')) tests.push('Nutrient Zoomer - Nutritional status ($500)');
+            if (currentPrompt.includes('cellular')) tests.push('Cellular Zoomer - Cellular function ($600)');
+            if (currentPrompt.includes('cbc') || (currentPrompt.includes('blood') && !currentPrompt.includes('pressure'))) tests.push('Complete Blood Count (CBC)');
+            if (currentPrompt.includes('thyroid')) tests.push('Thyroid Panel (TSH, Free T3, Free T4)');
+            if (tests.length === 0) {
+                tests.push('Gut Zoomer 3.0 - Microbiome analysis ($550)');
+                tests.push('Comprehensive Metabolic Panel');
+            }
+
+            createInlineProposal('Lab Orders to Process', tests, 'emerald');
         }
-    }, 2500);
+        // MEDICATIONS / EPRESCRIPTION
+        else if (currentPrompt.includes('medication') || currentPrompt.includes('prescrib') || currentPrompt.includes('erx') || currentPrompt.includes('rx')) {
+            const meds = [];
+            if (currentPrompt.includes('amoxicillin') || currentPrompt.includes('antibiotic')) meds.push('Amoxicillin 500mg - Take 1 capsule 3x daily for 10 days');
+            if (currentPrompt.includes('atorvastatin') || currentPrompt.includes('lipitor') || currentPrompt.includes('cholesterol')) meds.push('Atorvastatin 20mg - Take 1 tablet daily at bedtime');
+            if (currentPrompt.includes('lisinopril') || currentPrompt.includes('bp') || currentPrompt.includes('blood pressure')) meds.push('Lisinopril 10mg - Take 1 tablet daily');
+            if (currentPrompt.includes('metformin') || currentPrompt.includes('diabetes')) meds.push('Metformin 1000mg - Take 1 tablet twice daily with meals');
+            if (meds.length === 0) {
+                meds.push('Review current medication list');
+                meds.push('Reconcile with pharmacy records');
+            }
+
+            createInlineProposal('ePrescriptions to Send', meds, 'emerald');
+        }
+        // APPOINTMENTS
+        else if (currentPrompt.includes('appointment') || currentPrompt.includes('schedule') || currentPrompt.includes('follow up') || currentPrompt.includes('follow-up')) {
+            const apptItems = [
+                `Schedule follow-up appointment for ${patient.name}`,
+                'Set reminder for 24 hours before appointment',
+                'Send calendar invitation to patient email'
+            ];
+
+            createInlineProposal('Appointment Scheduling', apptItems, 'blue', () => {
+                // Auto-open appointment modal
+                setApptForm({ date: '2025-12-17', time: '10:00', reason: 'Follow-up', location: 'Zoom' });
+                setIsAppointmentModalOpen(true);
+            });
+        }
+        // TASKS
+        else if (currentPrompt.includes('task') || currentPrompt.includes('reminder') || currentPrompt.includes('todo')) {
+            const taskItems = [
+                'Task: Review lab results when available',
+                'Task: Patient education - sleep hygiene',
+                'Task: Follow up on headache symptoms in 2 weeks'
+            ];
+
+            createInlineProposal('Tasks to Create', taskItems, 'amber');
+        }
+        // WORKFLOWS
+        else if (currentPrompt.includes('workflow') || currentPrompt.includes('onboarding') || currentPrompt.includes('lab follow')) {
+            const workflowItems = [];
+            if (currentPrompt.includes('onboard') || currentPrompt.includes('new patient')) {
+                workflowItems.push('Start Patient Onboarding Workflow');
+                workflowItems.push('Send welcome email with intake forms');
+                workflowItems.push('Schedule initial consultation');
+            } else if (currentPrompt.includes('lab')) {
+                workflowItems.push('Trigger Lab Follow-up Workflow');
+                workflowItems.push('Notify patient when results are ready');
+                workflowItems.push('Schedule result review appointment');
+            } else {
+                workflowItems.push('Review available workflows');
+                workflowItems.push('Select appropriate workflow trigger');
+            }
+
+            createInlineProposal('Workflow Automation', workflowItems, 'purple');
+        }
+        // REPORTS ANALYSIS
+        else if (currentPrompt.includes('report') || currentPrompt.includes('result') || currentPrompt.includes('lab result') || currentPrompt.includes('analyze')) {
+            const analysisContent = (
+                <div className="space-y-3">
+                    <p className="text-slate-700">I've analyzed the latest lab results for {patient.name}:</p>
+
+                    <div className="bg-slate-50 border border-slate-200 rounded-lg p-3 space-y-3">
+                        <div className="flex items-center justify-between">
+                            <p className="text-[10px] font-bold text-slate-500 uppercase tracking-wide">Gut Zoomer 3.0</p>
+                            <span className="px-2 py-0.5 bg-amber-100 text-amber-700 text-[10px] font-bold rounded">Action Needed</span>
+                        </div>
+                        <ul className="text-sm text-slate-700 space-y-1">
+                            <li className="flex items-center gap-2">
+                                <span className="w-2 h-2 rounded-full bg-red-500"></span>
+                                <span><strong>Dysbiotic bacteria elevated:</strong> Multiple pathogenic markers detected</span>
+                            </li>
+                            <li className="flex items-center gap-2">
+                                <span className="w-2 h-2 rounded-full bg-amber-500"></span>
+                                <span><strong>Beneficial bacteria low:</strong> Lactobacillus and Bifidobacterium below optimal</span>
+                            </li>
+                            <li className="flex items-center gap-2">
+                                <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
+                                <span><strong>No parasites detected:</strong> All negative for common pathogens</span>
+                            </li>
+                        </ul>
+
+                        <div className="pt-2 border-t border-slate-200">
+                            <p className="text-[10px] font-bold text-slate-500 uppercase tracking-wide mb-2">Recommended Actions</p>
+                            <ul className="text-sm text-slate-600 space-y-1">
+                                <li>• Start Gut Restoration Protocol Phase 1</li>
+                                <li>• Order follow-up Gut Zoomer in 6 weeks</li>
+                                <li>• Patient education: probiotic support</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            );
+
+            setAiChatHistory(prev => [...prev, { role: 'assistant', text: analysisContent }]);
+        }
+        // CARDIAC / TREATMENT PLAN (existing)
+        // Note: Must exclude 'order' to not conflict with lab orders
+        else if (currentPrompt.includes('cardiac markers') || currentPrompt.includes('treatment plan')) {
+            const explanation = "I've flagged elevated Troponin levels from the latest panel. Given the HPI, I've drafted a standard cardiac intervention plan for your review.";
+            const content = `Proposed Cardiac Treatment Plan`;
+            const items = [
+                'Bedside Cardiac Monitoring',
+                'Serial Troponin every 4h',
+                'Cardiology consult requested',
+                'Increase Aspirin to 325mg'
+            ];
+
+            createInlineProposal('Cardiac Treatment Plan', items, 'emerald');
+        }
+        // SUMMARIZE VISIT (existing)
+        else if (currentPrompt.includes('summarize')) {
+            const summaryContent = (
+                <div className="space-y-3">
+                    <p className="text-slate-700">Based on today's consultation, here's my summary:</p>
+
+                    <div className="bg-slate-50 border border-slate-200 rounded-lg p-3 space-y-3">
+                        <div>
+                            <p className="text-[10px] font-bold text-slate-500 uppercase tracking-wide">Chief Complaint</p>
+                            <p className="text-sm text-slate-800">Patient presents with fatigue and intermittent frontal headaches for approximately one week.</p>
+                        </div>
+
+                        <div>
+                            <p className="text-[10px] font-bold text-slate-500 uppercase tracking-wide">Key Findings</p>
+                            <ul className="text-sm text-slate-700 space-y-1 mt-1">
+                                <li>• Headaches: dull, frontal, occur 2-3x/day, lasting 30-60 minutes</li>
+                                <li>• Pain severity: 3-4/10, worse in late afternoon</li>
+                                <li>• Associated symptoms: occasional dizziness on standing, no nausea/vision changes</li>
+                                <li>• Contributing factors: increased work stress, reduced sleep (5-6 hours/night)</li>
+                            </ul>
+                        </div>
+
+                        <div>
+                            <p className="text-[10px] font-bold text-slate-500 uppercase tracking-wide">Assessment</p>
+                            <p className="text-sm text-slate-800">Likely tension-type headaches exacerbated by poor sleep hygiene and stress. No red flags present.</p>
+                        </div>
+
+                        <div>
+                            <p className="text-[10px] font-bold text-slate-500 uppercase tracking-wide">Follow-up Plan</p>
+                            <ol className="text-sm text-slate-700 space-y-1 mt-1 list-decimal list-inside">
+                                <li>Sleep optimization counseling provided</li>
+                                <li>Stress management techniques discussed</li>
+                                <li>Re-evaluate in 4 weeks if symptoms persist</li>
+                                <li>Consider CBC to rule out anemia if fatigue continues</li>
+                            </ol>
+                        </div>
+                    </div>
+
+                    <p className="text-slate-700">Shall I insert this into the encounter note?</p>
+                </div>
+            );
+
+            setAiChatHistory(prev => [...prev, { role: 'assistant', text: summaryContent }]);
+        }
+        // DRAFT ENCOUNTER NOTE
+        else if (currentPrompt.includes('draft') || currentPrompt.includes('note') || currentPrompt.includes('consultation')) {
+            const richContent = (
+                <div className="space-y-3">
+                    <p className="text-slate-700">I've drafted a follow-up note based on the consultation. Here's a preview:</p>
+                    <div className="bg-slate-50 border border-slate-200 rounded-lg p-3 text-xs space-y-2">
+                        <div>
+                            <p className="font-bold text-slate-800">Follow-up Note - {patient.name}</p>
+                            <p className="text-slate-500">Date of Service: December 10, 2025</p>
+                        </div>
+                        <div>
+                            <p className="font-semibold text-slate-700">Subjective:</p>
+                            <p className="text-slate-600">Patient returns for follow-up of fatigue and headaches. Reports symptoms have improved slightly with better sleep hygiene. Still experiencing occasional headaches, particularly after stressful workdays.</p>
+                        </div>
+                        <div>
+                            <p className="font-semibold text-slate-700">Objective:</p>
+                            <ul className="text-slate-600 space-y-0.5">
+                                <li>• Vitals: BP 118/76, HR 72, Temp 98.4°F</li>
+                                <li>• Appearance: Well-developed, no apparent distress</li>
+                                <li>• Neurological: Alert & oriented x3, no focal deficits</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <p className="font-semibold text-slate-700">Assessment:</p>
+                            <ol className="text-slate-600 list-decimal list-inside">
+                                <li>Tension-type headaches - improving</li>
+                                <li>Sleep deprivation - resolved with lifestyle modifications</li>
+                            </ol>
+                        </div>
+                        <div>
+                            <p className="font-semibold text-slate-700">Plan:</p>
+                            <ul className="text-slate-600 space-y-0.5">
+                                <li>• Continue current sleep hygiene regimen</li>
+                                <li>• Stress reduction techniques reviewed</li>
+                                <li>• Follow up in 4 weeks or PRN</li>
+                                <li>• Patient to log headache frequency</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <p className="text-slate-700">Would you like me to insert this into the note editor?</p>
+                </div>
+            );
+            setAiChatHistory(prev => [...prev, { role: 'assistant', text: richContent }]);
+        }
+        // DIABETES
+        else if (currentPrompt.includes('diabetes') || currentPrompt.includes('a1c')) {
+            const richContent = (
+                <div className="space-y-3">
+                    <p className="text-slate-700">I've drafted a diabetes-focused encounter note:</p>
+                    <div className="bg-slate-50 border border-slate-200 rounded-lg p-3 text-xs space-y-2">
+                        <p className="font-bold text-slate-800">Diabetes Follow-up Note</p>
+                        <div>
+                            <p className="font-semibold text-slate-700">Subjective:</p>
+                            <p className="text-slate-600">Patient presents for diabetes management. Reports home glucose monitoring has been consistent.</p>
+                        </div>
+                        <div>
+                            <p className="font-semibold text-slate-700">Objective:</p>
+                            <ul className="text-slate-600 space-y-0.5">
+                                <li>• A1C: 6.8% (down from 7.2%)</li>
+                                <li>• Average glucose: 135 mg/dL</li>
+                                <li>• No hypoglycemic episodes reported</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <p className="font-semibold text-slate-700">Assessment:</p>
+                            <p className="text-slate-600">Type 2 Diabetes Mellitus - well controlled</p>
+                        </div>
+                        <div>
+                            <p className="font-semibold text-slate-700">Plan:</p>
+                            <ul className="text-slate-600 space-y-0.5">
+                                <li>• Continue current metformin regimen</li>
+                                <li>• Repeat A1C in 3 months</li>
+                                <li>• Dietary reinforcement provided</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <p className="text-slate-700">Shall I add this to your note?</p>
+                </div>
+            );
+            setAiChatHistory(prev => [...prev, { role: 'assistant', text: richContent }]);
+        }
+        // FORMS
+        else if (currentPrompt.includes('form') || currentPrompt.includes('intake') || currentPrompt.includes('questionnaire')) {
+            const formItems = [
+                'Standard Patient Intake Form',
+                'Health Insurance Information',
+                'Medical History Questionnaire',
+                'Current Medications List'
+            ];
+
+            createInlineProposal('Forms to Generate', formItems, 'purple');
+        }
+        // COMMUNICATIONS
+        else if (currentPrompt.includes('message') || currentPrompt.includes('email') || currentPrompt.includes('notify') || currentPrompt.includes('send')) {
+            const messageItems = [
+                'Send appointment reminder email',
+                'Send lab results summary to patient portal',
+                'Schedule follow-up SMS notification'
+            ];
+
+            createInlineProposal('Communications to Send', messageItems, 'blue');
+        }
+        // DOCUMENTS
+        else if (currentPrompt.includes('document') || currentPrompt.includes('generate') || currentPrompt.includes('create')) {
+            const docItems = [
+                'Generate clinical visit summary',
+                'Create patient care plan document',
+                'Export treatment plan to PDF'
+            ];
+
+            createInlineProposal('Documents to Create', docItems, 'amber');
+        }
+        // GENERIC HELP
+        else {
+            const genericResponse = (
+                <div className="space-y-2">
+                    <p className="text-slate-700">I can help you with the following Vibrant Intelligence actions:</p>
+                    <div className="grid grid-cols-2 gap-2 text-xs">
+                        <div className="bg-slate-50 p-2 rounded">
+                            <p className="font-bold text-slate-700">📋 Clinical Notes</p>
+                            <ul className="text-slate-500 mt-1 space-y-0.5">
+                                <li>• Summarize visit</li>
+                                <li>• Draft SOAP notes</li>
+                                <li>• Treatment plans</li>
+                            </ul>
+                        </div>
+                        <div className="bg-slate-50 p-2 rounded">
+                            <p className="font-bold text-slate-700">🔬 Orders</p>
+                            <ul className="text-slate-500 mt-1 space-y-0.5">
+                                <li>• Order lab tests</li>
+                                <li>• Prescribe medications</li>
+                                <li>• Schedule imaging</li>
+                            </ul>
+                        </div>
+                        <div className="bg-slate-50 p-2 rounded">
+                            <p className="font-bold text-slate-700">📅 Scheduling</p>
+                            <ul className="text-slate-500 mt-1 space-y-0.5">
+                                <li>• Book appointments</li>
+                                <li>• Set reminders</li>
+                                <li>• Calendar invites</li>
+                            </ul>
+                        </div>
+                        <div className="bg-slate-50 p-2 rounded">
+                            <p className="font-bold text-slate-700">⚡ Automation</p>
+                            <ul className="text-slate-500 mt-1 space-y-0.5">
+                                <li>• Trigger workflows</li>
+                                <li>• Create tasks</li>
+                                <li>• Send messages</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <p className="text-slate-700 mt-2">Try saying: <em className="text-blue-600">"Order Gut Zoomer lab test"</em> or <em className="text-blue-600">"Schedule follow-up appointment"</em></p>
+                </div>
+            );
+
+            setAiChatHistory(prev => [...prev, { role: 'assistant', text: genericResponse }]);
+        }
+    }, 2000);
   };
 
   const filteredList = getFilteredList();

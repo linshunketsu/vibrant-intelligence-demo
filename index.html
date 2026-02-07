@@ -84,20 +84,19 @@
           linear-gradient(to right, #e2e8f0 1px, transparent 1px),
           linear-gradient(to bottom, #e2e8f0 1px, transparent 1px);
       }
-      /* Custom Scrollbar for cleaner look */
+      /* Hide scrollbars but keep scrolling functionality */
       ::-webkit-scrollbar {
-        width: 6px;
-        height: 6px;
-      }
-      ::-webkit-scrollbar-track {
+        width: 0px;
+        height: 0px;
         background: transparent;
       }
-      ::-webkit-scrollbar-thumb {
-        background: #cbd5e1;
-        border-radius: 3px;
+      /* Firefox */
+      * {
+        scrollbar-width: none;
       }
-      ::-webkit-scrollbar-thumb:hover {
-        background: #94a3b8;
+      /* IE/Edge */
+      * {
+        -ms-overflow-style: none;
       }
       /* Smooth transitions for interactive elements */
       * {
