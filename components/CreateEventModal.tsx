@@ -1,13 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import {
-  X, Calendar, Clock, Users, MapPin, Video,
-  AlignLeft, ChevronDown, Globe
+  X, Calendar, Clock, MapPin, Video,
+  AlignLeft, ChevronDown, Globe, User, Stethoscope
 } from 'lucide-react';
 
 interface PatientInfo {
   name: string;
   initials?: string;
+}
+
+interface ProviderInfo {
+  name: string;
 }
 
 interface CreateEventModalProps {
@@ -16,8 +20,15 @@ interface CreateEventModalProps {
   initialDate?: string; // YYYY-MM-DD
   initialTime?: string; // e.g. "10:00 AM"
   patient?: PatientInfo; // Patient info for prefilling
+  provider?: ProviderInfo; // Provider info for prefilling
   appointmentType?: string; // Optional appointment type for title
 }
+
+const DEFAULT_PROVIDERS = [
+  'Irene Hoffman',
+  'Dr. Sarah Smith',
+  'Dr. Michael Johnson',
+];
 
 export const CreateEventModal: React.FC<CreateEventModalProps> = ({
   isOpen,
@@ -25,11 +36,13 @@ export const CreateEventModal: React.FC<CreateEventModalProps> = ({
   initialDate,
   initialTime,
   patient,
+  provider,
   appointmentType = 'Appointment'
 }) => {
   const [activeTab, setActiveTab] = useState<'Appointment' | 'Task'>('Appointment');
   const [description, setDescription] = useState('');
-  const [attendees, setAttendees] = useState<string[]>([]);
+  const [selectedPatient, setSelectedPatient] = useState('');
+  const [selectedProvider, setSelectedProvider] = useState('');
   const [selectedDate, setSelectedDate] = useState(initialDate || '');
   const [startTime, setStartTime] = useState(initialTime || '10:00 AM');
   const [endTime, setEndTime] = useState('10:15 AM');
@@ -45,15 +58,13 @@ export const CreateEventModal: React.FC<CreateEventModalProps> = ({
         setEndTime(calculateEndTime(initialTime));
       }
       // Prefill patient name if provided
-      if (patient?.name) {
-        setAttendees([patient.name]);
-      } else {
-        setAttendees([]);
-      }
+      setSelectedPatient(patient?.name ?? '');
+      // Prefill provider if provided, otherwise use first default
+      setSelectedProvider(provider?.name ?? DEFAULT_PROVIDERS[0]);
       // Reset description
       setDescription('');
     }
-  }, [isOpen, initialDate, initialTime, patient]);
+  }, [isOpen, initialDate, initialTime, patient, provider]);
 
   // Generate title from appointment type and patient initials
   const getModalTitle = () => {
@@ -66,7 +77,9 @@ export const CreateEventModal: React.FC<CreateEventModalProps> = ({
   const calculateEndTime = (start: string) => {
      // Very basic mock logic for demo purposes
      if (start.includes('10:00 AM')) return '10:15 AM';
+     if (start.includes('10:30 AM')) return '10:45 AM';
      if (start.includes('11:00 AM')) return '11:15 AM';
+     if (start.includes('11:30 AM')) return '11:45 AM';
      return '10:15 AM'; // Default fallback
   };
 
@@ -126,7 +139,7 @@ export const CreateEventModal: React.FC<CreateEventModalProps> = ({
                 </motion.button>
               </div>
 
-              <div className="p-6 space-y-5 max-h-[80vh] overflow-y-auto custom-scrollbar">
+              <div className="p-6 space-y-4 max-h-[80vh] overflow-y-auto custom-scrollbar">
 
                  {/* Date/Time Readout Input */}
                  <motion.div
@@ -144,11 +157,52 @@ export const CreateEventModal: React.FC<CreateEventModalProps> = ({
                     />
                  </motion.div>
 
-                 {/* Description */}
+                 {/* Patient Field */}
                  <motion.div
                    initial={{ opacity: 0, y: 10 }}
                    animate={{ opacity: 1, y: 0 }}
                    transition={{ delay: 0.08 }}
+                   className="flex items-center gap-3"
+                 >
+                    <div className="mt-1 text-slate-400"><User size={18} /></div>
+                    <div className="flex-1">
+                      <input
+                        type="text"
+                        value={selectedPatient}
+                        onChange={(e) => setSelectedPatient(e.target.value)}
+                        placeholder="Patient name"
+                        className="w-full text-sm text-gray-700 border-b border-gray-200 focus:border-blue-500 focus:outline-none py-1 bg-transparent placeholder-slate-400"
+                      />
+                    </div>
+                 </motion.div>
+
+                 {/* Provider Field */}
+                 <motion.div
+                   initial={{ opacity: 0, y: 10 }}
+                   animate={{ opacity: 1, y: 0 }}
+                   transition={{ delay: 0.1 }}
+                   className="flex items-center gap-3"
+                 >
+                    <div className="mt-1 text-slate-400"><Stethoscope size={18} /></div>
+                    <div className="flex-1 relative">
+                       <select
+                         value={selectedProvider}
+                         onChange={(e) => setSelectedProvider(e.target.value)}
+                         className="w-full text-sm text-gray-700 border-b border-gray-200 focus:border-blue-500 focus:outline-none py-1 bg-transparent appearance-none cursor-pointer"
+                       >
+                         {DEFAULT_PROVIDERS.map((p) => (
+                           <option key={p} value={p}>{p}</option>
+                         ))}
+                       </select>
+                       <ChevronDown size={14} className="absolute right-0 top-2 text-slate-400 pointer-events-none" />
+                    </div>
+                 </motion.div>
+
+                 {/* Description */}
+                 <motion.div
+                   initial={{ opacity: 0, y: 10 }}
+                   animate={{ opacity: 1, y: 0 }}
+                   transition={{ delay: 0.12 }}
                    className="flex items-start gap-3"
                  >
                     <div className="mt-1 text-slate-400"><AlignLeft size={18} /></div>
@@ -159,43 +213,6 @@ export const CreateEventModal: React.FC<CreateEventModalProps> = ({
                       onChange={(e) => setDescription(e.target.value)}
                       className="w-full text-sm text-gray-700 border-b border-gray-200 focus:border-blue-500 focus:outline-none py-1 bg-transparent placeholder-slate-400"
                     />
-                 </motion.div>
-
-                 {/* Attendees / Patient */}
-                 <motion.div
-                   initial={{ opacity: 0, y: 10 }}
-                   animate={{ opacity: 1, y: 0 }}
-                   transition={{ delay: 0.11 }}
-                   className="flex items-start gap-3"
-                 >
-                    <div className="mt-1.5 text-slate-400"><Users size={18} /></div>
-                    <div className="flex-1">
-                       <div className="flex flex-wrap gap-2 mb-2">
-                          {attendees.map((att, i) => (
-                            <motion.span
-                              key={att}
-                              initial={{ opacity: 0, scale: 0.8 }}
-                              animate={{ opacity: 1, scale: 1 }}
-                              transition={{ delay: 0.15 + (i * 0.03) }}
-                              exit={{ opacity: 0, scale: 0.8 }}
-                              className="inline-flex items-center gap-1 px-2 py-1 bg-slate-100 border border-slate-200 rounded text-xs font-medium text-slate-700"
-                            >
-                               {att}
-                               <button
-                                 onClick={() => setAttendees(prev => prev.filter(a => a !== att))}
-                                 className="hover:text-red-500 ml-1 transition-colors"
-                               >
-                                 <X size={12} />
-                               </button>
-                            </motion.span>
-                          ))}
-                       </div>
-                       <input
-                          type="text"
-                          placeholder="Invite other Providers (Optional)"
-                          className="w-full text-sm text-gray-700 border-b border-gray-200 focus:border-blue-500 focus:outline-none py-1 bg-transparent placeholder-slate-400"
-                       />
-                    </div>
                  </motion.div>
 
                  {/* Suggested Times */}
@@ -211,7 +228,7 @@ export const CreateEventModal: React.FC<CreateEventModalProps> = ({
                          whileTap={{ scale: checkReducedMotion() ? 1 : 0.98 }}
                          className="p-2 border-2 border-blue-500 bg-blue-50 rounded-lg text-left transition-all"
                        >
-                          <div className="text-[10px] font-bold text-blue-700">Wed 9/3</div>
+                          <div className="text-[10px] font-bold text-blue-700">Today</div>
                           <div className="text-[10px] font-medium text-blue-600">{startTime} - {endTime}</div>
                        </motion.button>
                        <motion.button
@@ -219,7 +236,7 @@ export const CreateEventModal: React.FC<CreateEventModalProps> = ({
                          whileTap={{ scale: checkReducedMotion() ? 1 : 0.98 }}
                          className="p-2 border border-slate-200 rounded-lg text-left hover:bg-slate-50 transition-all opacity-60 hover:opacity-100"
                        >
-                          <div className="text-[10px] font-bold text-slate-700">Thu 9/4</div>
+                          <div className="text-[10px] font-bold text-slate-700">Tomorrow</div>
                           <div className="text-[10px] font-medium text-slate-500">{startTime} - {endTime}</div>
                        </motion.button>
                        <motion.button
@@ -227,7 +244,7 @@ export const CreateEventModal: React.FC<CreateEventModalProps> = ({
                          whileTap={{ scale: checkReducedMotion() ? 1 : 0.98 }}
                          className="p-2 border border-slate-200 rounded-lg text-left hover:bg-slate-50 transition-all opacity-60 hover:opacity-100"
                        >
-                          <div className="text-[10px] font-bold text-slate-700">Fri 9/5</div>
+                          <div className="text-[10px] font-bold text-slate-700">Next Week</div>
                           <div className="text-[10px] font-medium text-slate-500">{startTime} - {endTime}</div>
                        </motion.button>
                     </div>
@@ -253,12 +270,31 @@ export const CreateEventModal: React.FC<CreateEventModalProps> = ({
                        <div className="relative">
                           <select
                              value={startTime}
-                             onChange={(e) => setStartTime(e.target.value)}
+                             onChange={(e) => {
+                               setStartTime(e.target.value);
+                               setEndTime(calculateEndTime(e.target.value));
+                             }}
                              className="bg-slate-100 border-none rounded px-3 py-1.5 text-sm font-medium text-slate-700 focus:ring-2 focus:ring-blue-500 outline-none appearance-none pr-8"
                           >
+                             <option>8:00 AM</option>
+                             <option>8:30 AM</option>
+                             <option>9:00 AM</option>
+                             <option>9:30 AM</option>
                              <option>10:00 AM</option>
                              <option>10:30 AM</option>
                              <option>11:00 AM</option>
+                             <option>11:30 AM</option>
+                             <option>12:00 PM</option>
+                             <option>12:30 PM</option>
+                             <option>1:00 PM</option>
+                             <option>1:30 PM</option>
+                             <option>2:00 PM</option>
+                             <option>2:30 PM</option>
+                             <option>3:00 PM</option>
+                             <option>3:30 PM</option>
+                             <option>4:00 PM</option>
+                             <option>4:30 PM</option>
+                             <option>5:00 PM</option>
                           </select>
                           <ChevronDown size={14} className="absolute right-2 top-2.5 text-slate-400 pointer-events-none" />
                        </div>
@@ -269,9 +305,25 @@ export const CreateEventModal: React.FC<CreateEventModalProps> = ({
                              onChange={(e) => setEndTime(e.target.value)}
                              className="bg-slate-100 border-none rounded px-3 py-1.5 text-sm font-medium text-slate-700 focus:ring-2 focus:ring-blue-500 outline-none appearance-none pr-8"
                           >
+                             <option>8:15 AM</option>
+                             <option>8:45 AM</option>
+                             <option>9:15 AM</option>
+                             <option>9:45 AM</option>
                              <option>10:15 AM</option>
                              <option>10:45 AM</option>
                              <option>11:15 AM</option>
+                             <option>11:45 AM</option>
+                             <option>12:15 PM</option>
+                             <option>12:45 PM</option>
+                             <option>1:15 PM</option>
+                             <option>1:45 PM</option>
+                             <option>2:15 PM</option>
+                             <option>2:45 PM</option>
+                             <option>3:15 PM</option>
+                             <option>3:45 PM</option>
+                             <option>4:15 PM</option>
+                             <option>4:45 PM</option>
+                             <option>5:15 PM</option>
                           </select>
                           <ChevronDown size={14} className="absolute right-2 top-2.5 text-slate-400 pointer-events-none" />
                        </div>
@@ -306,7 +358,7 @@ export const CreateEventModal: React.FC<CreateEventModalProps> = ({
                  <motion.div
                    initial={{ opacity: 0, y: 10 }}
                    animate={{ opacity: 1, y: 0 }}
-                   transition={{ delay: 0.23 }}
+                   transition={{ delay: 0.22 }}
                    className="flex items-center gap-3"
                  >
                     <div className="mt-1 text-slate-400"><div className="w-[18px]"></div></div> {/* Spacer/Icon placeholder */}
@@ -316,6 +368,7 @@ export const CreateEventModal: React.FC<CreateEventModalProps> = ({
                           <option>Follow-up</option>
                           <option>Initial Consultation</option>
                           <option>Checkup</option>
+                          <option>Lab Results Review</option>
                        </select>
                        <ChevronDown size={16} className="absolute right-3 top-3 text-slate-400 pointer-events-none" />
                     </div>
@@ -325,7 +378,7 @@ export const CreateEventModal: React.FC<CreateEventModalProps> = ({
                  <motion.div
                    initial={{ opacity: 0, y: 10 }}
                    animate={{ opacity: 1, y: 0 }}
-                   transition={{ delay: 0.26 }}
+                   transition={{ delay: 0.24 }}
                    className="flex items-center gap-3"
                  >
                     <div className="mt-1 text-slate-400"><MapPin size={18} /></div>
@@ -340,7 +393,7 @@ export const CreateEventModal: React.FC<CreateEventModalProps> = ({
                  <motion.div
                    initial={{ opacity: 0, y: 10 }}
                    animate={{ opacity: 1, y: 0 }}
-                   transition={{ delay: 0.29 }}
+                   transition={{ delay: 0.26 }}
                    className="flex items-center gap-3"
                  >
                     <div className="mt-1 text-slate-400"><Video size={18} className="text-blue-500" /></div>

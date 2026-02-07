@@ -497,6 +497,16 @@ const getPatientDetails = (id: string, patient: Patient) => {
     };
 };
 
+// Helper to format patient name as "First L" (e.g., "Jane Miller" -> "Jane M")
+const getPatientDisplayName = (fullName: string): string => {
+  const parts = fullName.trim().split(' ');
+  if (parts.length === 0) return '';
+  if (parts.length === 1) return parts[0];
+  const firstName = parts[0];
+  const lastNameInitial = parts[parts.length - 1][0];
+  return `${firstName} ${lastNameInitial}`;
+};
+
 export const PatientsView: React.FC = () => {
   const [activePatientId, setActivePatientId] = useState('3');
   const [chatInput, setChatInput] = useState('');
@@ -1453,7 +1463,7 @@ Dr. Johnson
       initialDate={new Date().toISOString().split('T')[0]}
       patient={{
         name: activePatient?.name ?? '',
-        initials: activePatient?.initials ?? ''
+        initials: activePatient?.name ? getPatientDisplayName(activePatient.name) : ''
       }}
       appointmentType="Follow-up"
     />
