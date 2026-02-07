@@ -10,7 +10,8 @@ import {
   Copy, ArrowUp, RefreshCw, File, Download, Eye, Link as LinkIcon,
   ChevronDown, ChevronUp, DollarSign, Receipt, Shield, Smartphone,
   BriefcaseMedical, ShieldAlert, Notebook, Move, GripVertical, MessageSquare,
-  Tag, X, Sparkles, Target, TrendingUp, CalendarDays, Stethoscope
+  Tag, X, Sparkles, Target, TrendingUp, CalendarDays, Stethoscope,
+  TestTube, Heart
 } from 'lucide-react';
 import { EncounterNotesEditor } from './EncounterNotesEditor';
 import { NotificationCenter } from './NotificationCenter';
@@ -37,7 +38,7 @@ interface Patient {
 
 interface PinnedItem {
     id: string;
-    type: 'demographics' | 'contact' | 'financial' | 'medication' | 'allergy' | 'note' | 'document' | 'calendar' | 'billing' | 'tags' | 'program';
+    type: 'demographics' | 'contact' | 'financial' | 'medication' | 'allergy' | 'note' | 'document' | 'calendar' | 'billing' | 'tags' | 'program' | 'labs' | 'vitals' | 'conditions';
     title: string;
     iconName: string;
     data: any;
@@ -215,7 +216,37 @@ const WorkflowProgressBar: React.FC<{ status: 'on-track' | 'exception' | 'comple
     );
 };
 
-const SystemEventCard: React.FC<SystemEventCardProps> = ({ icon: Icon, title, status, date, variant = 'neutral', details, actionLabel }) => { const styles = { neutral: { bg: 'bg-white', border: 'border-gray-200', iconBg: 'bg-gray-100', iconColor: 'text-gray-500', title: 'text-gray-900', text: 'text-gray-600' }, success: { bg: 'bg-emerald-50', border: 'border-emerald-100', iconBg: 'bg-emerald-100', iconColor: 'text-emerald-600', title: 'text-emerald-900', text: 'text-emerald-700' }, info: { bg: 'bg-blue-50', border: 'border-blue-100', iconBg: 'bg-blue-100', iconColor: 'text-blue-600', title: 'text-blue-900', text: 'text-blue-700' }, warning: { bg: 'bg-amber-50', border: 'border-amber-100', iconBg: 'bg-amber-100', iconColor: 'text-amber-600', title: 'text-amber-900', text: 'text-amber-700' }, error: { bg: 'bg-red-50', border: 'border-red-100', iconBg: 'bg-red-100', iconColor: 'text-red-600', title: 'text-red-900', text: 'text-red-700' }, }; const s = styles[variant] || styles.neutral; return (<div className="flex justify-center w-full"><div className={`rounded-xl p-4 border max-w-2xl w-full flex items-start gap-4 shadow-sm transition-all ${s.bg} ${s.border}`}><div className={`w-10 h-10 rounded-full flex items-center justify-center shrink-0 ${s.iconBg} ${s.iconColor}`}><Icon size={20} /></div><div className="flex-1 min-w-0"><div className="flex justify-between items-start"><h4 className={`font-bold text-sm ${s.title}`}>{title}</h4><span className={`text-[10px] opacity-70 ml-2 whitespace-nowrap ${s.text}`}>{date}</span></div>{details && <p className={`text-xs mt-1 leading-relaxed ${s.text}`}>{details}</p>}{actionLabel && (<button className="mt-3 px-4 py-2 bg-white border border-gray-200 rounded-lg text-xs font-bold text-gray-700 hover:bg-gray-50 transition-colors shadow-sm flex items-center gap-1">{actionLabel} <ArrowRight size={12} /></button>)}</div></div></div>); };
+const SystemEventCard: React.FC<SystemEventCardProps> = ({ icon: Icon, title, status, date, variant = 'neutral', details, actionLabel }) => {
+    const styles = {
+        neutral: { bg: 'bg-white', border: 'border-slate-200', iconBg: 'bg-slate-100', iconColor: 'text-slate-500', title: 'text-slate-900', text: 'text-slate-600' },
+        success: { bg: 'bg-white', border: 'border-slate-200', iconBg: 'bg-[#0F4C81]', iconColor: 'text-white', title: 'text-slate-900', text: 'text-slate-600' },
+        info: { bg: 'bg-slate-50', border: 'border-slate-200', iconBg: 'bg-slate-200', iconColor: 'text-slate-600', title: 'text-slate-900', text: 'text-slate-600' },
+        warning: { bg: 'bg-amber-50', border: 'border-amber-200', iconBg: 'bg-amber-100', iconColor: 'text-amber-600', title: 'text-slate-900', text: 'text-slate-600' },
+        error: { bg: 'bg-red-50', border: 'border-red-200', iconBg: 'bg-red-100', iconColor: 'text-red-600', title: 'text-slate-900', text: 'text-slate-700' },
+    };
+    const s = styles[variant] || styles.neutral;
+    return (
+        <div className="flex justify-center w-full">
+            <div className={`rounded-xl p-4 border max-w-2xl w-full flex items-start gap-4 shadow-sm transition-all hover:shadow-md ${s.bg} ${s.border}`}>
+                <div className={`w-10 h-10 rounded-full flex items-center justify-center shrink-0 ${s.iconBg} ${s.iconColor}`}>
+                    <Icon size={18} />
+                </div>
+                <div className="flex-1 min-w-0">
+                    <div className="flex justify-between items-start">
+                        <h4 className={`font-semibold text-sm ${s.title}`}>{title}</h4>
+                        <span className={`text-[11px] opacity-60 ml-2 whitespace-nowrap font-medium ${s.text}`}>{date}</span>
+                    </div>
+                    {details && <p className={`text-xs mt-1 leading-relaxed ${s.text}`}>{details}</p>}
+                    {actionLabel && (
+                        <button className="mt-3 px-4 py-2 bg-white border border-slate-200 rounded-lg text-xs font-bold text-slate-700 hover:bg-slate-50 hover:border-slate-300 transition-colors shadow-sm flex items-center gap-1">
+                            {actionLabel} <ArrowRight size={12} />
+                        </button>
+                    )}
+                </div>
+            </div>
+        </div>
+    );
+};
 
 const TabButton = React.forwardRef<HTMLButtonElement, { label: string, icon: any, active?: boolean, onClick?: () => void, isDropdown?: boolean }>(({ label, icon: Icon, active, onClick, isDropdown }, ref) => (<button ref={ref} onClick={onClick} className={`flex items-center gap-2 py-3 text-sm font-bold transition-all relative rounded-t-lg ${active ? 'text-[#0F4C81] px-10 bg-slate-50 border-b-2 border-[#0F4C81]' : 'text-gray-500 hover:text-gray-700 hover:bg-gray-50 px-6'}`}><Icon size={16} className={active ? "text-[#0F4C81]" : "text-gray-400"} /> {label}{isDropdown && (<ChevronDown size={12} className={`transition-transform duration-200 ${active ? 'rotate-180 text-[#0F4C81]' : 'text-gray-400'}`} />)}</button>));
 
@@ -228,7 +259,7 @@ const PinIcon = ({ onClick }: { onClick?: () => void }) => (<button onClick={(e)
 const PinnedCardRenderer: React.FC<{ item: PinnedItem; onUnpin: () => void }> = ({ item, onUnpin }) => {
     let Icon = Activity;
     if (item.type === 'medication') Icon = Pill;
-    if (item.type === 'demographics') Icon = Calendar;
+    if (item.type === 'demographics') Icon = User;
     if (item.type === 'contact') Icon = Phone;
     if (item.type === 'financial') Icon = CreditCard;
     if (item.type === 'allergy') Icon = ShieldAlert;
@@ -238,6 +269,9 @@ const PinnedCardRenderer: React.FC<{ item: PinnedItem; onUnpin: () => void }> = 
     if (item.type === 'billing') Icon = DollarSign;
     if (item.type === 'tags') Icon = Tag;
     if (item.type === 'program') Icon = Target;
+    if (item.type === 'labs') Icon = TestTube;
+    if (item.type === 'vitals') Icon = Heart;
+    if (item.type === 'conditions') Icon = AlertCircle;
 
     return (
         <div className="bg-white rounded-md p-3 shadow-sm relative group hover:shadow-md transition-shadow">
@@ -253,10 +287,13 @@ const PinnedCardRenderer: React.FC<{ item: PinnedItem; onUnpin: () => void }> = 
                  {item.type === 'allergy' && (<div className="space-y-1 mt-1">{item.data.items.map((a: any, i: number) => (<div key={i} className="flex gap-1 text-xs"><span className="font-bold text-gray-900">{a.name}</span><span className={`px-1 py-0.5 rounded text-[9px] font-bold ${a.severity === 'Severe' ? 'bg-red-100 text-red-700' : 'bg-amber-100 text-amber-700'}`}>{a.severity}</span></div>))}</div>)}
                  {item.type === 'note' && (<div className="mt-1"><div className="text-xs text-gray-500 mb-1">{item.data.date}</div><p className="text-xs text-gray-700 italic line-clamp-2 leading-relaxed">"{item.data.preview}"</p></div>)}
                  {item.type === 'document' && (<div className="mt-1 space-y-0.5"><div className="text-sm font-bold text-gray-900">{item.data.count} Files</div>{item.data.types.slice(0, 2).map((t: string, i: number) => (<div key={i} className="text-[10px] text-gray-500">{t}</div>))}</div>)}
-                 {item.type === 'calendar' && (<div className="mt-1"><div className="text-sm font-bold text-gray-900">{item.data.event}</div><div className="text-xs text-gray-500 mt-0.5">{item.data.date}</div></div>)}
+                 {item.type === 'calendar' && (<div className="mt-1"><div className="text-sm font-bold text-gray-900">{item.data.event}</div><div className="text-xs text-gray-500 mt-0.5">{item.data.date}</div>{item.data.provider && <div className="text-[10px] text-slate-500">{item.data.provider}</div>}</div>)}
                  {item.type === 'billing' && (<div className="mt-1">{item.data.amount && <div className="text-lg font-bold text-gray-900">{item.data.amount}</div>}{item.data.invoice && <div className="text-sm font-bold text-gray-900">{item.data.invoice}</div>}<div className="text-[10px] text-red-500 font-bold mt-0.5">{item.data.status || 'Due Now'}</div></div>)}
                  {item.type === 'tags' && (<div className="mt-1 flex flex-wrap gap-1">{item.data.tags?.slice(0, 5).map((tag: string, i: number) => (<span key={i} className="px-2 py-0.5 bg-slate-100 text-slate-600 border border-slate-200 rounded-full text-[9px] font-bold">{tag}</span>))}{(item.data.tags?.length || 0) > 5 && (<span className="text-[9px] text-gray-400 font-medium">+{item.data.tags.length - 5}</span>)}</div>)}
                  {item.type === 'program' && (<div className="mt-1 space-y-1.5"><div className="text-sm font-bold text-gray-900 leading-tight">{item.data.name}</div><div className="text-[10px] text-gray-500">{item.data.subtitle}</div><div className="w-full h-1.5 bg-gray-100 rounded-full overflow-hidden mt-1"><div className="h-full bg-gradient-to-r from-[#0F4C81] to-blue-500 rounded-full" style={{ width: `${item.data.progress}%` }}></div></div><div className="flex justify-between items-center"><span className="text-[9px] text-gray-400">{item.data.progress}% complete</span><TrendingUp size={10} className="text-emerald-500" /></div></div>)}
+                 {item.type === 'labs' && (<div className="mt-1 space-y-1"><div className="text-xs text-gray-500">{item.data.date}</div><div className="text-sm font-bold text-gray-900">{item.data.recent}</div><div className={`text-[10px] font-medium ${item.data.status === 'All normal' ? 'text-emerald-600' : item.data.status.includes('flagged') ? 'text-amber-600' : 'text-slate-600'}`}>{item.data.status}</div>{item.data.pending && <div className="text-[10px] text-slate-500">Pending: {item.data.pending}</div>}</div>)}
+                 {item.type === 'vitals' && (<div className="mt-1 space-y-1"><div className="grid grid-cols-2 gap-2 text-xs"><div><span className="text-gray-500">BP:</span> <span className="font-bold text-gray-900">{item.data.bp}</span></div><div><span className="text-gray-500">Weight:</span> <span className="font-bold text-gray-900">{item.data.weight}</span></div><div><span className="text-gray-500">BMI:</span> <span className="font-bold text-gray-900">{item.data.bmi}</span></div><div className="text-[9px] text-gray-400">{item.data.lastVisit}</div></div></div>)}
+                 {item.type === 'conditions' && (<div className="mt-1 flex flex-wrap gap-1">{item.data.map((c: string, i: number) => (<span key={i} className="px-2 py-0.5 bg-slate-100 text-slate-700 border border-slate-200 rounded-full text-[9px] font-medium">{c}</span>))}</div>)}
               </div>
            </div>
         </div>
@@ -266,77 +303,89 @@ const PinnedCardRenderer: React.FC<{ item: PinnedItem; onUnpin: () => void }> = 
 // --- Mock Data ---
 
 const PATIENTS: Patient[] = [
-  { 
-    id: '3', 
-    name: 'Kevin Johnson', 
-    initials: 'KJ', 
-    time: 'Just now', 
-    snippet: 'Action Required: Lab sample exception',
+  // === KEVIN JOHNSON ===
+  // High-complexity: Diabetes, hypertension, active program, balance due
+  {
+    id: '3',
+    name: 'Kevin Johnson',
+    initials: 'KJ',
+    time: 'Just now',
+    snippet: 'Action Required: Lab sample exception - redraw needed',
     unreadCount: 1,
     gender: 'Male',
     dob: 'Aug-10-1982',
-    age: 42,
+    age: 43,
     workflowStatus: 'exception',
-    tags: ['VIP', 'High Risk', 'Returning']
+    tags: ['VIP', 'High Risk', 'Diabetic Management', 'Returning']
   },
-  { 
-    id: '1', 
-    name: 'Amanda Lee', 
-    initials: 'AL', 
-    time: '2 hours ago', 
-    snippet: 'Results reviewed. Protocol updated.',
+  // === AMANDA LEE ===
+  // Low-complexity: Thyroid management, good compliance
+  {
+    id: '1',
+    name: 'Amanda Lee',
+    initials: 'AL',
+    time: '2 hours ago',
+    snippet: 'Results reviewed. TSH normalized to 2.8.',
     gender: 'Female',
     dob: 'Jun-21-1985',
-    age: 39,
+    age: 40,
     workflowStatus: 'completed',
-    tags: ['New Patient', 'Thyroid']
+    tags: ['Thyroid Management', 'Good Compliance']
   },
-  { 
-    id: '2', 
-    name: 'Jessica Patel', 
-    initials: 'JP', 
-    time: 'Yesterday', 
-    snippet: 'Can we reschedule the appointment?',
-    unreadCount: 0,
+  // === JESSICA PATEL ===
+  // New patient: In intake phase, first appointment pending
+  {
+    id: '2',
+    name: 'Jessica Patel',
+    initials: 'JP',
+    time: 'Yesterday',
+    snippet: 'Can we reschedule the consultation?',
+    unreadCount: 2,
     gender: 'Female',
     dob: 'Apr-12-1990',
-    age: 34,
+    age: 35,
     workflowStatus: 'on-track',
-    tags: ['Telehealth', 'Busy Professional']
+    tags: ['New Patient', 'Pending Intake', 'Self-Pay']
   },
+  // === ROBERT CHEN ===
+  // Complex: Cardiac risk, multiple medications, active program
   {
     id: '4',
-    name: 'Michael Chen',
-    initials: 'MC',
+    name: 'Robert Chen',
+    initials: 'RC',
     time: 'Yesterday',
-    snippet: 'Questionnaire completed.',
+    snippet: 'LDL improved from 148 to 122. Continue protocol.',
     gender: 'Male',
-    dob: 'Mar-15-1978',
-    age: 46,
+    dob: 'Mar-15-1976',
+    age: 49,
     workflowStatus: 'on-track',
-    tags: ['Weight Management']
+    tags: ['Cardiac Risk', 'Complex Care', 'Long-term']
   },
+  // === MARIA GARCIA ===
+  // Prenatal: 28 weeks pregnant, healthy pregnancy
   {
     id: '5',
-    name: 'Sarah Connor',
-    initials: 'SC',
+    name: 'Maria Garcia',
+    initials: 'MG',
     time: '2 days ago',
-    snippet: 'Kit delivered to patient.',
+    snippet: 'Prenatal check went great. Baby measuring well.',
     gender: 'Female',
-    dob: 'Nov-29-1984',
-    age: 40,
+    dob: 'Nov-29-1992',
+    age: 33,
     workflowStatus: 'on-track',
-    tags: ['Prenatal', 'Supplements']
+    tags: ['Prenatal', 'High Priority', 'Insurance Active']
   },
+  // === JAMES WILSON ===
+  // Mental health: Depression/anxiety, active therapy
   {
     id: '6',
-    name: 'Robert Davis',
-    initials: 'RD',
+    name: 'James Wilson',
+    initials: 'JW',
     time: '3 days ago',
-    snippet: 'Waiting for lab results.',
+    snippet: 'PHQ-9 improved from 15 to 8. Great progress!',
     gender: 'Male',
-    dob: 'Jan-05-1965',
-    age: 59,
+    dob: 'Jan-05-1991',
+    age: 35,
     workflowStatus: 'on-track',
     tags: ['Cardiac History']
   },
@@ -426,57 +475,377 @@ const PATIENTS: Patient[] = [
   },
 ];
 
+// Pinboard Item Definitions - What can be auto-pinned for users
+// Each item type represents a card that can be pinned to the patient's pinboard
+const PINBOARD_ITEM_TYPES = {
+    // === DEMOGRAPHICS (Basics Tab) ===
+    'basics-demo': { title: 'Demographics', icon: 'User', description: 'Patient age, gender, and date of birth' },
+    'basics-contact': { title: 'Contact Info', icon: 'Phone', description: 'Phone, email, and address' },
+    'basics-financial': { title: 'Financial', icon: 'CreditCard', description: 'Billing method and payment details' },
+
+    // === HEALTH (Health Tab) ===
+    'med-active': { title: 'Active Medications', icon: 'Pill', description: 'Current medications and dosages' },
+    'med-allergies': { title: 'Allergies', icon: 'ShieldAlert', description: 'Known allergies and severities' },
+    'med-notes': { title: 'Encounter Notes', icon: 'Notebook', description: 'Recent clinical notes from visits' },
+    'med-docs': { title: 'Documents', icon: 'FileText', description: 'Medical records and forms' },
+    'med-tags': { title: 'Patient Tags', icon: 'Tag', description: 'Custom tags for categorization' },
+    'med-program': { title: 'Program Progress', icon: 'Target', description: 'Active care program enrollment and status' },
+    'med-labs': { title: 'Recent Labs', icon: 'TestTube', description: 'Latest lab results and pending orders' },
+    'med-vitals': { title: 'Vitals History', icon: 'Activity', description: 'Blood pressure, weight, and other vitals' },
+    'med-conditions': { title: 'Conditions', icon: 'AlertCircle', description: 'Diagnosed conditions and comorbidities' },
+
+    // === CALENDAR (Calendar Tab) ===
+    'cal-upcoming': { title: 'Upcoming Appointment', icon: 'Clock', description: 'Next scheduled appointment' },
+    'cal-past': { title: 'Past Events', icon: 'CheckCircle2', description: 'Recent appointment history' },
+    'cal-requests': { title: 'Pending Requests', icon: 'CalendarClock', description: 'Appointment change requests' },
+
+    // === BILLING (Billing Tab) ===
+    'bill-balance': { title: 'Account Balance', icon: 'DollarSign', description: 'Current outstanding balance' },
+    'bill-invoices': { title: 'Recent Invoices', icon: 'FileText', description: 'Recent billing statements' },
+    'bill-insurance': { title: 'Insurance', icon: 'Shield', description: 'Insurance coverage and claims' },
+};
+
+// Comprehensive Mock Patient Details
+// Each patient has realistic, varied data to demonstrate different pinboard configurations
 const MOCK_DETAILS: Record<string, any> = {
+    // === KEVIN JOHNSON (Patient ID: 3) ===
+    // High-complexity patient with active program, medications, allergies, and balance due
     '3': {
-        contact: { phone: '+1 123-456-7890', email: 'skaufman@outlook.com', address: '911 Schoolhouse Dr. Nanuet, NY' },
-        financial: { billing: 'As Default', card: '***1111', shipping: 'Ship to Patient' },
-        medications: ['Lisinopril 10mg - Daily', 'Metformin 500mg - BID'],
-        allergies: [{name: 'Penicillin', severity: 'Severe'}, {name: 'Sulfa', severity: 'Moderate'}],
-        notes: { date: 'Feb-01-2026', preview: 'The patient passed by and came in to say hi, patient mentioned feeling much better after the new protocol.' },
-        docs: { count: 11, types: ['3 Medical Reports', '4 Encounter Notes'] },
-        upcoming: { event: 'Follow-up Consultation', date: 'Feb 27, 2026 at 2:00 PM' },
-        past: { event: 'Initial Consultation', date: 'Jan 15, 2026' },
-        billing: { balance: '$150.00', date: 'Feb 10', invoice: 'INV-2026-003', status: 'Due Now' },
-        pinned: ['med-active', 'basics-demo', 'med-tags'],
+        contact: {
+            phone: '+1 (845) 553-2190',
+            email: 'kevin.johnson78@email.com',
+            address: '911 Schoolhouse Dr, Nanuet, NY 10954'
+        },
+        financial: {
+            billing: 'Self-Pay - HSA',
+            card: '**** 4242',
+            shipping: 'Ship to Patient',
+            accountSince: 'Jan 2024'
+        },
+        medications: [
+            'Lisinopril 10mg - Daily (take with breakfast)',
+            'Metformin 500mg - Twice daily',
+            'Vitamin D3 5000IU - Daily'
+        ],
+        allergies: [
+            { name: 'Penicillin', severity: 'Severe' },
+            { name: 'Sulfa drugs', severity: 'Moderate' },
+            { name: 'Latex', severity: 'Mild' }
+        ],
+        notes: {
+            date: 'Feb 05, 2026',
+            preview: 'Patient reported significant improvement in energy levels after 4 weeks on new protocol. Blood sugar readings have stabilized. Still working on consistent sleep schedule.'
+        },
+        docs: {
+            count: 14,
+            types: ['6 Lab Reports', '4 Encounter Notes', '2 Intake Forms', '1 Insurance', '1 Consent']
+        },
+        upcoming: {
+            event: 'Program Check-In',
+            date: 'Feb 20, 2026 at 10:00 AM',
+            provider: 'Irene Hoffman'
+        },
+        past: {
+            event: 'Lab Results Review',
+            date: 'Feb 05, 2026 at 2:30 PM',
+            notes: 'Discussed A1C improvement from 7.2 to 6.8'
+        },
+        billing: {
+            balance: '$375.00',
+            date: 'Feb 10, 2026',
+            invoice: 'INV-2026-042',
+            status: 'Due Now',
+            paymentPlan: '3-month available'
+        },
+        tags: ['VIP', 'High Risk', 'Diabetic Management', 'Returning'],
+        pinned: ['med-active', 'med-allergies', 'med-program', 'bill-balance', 'cal-upcoming'],
         program: {
-            name: 'Signature Program - Body Sculpt 90',
-            subtitle: '12-Week Lifestyle Reset',
-            joinedDate: 'Jan-01-2026',
-            progress: 66,
-            nextCheckIn: 'Feb-20-2026',
+            name: 'Metabolic Reset Program',
+            subtitle: '16-Week Comprehensive Protocol',
+            joinedDate: 'Jan 02, 2026',
+            progress: 68,
+            nextCheckIn: 'Feb 20, 2026',
             paymentPlan: 'Paid in Full',
             phases: [
-                { name: 'Baseline Testing', touchpoints: 5, dateRange: 'Jan 1-7', status: 'completed' },
-                { name: 'Results Debrief', touchpoints: 3, dateRange: 'Jan 15-18', status: 'completed' },
-                { name: 'Training Sprint', touchpoints: 8, dateRange: 'Jan 22 - Feb 13', status: 'in-progress' },
-                { name: 'Supplement Fulfillment', touchpoints: 4, dateRange: 'Feb 14-26', status: 'pending' }
+                { name: 'Baseline Assessment', touchpoints: 6, dateRange: 'Jan 2-8', status: 'completed' },
+                { name: 'Results & Planning', touchpoints: 4, dateRange: 'Jan 15-18', status: 'completed' },
+                { name: 'Active Treatment', touchpoints: 12, dateRange: 'Jan 22 - Mar 15', status: 'in-progress' },
+                { name: 'Maintenance', touchpoints: 4, dateRange: 'Mar 16 - Apr 30', status: 'pending' }
             ]
         }
     },
+
+    // === AMANDA LEE (Patient ID: 1) ===
+    // Low-complexity patient, minimal medications, good compliance, up to date on billing
     '1': {
-        contact: { phone: '(555) 123-4567', email: 'amanda.lee@example.com', address: '42 Pine St, Austin, TX' },
-        financial: { billing: 'Insurance', card: '***4421', shipping: 'Home' },
-        medications: ['Levothyroxine 50mcg'],
-        allergies: [{ name: 'Peanuts', severity: 'Mild' }],
-        notes: { date: 'Feb 10, 2026', preview: 'Review of systems negative. Patient reports feeling energetic. TSH levels normalized.' },
-        docs: { count: 5, types: ['Lab Report', 'Consent Form'] },
+        contact: {
+            phone: '(512) 555-1842',
+            email: 'amanda.lee@email.com',
+            address: '42 Pine Street, Austin, TX 78701'
+        },
+        financial: {
+            billing: 'BlueCross BlueShield',
+            card: '**** 8876',
+            shipping: 'Home - Standard',
+            accountSince: 'Mar 2023'
+        },
+        medications: [
+            'Levothyroxine 50mcg - Daily (empty stomach)',
+            'Multivitamin - Daily'
+        ],
+        allergies: [
+            { name: 'Peanuts', severity: 'Mild' },
+            { name: 'Dust mites', severity: 'Mild' }
+        ],
+        notes: {
+            date: 'Feb 10, 2026',
+            preview: 'Follow-up visit: Patient reports excellent energy levels, no thyroid symptoms. TSH now 2.8 (was 6.1 in Sept). Continue current dosage. Will retest in 6 months.'
+        },
+        docs: {
+            count: 8,
+            types: ['3 Lab Reports', '2 Encounter Notes', '1 Insurance', '2 Consent Forms']
+        },
         upcoming: null,
-        past: { event: 'Results Review', date: 'Feb 12, 2026' },
-        billing: { balance: '$0.00', date: 'Feb 12', invoice: 'INV-2026-001', status: 'Paid' },
-        pinned: ['basics-demo', 'med-docs', 'cal-past'],
+        past: {
+            event: 'Thyroid Follow-Up',
+            date: 'Feb 10, 2026 at 11:00 AM',
+            notes: 'Excellent progress, continue current treatment'
+        },
+        billing: {
+            balance: '$0.00',
+            date: 'Feb 10, 2026',
+            invoice: 'INV-2026-018',
+            status: 'Paid - Insurance Processed'
+        },
+        tags: ['Thyroid Management', 'Good Compliance'],
+        pinned: ['basics-demo', 'med-active', 'med-labs'],
         program: null
     },
+
+    // === JESS PATEL (Patient ID: 2) ===
+    // New patient, in intake phase, pending appointment, has outstanding balance
     '2': {
-        contact: { phone: '(555) 987-6543', email: 'jess.patel@example.com', address: '88 Oak Ave, Dallas, TX' },
-        financial: { billing: 'Self-Pay', card: '***9988', shipping: 'Office' },
+        contact: {
+            phone: '(214) 555-9921',
+            email: 'jess.patel@email.com',
+            address: '88 Oak Avenue, Dallas, TX 75201'
+        },
+        financial: {
+            billing: 'Self-Pay - Payment Plan',
+            card: '**** 3344',
+            shipping: 'Office Pick-Up',
+            accountSince: 'Jan 2026'
+        },
         medications: [],
         allergies: [],
-        notes: { date: 'Feb 14, 2026', preview: 'Requesting reschedule due to work conflict. Patient has limited availability.' },
-        docs: { count: 2, types: ['Intake Form'] },
-        upcoming: { event: 'Physical Exam', date: 'Feb 25, 2026 at 9:00 AM' },
-        past: { event: 'Intro Call', date: 'Feb 01, 2026' },
-        billing: { balance: '$50.00', date: 'Feb 01', invoice: 'INV-2026-009', status: 'Unpaid' },
-        pinned: ['cal-upcoming', 'basics-contact'],
+        notes: {
+            date: 'Feb 01, 2026',
+            preview: 'Introductory call completed. Patient interested in comprehensive gut health program. Concerns about bloating, irregular digestion, and low energy. Discussed basic testing options.'
+        },
+        docs: {
+            count: 3,
+            types: ['1 Intake Form', '1 HIPAA Authorization', '1 Consent to Treat']
+        },
+        upcoming: {
+            event: 'New Patient Consultation',
+            date: 'Feb 25, 2026 at 9:00 AM',
+            provider: 'Dr. Sarah Smith',
+            notes: 'Confirm insurance card, review intake forms'
+        },
+        past: {
+            event: 'Discovery Call',
+            date: 'Feb 01, 2026',
+            notes: '30 min phone consultation'
+        },
+        billing: {
+            balance: '$175.00',
+            date: 'Feb 01, 2026',
+            invoice: 'INV-2026-009',
+            status: 'Unpaid - Due Feb 15',
+            paymentPlan: '$50/month for 4 months available'
+        },
+        tags: ['New Patient', 'Pending Intake', 'Self-Pay'],
+        pinned: ['cal-upcoming', 'basics-contact', 'bill-balance'],
+        program: null
+    },
+
+    // === ROBERT CHEN (Patient ID: 4) ===
+    // Chronic condition patient, multiple programs, complex history
+    '4': {
+        contact: {
+            phone: '(415) 555-4782',
+            email: 'r.chen@email.com',
+            address: '2250 Mission Street, San Francisco, CA 94110'
+        },
+        financial: {
+            billing: 'Aetna PPO',
+            card: '**** 9988',
+            shipping: 'Ship to Patient',
+            accountSince: 'Nov 2022'
+        },
+        medications: [
+            'Atorvastatin 20mg - Daily',
+            'Omeprazole 20mg - Daily',
+            'Omega-3 1000mg - Twice daily',
+            'CoQ10 200mg - Daily',
+            'Magnesium Glycinate 400mg - Bedtime'
+        ],
+        allergies: [
+            { name: 'Codeine', severity: 'Moderate' },
+            { name: 'Shellfish', severity: 'Severe' }
+        ],
+        notes: {
+            date: 'Feb 12, 2026',
+            preview: 'Patient experiencing some GI discomfort with current supplement regimen. Recommended splitting doses and taking with food. Will reassess at next visit. Lipid panel improved but LDL still elevated.'
+        },
+        docs: {
+            count: 23,
+            types: ['8 Lab Reports', '7 Encounter Notes', '3 Imaging Reports', '3 Insurance', '2 Specialist Referrals']
+        },
+        upcoming: {
+            event: 'Cardiology Follow-Up',
+            date: 'Feb 28, 2026 at 3:30 PM',
+            provider: 'Dr. Michael Johnson'
+        },
+        past: {
+            event: 'Lipid Review',
+            date: 'Feb 12, 2026 at 10:00 AM',
+            notes: 'LDL improved from 148 to 122, goal is <100'
+        },
+        billing: {
+            balance: '$0.00',
+            date: 'Feb 12, 2026',
+            invoice: 'INV-2026-025',
+            status: 'Paid - Insurance Processed'
+        },
+        tags: ['Cardiac Risk', 'Complex Care', 'Long-term'],
+        pinned: ['med-active', 'med-conditions', 'med-labs', 'cal-upcoming', 'med-vitals'],
+        program: {
+            name: 'Heart Health Optimization',
+            subtitle: '24-Week Cardiac Wellness Program',
+            joinedDate: 'Nov 15, 2025',
+            progress: 82,
+            nextCheckIn: 'Feb 28, 2026',
+            paymentPlan: 'Insurance Billing',
+            phases: [
+                { name: 'Comprehensive Assessment', touchpoints: 8, dateRange: 'Nov 15-30', status: 'completed' },
+                { name: 'Risk Factor Management', touchpoints: 16, dateRange: 'Dec 1 - Feb 15', status: 'in-progress' },
+                { name: 'Specialist Coordination', touchpoints: 6, dateRange: 'Feb 16 - Apr 15', status: 'in-progress' },
+                { name: 'Maintenance & Prevention', touchpoints: 4, dateRange: 'Apr 16 - May 15', status: 'pending' }
+            ]
+        }
+    },
+
+    // === MARIA GARCIA (Patient ID: 5) ===
+    // Prenatal patient, special considerations
+    '5': {
+        contact: {
+            phone: '(305) 555-2891',
+            email: 'mariag.miami@email.com',
+            address: '1450 Ocean Drive, Miami Beach, FL 33139'
+        },
+        financial: {
+            billing: 'Cigna - Prenatal Coverage',
+            card: '**** 7733',
+            shipping: 'Ship to Patient',
+            accountSince: 'Oct 2025'
+        },
+        medications: [
+            'Prenatal Vitamin - Daily',
+            'DHA 200mg - Daily',
+            'Iron 27mg - Daily'
+        ],
+        allergies: [],
+        notes: {
+            date: 'Feb 14, 2026',
+            preview: 'Routine prenatal check. Baby measuring well, fetal heart rate 145 bpm. Patient reporting mild nausea which has improved. Blood pressure stable. Discussed birth plan preferences.'
+        },
+        docs: {
+            count: 6,
+            types: ['2 Lab Reports', '2 Ultrasound Reports', '1 Prenatal Record', '1 Birth Plan Draft']
+        },
+        upcoming: {
+            event: 'Prenatal Check-Up',
+            date: 'Feb 28, 2026 at 11:00 AM',
+            provider: 'Irene Hoffman',
+            notes: 'Anatomy scan ultrasound, discuss birth plan'
+        },
+        past: {
+            event: 'Prenatal Visit',
+            date: 'Feb 14, 2026 at 9:30 AM',
+            notes: '28 weeks, all progressing well'
+        },
+        billing: {
+            balance: '$0.00',
+            date: 'Feb 14, 2026',
+            invoice: 'INV-2026-031',
+            status: 'Paid - Insurance'
+        },
+        tags: ['Prenatal', 'High Priority', 'Insurance Active'],
+        pinned: ['med-active', 'med-vitals', 'cal-upcoming', 'med-labs'],
+        program: {
+            name: 'Healthy Pregnancy Program',
+            subtitle: 'Trimester-Based Wellness Support',
+            joinedDate: 'Oct 15, 2025',
+            progress: 75,
+            nextCheckIn: 'Feb 28, 2026',
+            paymentPlan: 'Insurance Covered',
+            phases: [
+                { name: 'First Trimester', touchpoints: 4, dateRange: 'Oct-Dec 2025', status: 'completed' },
+                { name: 'Second Trimester', touchpoints: 6, dateRange: 'Jan-Mar 2026', status: 'in-progress' },
+                { name: 'Third Trimester Prep', touchpoints: 6, dateRange: 'Apr-Jun 2026', status: 'pending' },
+                { name: 'Postpartum Support', touchpoints: 4, dateRange: 'Jul-Aug 2026', status: 'pending' }
+            ]
+        }
+    },
+
+    // === JAMES WILSON (Patient ID: 6) ===
+    // Mental health focus patient, minimal physical meds
+    '6': {
+        contact: {
+            phone: '(617) 555-3456',
+            email: 'jwilson.boston@email.com',
+            address: '789 Massachusetts Ave, Cambridge, MA 02139'
+        },
+        financial: {
+            billing: 'Self-Pay (HSA eligible)',
+            card: '**** 2211',
+            shipping: 'HIPAA Secure Mail',
+            accountSince: 'Sep 2025'
+        },
+        medications: [
+            'Sertraline 100mg - Daily',
+            'Melatonin 3mg - As needed for sleep'
+        ],
+        allergies: [
+            { name: 'Aspirin', severity: 'Mild' }
+        ],
+        notes: {
+            date: 'Feb 13, 2026',
+            preview: 'Therapy check-in. Patient reports mood improvement over past 6 weeks. Sleep has improved with melatonin and sleep hygiene changes. Discussing tapering plan for next session. PHQ-9 score: 8 (down from 15).'
+        },
+        docs: {
+            count: 10,
+            types: ['3 PHQ-9 Assessments', '4 Session Notes', '2 Treatment Plan Updates', '1 Insurance']
+        },
+        upcoming: {
+            event: 'Therapy Session',
+            date: 'Feb 27, 2026 at 2:00 PM',
+            provider: 'Dr. Sarah Smith'
+        },
+        past: {
+            event: 'Medication Management',
+            date: 'Feb 13, 2026 at 3:00 PM',
+            notes: 'PHQ-9 improved to 8, continue current dose'
+        },
+        billing: {
+            balance: '$200.00',
+            date: 'Feb 13, 2026',
+            invoice: 'INV-2026-036',
+            status: 'Payment Plan - $100/month'
+        },
+        tags: ['Mental Health', 'Payment Plan', 'Active Treatment'],
+        pinned: ['med-active', 'med-notes', 'bill-balance', 'cal-upcoming'],
         program: null
     }
 };
@@ -490,9 +859,13 @@ const getPatientDetails = (id: string, patient: Patient) => {
         allergies: [],
         notes: { date: 'Jan 20, 2026', preview: 'Routine check-up. No major complaints reported.' },
         docs: { count: 1, types: ['Intake Form'] },
+        labs: { recent: 'None', date: 'N/A', status: 'No recent labs', pending: 'None' },
+        vitals: { bp: 'Not recorded', weight: 'Not recorded', bmi: 'Not recorded', lastVisit: 'N/A' },
+        conditions: [],
         upcoming: null,
         past: { event: 'Initial Visit', date: 'Jan 05, 2026' },
         billing: { balance: '$0.00', date: 'Jan 05', invoice: `INV-2026-0${id}`, status: 'Paid' },
+        tags: ['New Patient'],
         pinned: ['basics-demo', 'med-tags']
     };
 };
