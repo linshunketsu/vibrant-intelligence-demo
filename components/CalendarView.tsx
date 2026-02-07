@@ -112,13 +112,13 @@ export const CalendarView: React.FC = () => {
   return (
     <div className="flex h-full bg-white">
       {/* Left Sidebar */}
-      <div className="w-80 border-r border-gray-200 flex flex-col bg-white shrink-0">
+      <div className="w-80 border-r border-gray-200/60 flex flex-col bg-white shrink-0">
         {/* Mini Calendar */}
-        <div className="p-4 border-b border-gray-100">
+        <div className="p-4 border-b border-gray-100/80">
            <div className="flex items-center justify-between mb-4">
-              <button className="p-1 hover:bg-gray-100 rounded"><ChevronLeft size={16} /></button>
-              <span className="font-bold text-slate-700">September 2025</span>
-              <button className="p-1 hover:bg-gray-100 rounded"><ChevronRight size={16} /></button>
+              <button className="p-1.5 hover:bg-slate-100 rounded-lg transition-all duration-200"><ChevronLeft size={16} /></button>
+              <span className="font-semibold text-slate-700">September 2025</span>
+              <button className="p-1.5 hover:bg-slate-100 rounded-lg transition-all duration-200"><ChevronRight size={16} /></button>
            </div>
            {/* Simple Grid for Mini Calendar */}
            <div className="grid grid-cols-7 gap-1 text-center text-xs mb-2">
@@ -133,24 +133,24 @@ export const CalendarView: React.FC = () => {
            <div className="grid grid-cols-7 gap-1 text-center text-sm">
               {/* Padding days */}
               <span className="p-1"></span>
-              {[1, 2].map(d => <span key={d} className="w-8 h-8 flex items-center justify-center text-slate-700 hover:bg-slate-50 rounded-full cursor-pointer mx-auto">{d}</span>)}
-              <span className="w-8 h-8 flex items-center justify-center bg-[#0F4C81] text-white rounded-full font-bold mx-auto shadow-md">3</span>
+              {[1, 2].map(d => <span key={d} className="w-8 h-8 flex items-center justify-center text-slate-700 hover:bg-slate-100 rounded-full cursor-pointer mx-auto transition-all duration-200">{d}</span>)}
+              <span className="w-8 h-8 flex items-center justify-center bg-[#0F4C81] text-white rounded-full font-semibold mx-auto shadow-sm">3</span>
               {Array.from({length: 27}, (_, i) => i + 4).map(d => (
-                 <span key={d} className="w-8 h-8 flex items-center justify-center text-slate-700 hover:bg-slate-50 rounded-full cursor-pointer mx-auto">{d}</span>
+                 <span key={d} className="w-8 h-8 flex items-center justify-center text-slate-700 hover:bg-slate-100 rounded-full cursor-pointer mx-auto transition-all duration-200">{d}</span>
               ))}
            </div>
         </div>
 
         {/* Requests List */}
-        <div className="flex-1 overflow-y-auto bg-slate-50/50">
+        <div className="flex-1 overflow-y-auto bg-gradient-to-b from-slate-50/50 to-white">
            <div className="p-4">
               <div className="flex items-center justify-between mb-3 cursor-pointer">
-                 <h3 className="text-sm font-bold text-slate-700">Patient Meeting Requests ({REQUESTS.length + 7})</h3>
+                 <h3 className="text-sm font-semibold text-slate-700">Patient Meeting Requests ({REQUESTS.length + 7})</h3>
                  <ChevronLeft size={16} className="-rotate-90 text-slate-400" />
               </div>
-              
+
               {/* Info Alert */}
-              <div className="bg-blue-50 p-3 rounded-lg flex items-start gap-3 mb-4 border border-blue-100 shadow-sm">
+              <div className="bg-gradient-to-r from-blue-50 to-sky-50/60 p-3 rounded-lg flex items-start gap-3 mb-4 border border-blue-100/80 shadow-sm">
                   <Info size={16} className="text-blue-500 mt-0.5 shrink-0" />
                   <div className="text-xs text-blue-700 leading-relaxed">
                       <span className="font-bold">3 time slots available</span> due to patient cancellation. <span className="underline cursor-pointer font-bold hover:text-blue-800">See Detail</span>
@@ -160,26 +160,26 @@ export const CalendarView: React.FC = () => {
               {/* Request Cards */}
               <div className="space-y-3">
                   {REQUESTS.map(req => (
-                      <div key={req.id} className="bg-white border border-gray-200 rounded-lg p-3 shadow-sm hover:shadow-md transition-shadow">
+                      <div key={req.id} className="bg-white border border-gray-200/80 rounded-lg p-3 shadow-soft hover:shadow-md transition-all duration-200">
                           <div className="flex justify-between items-start mb-2">
                               <span className="text-xs font-medium text-slate-500">{req.name}</span>
-                              <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
+                              <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full ${
                                   req.status === 'Available' ? 'bg-emerald-50 text-emerald-600' : 'bg-amber-50 text-amber-600'
                               }`}>
                                   {req.status}
                               </span>
                           </div>
-                          <div className="text-xs font-bold text-slate-800 mb-3 tracking-tight">
+                          <div className="text-xs font-semibold text-slate-800 mb-3 tracking-tight">
                               {req.time}
                           </div>
-                          <div className="flex items-center justify-between border-t border-gray-50 pt-2">
-                              <button className="flex items-center gap-1 text-[10px] font-bold text-red-500 hover:bg-red-50 px-2 py-1 rounded transition-colors">
+                          <div className="flex items-center justify-between border-t border-gray-50/80 pt-2">
+                              <button className="flex items-center gap-1 text-[10px] font-semibold text-red-500 hover:bg-red-50 px-2 py-1 rounded transition-colors duration-200">
                                   <X size={12} strokeWidth={3} /> Decline
                               </button>
-                              <button className="flex items-center gap-1 text-[10px] font-bold text-amber-600 hover:bg-amber-50 px-2 py-1 rounded transition-colors">
+                              <button className="flex items-center gap-1 text-[10px] font-semibold text-amber-600 hover:bg-amber-50 px-2 py-1 rounded transition-colors duration-200">
                                   <HelpCircle size={12} strokeWidth={3} /> Reschedule
                               </button>
-                              <button className="flex items-center gap-1 text-[10px] font-bold text-emerald-600 hover:bg-emerald-50 px-2 py-1 rounded transition-colors">
+                              <button className="flex items-center gap-1 text-[10px] font-semibold text-emerald-600 hover:bg-emerald-50 px-2 py-1 rounded transition-colors duration-200">
                                   <Check size={12} strokeWidth={3} /> Accept
                               </button>
                           </div>
@@ -193,40 +193,40 @@ export const CalendarView: React.FC = () => {
       {/* Main Calendar Area */}
       <div className="flex-1 flex flex-col min-w-0">
          {/* Top Control Bar */}
-         <div className="h-16 border-b border-gray-200 flex items-center justify-between px-6 bg-white shrink-0">
-            <button 
+         <div className="h-16 border-b border-gray-200/60 flex items-center justify-between px-6 bg-white/80 backdrop-blur-sm shrink-0">
+            <button
                 onClick={() => setShowSettings(true)}
-                className="flex items-center gap-2 text-sm font-bold text-[#0F4C81] hover:text-[#09355E] transition-colors"
+                className="flex items-center gap-2 text-sm font-semibold text-[#0F4C81] hover:text-[#09355E] transition-colors duration-200"
             >
                <Settings size={18} /> Settings
             </button>
-            <div className="flex bg-slate-100 p-1 rounded-lg">
-               <button className="px-4 py-1.5 bg-[#0F4C81] text-white text-sm font-bold rounded shadow-sm flex items-center gap-2">
+            <div className="flex bg-slate-100/80 p-1 rounded-lg">
+               <button className="px-4 py-1.5 bg-[#0F4C81] text-white text-sm font-semibold rounded shadow-sm flex items-center gap-2">
                   <CalendarIcon size={14} /> Switch to Calendar
                </button>
-               <button className="px-4 py-1.5 text-slate-500 text-sm font-bold hover:bg-white/60 hover:text-slate-700 rounded flex items-center gap-2 transition-all">
+               <button className="px-4 py-1.5 text-slate-500 text-sm font-semibold hover:bg-white/80 hover:text-slate-700 rounded flex items-center gap-2 transition-all duration-200">
                   Switch to Task <Clock size={14} />
                </button>
             </div>
          </div>
 
          {/* Calendar Toolbar */}
-         <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200 bg-white shrink-0">
+         <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200/60 bg-white shrink-0">
             <div className="flex items-center gap-6">
-               <div className="flex items-center gap-1 bg-slate-100 rounded-lg p-0.5">
-                  <button className="p-1.5 hover:bg-white hover:shadow-sm rounded-md transition-all"><ChevronLeft size={18} className="text-gray-600"/></button>
-                  <button className="p-1.5 hover:bg-white hover:shadow-sm rounded-md transition-all"><ChevronRight size={18} className="text-gray-600"/></button>
+               <div className="flex items-center gap-1 bg-slate-100/80 rounded-lg p-0.5">
+                  <button className="p-1.5 hover:bg-white hover:shadow-sm rounded-md transition-all duration-200"><ChevronLeft size={18} className="text-gray-600"/></button>
+                  <button className="p-1.5 hover:bg-white hover:shadow-sm rounded-md transition-all duration-200"><ChevronRight size={18} className="text-gray-600"/></button>
                </div>
-               <button className="px-4 py-2 border border-[#0F4C81] bg-[#0F4C81] text-white rounded-lg text-sm font-bold transition-colors shadow-sm">Today</button>
+               <button className="px-4 py-2 border border-[#0F4C81] bg-[#0F4C81] text-white rounded-lg text-sm font-semibold transition-all duration-200 shadow-sm hover:shadow-md">Today</button>
                <h2 className="text-2xl font-medium text-slate-700">
                   {view === 'Week' ? 'Aug 31 - Sep 6, 2025' : 'September 3, 2025'}
                </h2>
             </div>
-            
-            <div className="flex bg-[#0F4C81] rounded-lg p-0.5 font-bold overflow-hidden shadow-sm">
-               <button onClick={() => setView('Month')} className={`px-5 py-1.5 text-sm transition-all ${view === 'Month' ? 'bg-[#1e3a5f] text-white shadow-inner' : 'text-white/80 hover:bg-white/10'}`}>Month</button>
-               <button onClick={() => setView('Week')} className={`px-5 py-1.5 text-sm transition-all ${view === 'Week' ? 'bg-[#1e3a5f] text-white shadow-inner' : 'text-white/80 hover:bg-white/10'}`}>Week</button>
-               <button onClick={() => setView('Day')} className={`px-5 py-1.5 text-sm transition-all ${view === 'Day' ? 'bg-[#1e3a5f] text-white shadow-inner' : 'text-white/80 hover:bg-white/10'}`}>Day</button>
+
+            <div className="flex bg-[#0F4C81] rounded-lg p-0.5 font-semibold overflow-hidden shadow-sm">
+               <button onClick={() => setView('Month')} className={`px-5 py-1.5 text-sm transition-all duration-200 ${view === 'Month' ? 'bg-[#1e3a5f] text-white shadow-inner' : 'text-white/80 hover:bg-white/10'}`}>Month</button>
+               <button onClick={() => setView('Week')} className={`px-5 py-1.5 text-sm transition-all duration-200 ${view === 'Week' ? 'bg-[#1e3a5f] text-white shadow-inner' : 'text-white/80 hover:bg-white/10'}`}>Week</button>
+               <button onClick={() => setView('Day')} className={`px-5 py-1.5 text-sm transition-all duration-200 ${view === 'Day' ? 'bg-[#1e3a5f] text-white shadow-inner' : 'text-white/80 hover:bg-white/10'}`}>Day</button>
             </div>
          </div>
 
@@ -234,12 +234,12 @@ export const CalendarView: React.FC = () => {
          <div className="flex-1 overflow-y-auto bg-white relative custom-scrollbar">
             
             {/* --- HEADER --- */}
-            <div className="flex border-b border-gray-200 sticky top-0 bg-white z-20">
-               <div className="w-16 border-r border-gray-200 bg-white shrink-0"></div>
+            <div className="flex border-b border-gray-200/60 sticky top-0 bg-white z-20">
+               <div className="w-16 border-r border-gray-200/60 bg-white shrink-0"></div>
                {/* Week Header Columns */}
                <div className="flex-1 flex">
                   {DAYS_HEADER.map((d, i) => (
-                     <div key={i} className="flex-1 border-r border-gray-200 last:border-r-0 py-2 text-center">
+                     <div key={i} className="flex-1 border-r border-gray-200/60 last:border-r-0 py-2 text-center">
                         <div className="text-xs text-slate-500 font-medium">{d.day} {d.date}</div>
                      </div>
                   ))}
@@ -247,15 +247,15 @@ export const CalendarView: React.FC = () => {
             </div>
 
             {/* --- ALL DAY ROW --- */}
-            <div className="flex border-b border-gray-200 min-h-[40px] sticky z-10 bg-white" style={{ top: '33px' }}>
-               <div className="w-16 border-r border-gray-200 bg-white flex items-center justify-center text-xs text-gray-500 shrink-0">
+            <div className="flex border-b border-gray-200/60 min-h-[40px] sticky z-10 bg-white" style={{ top: '33px' }}>
+               <div className="w-16 border-r border-gray-200/60 bg-white flex items-center justify-center text-xs text-gray-500 shrink-0">
                   all-day
                </div>
                <div className="flex-1 flex relative">
                   {DAYS_HEADER.map((d, i) => {
                      const events = getAllDayEventsForDay(d.fullDate);
                      return (
-                        <div key={i} className="flex-1 border-r border-gray-200 last:border-r-0 p-1 relative">
+                        <div key={i} className="flex-1 border-r border-gray-200/60 last:border-r-0 p-1 relative">
                            {events.map((ev, idx) => (
                               <div key={idx} className={`${ev.color} text-white text-[10px] font-semibold px-2 py-1 rounded w-full shadow-sm mb-1 truncate`}>
                                  {ev.title}
@@ -270,22 +270,22 @@ export const CalendarView: React.FC = () => {
             {/* --- TIME GRID --- */}
             <div className="relative pb-10">
                {hours.map((hour, index) => (
-                  <div key={hour} className="flex h-16 border-b border-gray-100 group">
+                  <div key={hour} className="flex h-16 border-b border-gray-100/80 group">
                      {/* Time Label */}
-                     <div className="w-16 border-r border-gray-200 bg-white text-right pr-2 pt-1 text-xs text-gray-400 font-medium shrink-0 group-hover:text-gray-600 relative">
+                     <div className="w-16 border-r border-gray-200/60 bg-white text-right pr-2 pt-1 text-xs text-gray-400 font-medium shrink-0 group-hover:text-gray-600 relative transition-colors">
                         <span className="-top-2.5 relative bg-white pl-1">{hour}</span>
                      </div>
                      {/* Grid Cells */}
-                     <div className="flex-1 flex relative group-hover:bg-slate-50/10 transition-colors">
+                     <div className="flex-1 flex relative group-hover:bg-slate-50/10 transition-colors duration-150">
                         {DAYS_HEADER.map((d, i) => (
-                           <div 
-                              key={i} 
-                              className="flex-1 border-r border-gray-100 last:border-r-0 relative cursor-pointer hover:bg-blue-50/20 active:bg-blue-50/40 transition-colors"
+                           <div
+                              key={i}
+                              className="flex-1 border-r border-gray-100/60 last:border-r-0 relative cursor-pointer hover:bg-blue-50/30 active:bg-blue-50/50 transition-colors duration-150"
                               onClick={() => handleCellClick(d.fullDate, hour)}
                            ></div>
                         ))}
                         {/* Half hour line */}
-                        <div className="absolute top-1/2 left-0 right-0 border-t border-dashed border-slate-100 w-full pointer-events-none"></div>
+                        <div className="absolute top-1/2 left-0 right-0 border-t border-dashed border-slate-100/60 w-full pointer-events-none"></div>
                      </div>
                   </div>
                ))}
@@ -298,12 +298,12 @@ export const CalendarView: React.FC = () => {
                         return (
                            <div key={i} className="flex-1 h-full relative">
                               {events.map(event => (
-                                 <div 
+                                 <div
                                     key={event.id}
-                                    className={`absolute left-0.5 right-1 rounded-sm px-1.5 py-0.5 flex flex-col justify-start text-white text-[10px] font-semibold pointer-events-auto cursor-pointer hover:brightness-110 shadow-sm border-l-2 border-white/20 ${event.color} transition-all hover:shadow-md z-10`}
-                                    style={{ 
-                                       top: calculateTop(event.start || ''), 
-                                       height: calculateHeight(event.start || '', event.end || '') 
+                                    className={`absolute left-0.5 right-1 rounded-sm px-1.5 py-0.5 flex flex-col justify-start text-white text-[10px] font-semibold pointer-events-auto cursor-pointer hover:brightness-110 shadow-sm border-l-2 border-white/30 ${event.color} transition-all hover:shadow-md hover:-translate-y-px z-10`}
+                                    style={{
+                                       top: calculateTop(event.start || ''),
+                                       height: calculateHeight(event.start || '', event.end || '')
                                     }}
                                  >
                                     <div className="flex items-center gap-1 truncate">

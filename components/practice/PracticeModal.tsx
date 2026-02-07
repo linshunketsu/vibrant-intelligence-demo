@@ -1,5 +1,6 @@
 // Practice Modal component migrated from myPractice folder
 import React from 'react';
+import { X } from 'lucide-react';
 
 interface PracticeModalProps {
   isOpen: boolean;
@@ -24,24 +25,22 @@ export const PracticeModal: React.FC<PracticeModalProps> = ({ isOpen, onClose, t
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex justify-center items-center" onClick={onClose}>
+    <div className="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 flex justify-center items-center animate-in fade-in duration-200" onClick={onClose}>
       <div
-        className={`bg-white rounded-xl shadow-2xl w-full ${sizeClasses[size]} flex flex-col max-h-[90vh]`}
+        className={`bg-white rounded-2xl shadow-xl w-full ${sizeClasses[size]} flex flex-col max-h-[90vh] animate-in zoom-in-95 duration-200 slide-in-from-bottom-4`}
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="flex justify-between items-center p-6 border-b border-slate-200">
-          <h2 className="text-xl font-semibold text-slate-800">{title}</h2>
-          <button onClick={onClose} className="text-slate-400 hover:text-slate-600">
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-            </svg>
+        <div className="flex justify-between items-center px-6 py-4 border-b border-gray-200/60">
+          <h2 className="text-lg font-semibold text-slate-800">{title}</h2>
+          <button onClick={onClose} className="p-1.5 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition-all duration-200">
+            <X size={20} strokeWidth={2} />
           </button>
         </div>
-        <div className="p-6 overflow-y-auto flex-grow">
+        <div className="p-6 overflow-y-auto flex-grow custom-scrollbar">
           {children}
         </div>
         {footer && (
-          <div className="p-6 border-t border-slate-200 bg-slate-50 rounded-b-xl">
+          <div className="p-6 border-t border-gray-200/60 bg-gradient-to-r from-slate-50 to-gray-50 rounded-b-2xl">
             {footer}
           </div>
         )}

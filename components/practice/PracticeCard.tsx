@@ -10,7 +10,7 @@ interface CardProps {
 
 export const PracticeCard: React.FC<CardProps> = ({ children, className = '', title, actions }) => {
   return (
-    <div className={`bg-white rounded-xl shadow-sm border border-slate-200/50 p-6 ${className}`}>
+    <div className={`bg-white rounded-xl shadow-soft border border-gray-200/60 p-6 transition-shadow duration-300 hover:shadow-md ${className}`}>
       {(title || actions) && (
         <div className="flex justify-between items-start mb-4">
           {title && <h3 className="text-lg font-semibold text-slate-800">{title}</h3>}

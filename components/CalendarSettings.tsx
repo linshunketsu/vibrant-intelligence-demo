@@ -68,26 +68,26 @@ export const CalendarSettings: React.FC<CalendarSettingsProps> = ({ onBack }) =>
   return (
     <div className="flex flex-col h-full bg-slate-50 overflow-y-auto custom-scrollbar relative">
       {/* Header */}
-      <div className="bg-white border-b border-gray-200 px-8 py-4 sticky top-0 z-10 flex items-center justify-between shadow-sm">
+      <div className="bg-white/80 backdrop-blur-md border-b border-gray-200/60 px-8 py-4 sticky top-0 z-10 flex items-center justify-between shadow-sm">
         <div className="flex items-center gap-4">
-          <button 
+          <button
             onClick={onBack}
-            className="p-2 hover:bg-slate-100 rounded-full text-slate-500 transition-colors"
+            className="p-2 hover:bg-slate-100 rounded-full text-slate-500 transition-all duration-200"
           >
             <ArrowLeft size={20} />
           </button>
-          <h1 className="text-xl font-bold text-slate-800">Calendar Settings</h1>
+          <h1 className="text-xl font-semibold text-slate-800">Calendar Settings</h1>
         </div>
       </div>
 
       <div className="flex-1 p-8 max-w-6xl mx-auto w-full space-y-8 pb-20">
         
         {/* Time Zone */}
-        <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
+        <div className="bg-white rounded-xl border border-gray-200/60 p-6 shadow-soft">
           <div className="flex items-start gap-3 mb-4">
             <Globe className="text-slate-400 mt-1" size={20} />
             <div className="flex-1">
-              <h3 className="text-base font-bold text-slate-800">Time Zone Settings</h3>
+              <h3 className="text-base font-semibold text-slate-800">Time Zone Settings</h3>
               <p className="text-xs text-slate-500 mt-1">Your calendar and appointment times will follow this time zone.</p>
             </div>
           </div>
@@ -106,24 +106,24 @@ export const CalendarSettings: React.FC<CalendarSettingsProps> = ({ onBack }) =>
         </div>
 
         {/* Public Booking Page Preview */}
-        <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
+        <div className="bg-white rounded-xl border border-gray-200/60 p-6 shadow-soft">
           <div className="flex items-start gap-3">
             <Eye className="text-slate-400 mt-1" size={20} />
             <div className="flex-1">
-              <h3 className="text-base font-bold text-slate-800">Public Booking Page</h3>
+              <h3 className="text-base font-semibold text-slate-800">Public Booking Page</h3>
               <p className="text-xs text-slate-500 mt-1">Preview and share your public scheduling page with patients.</p>
             </div>
           </div>
           <div className="ml-8 mt-4 flex items-center gap-3">
             <button
               onClick={() => setShowPublicPagePreview(true)}
-              className="px-4 py-2 bg-[#0F4C81] text-white text-sm font-bold rounded-lg hover:bg-[#09355E] transition-colors shadow-sm"
+              className="px-4 py-2 bg-[#0F4C81] text-white text-sm font-semibold rounded-lg hover:bg-[#09355E] transition-all duration-200 shadow-sm"
             >
               View Public Booking Page
             </button>
             <button
               onClick={handleCopyLink}
-              className="px-4 py-2 border border-slate-300 text-slate-700 text-sm font-bold rounded-lg hover:bg-slate-50 transition-colors flex items-center gap-2"
+              className="px-4 py-2 border border-slate-300 text-slate-700 text-sm font-semibold rounded-lg hover:bg-slate-50 transition-all duration-200 flex items-center gap-2"
             >
               <Copy size={14} />
               Copy Link
@@ -135,16 +135,16 @@ export const CalendarSettings: React.FC<CalendarSettingsProps> = ({ onBack }) =>
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           
           {/* Weekly Hours */}
-          <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
+          <div className="bg-white rounded-xl border border-gray-200/60 p-6 shadow-soft">
             <div className="flex justify-between items-start mb-6">
               <div className="flex items-start gap-3">
                 <div className="mt-1 text-slate-400"><Clock size={20} /></div>
                 <div>
-                  <h3 className="text-base font-bold text-slate-800">Weekly hours</h3>
+                  <h3 className="text-base font-semibold text-slate-800">Weekly hours</h3>
                   <p className="text-xs text-slate-500 mt-1">Set when you are typically available for appointment</p>
                 </div>
               </div>
-              <button className="px-6 py-2 bg-[#0F4C81] text-white text-sm font-bold rounded-lg hover:bg-[#09355E] transition-colors shadow-sm">
+              <button className="px-6 py-2 bg-[#0F4C81] text-white text-sm font-semibold rounded-lg hover:bg-[#09355E] transition-all duration-200 shadow-sm">
                 Save
               </button>
             </div>
@@ -214,29 +214,29 @@ export const CalendarSettings: React.FC<CalendarSettingsProps> = ({ onBack }) =>
           </div>
 
           {/* Date Overrides */}
-          <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm h-fit">
+          <div className="bg-white rounded-xl border border-gray-200/60 p-6 shadow-soft h-fit">
             <div className="flex justify-between items-start mb-6">
               <div className="flex items-start gap-3">
                 <div className="mt-1 text-slate-400"><Calendar size={20} /></div>
                 <div>
-                  <h3 className="text-base font-bold text-slate-800">Date Overrides</h3>
+                  <h3 className="text-base font-semibold text-slate-800">Date Overrides</h3>
                   <p className="text-xs text-slate-500 mt-1">Overrides replace the default schedule for that date</p>
                 </div>
               </div>
-              <button className="px-4 py-2 border border-slate-300 text-slate-700 text-sm font-bold rounded-lg hover:bg-slate-50 transition-colors">
+              <button className="px-4 py-2 border border-slate-300 text-slate-700 text-sm font-semibold rounded-lg hover:bg-slate-50 transition-all duration-200">
                 Add Hours
               </button>
             </div>
 
             <div className="space-y-2">
-              <div className="flex items-center justify-between p-3 bg-slate-50 rounded-lg border border-gray-100 hover:border-gray-200 transition-colors">
+              <div className="flex items-center justify-between p-3 bg-gradient-to-r from-slate-50 to-gray-50 rounded-lg border border-gray-100/80 hover:border-gray-200/80 hover:shadow-sm transition-all duration-200">
                 <div className="text-sm font-medium text-slate-700">Aug 25, 2025</div>
                 <div className="text-sm text-slate-600">10:00AM - 10:15 AM</div>
                 <div className="flex items-center gap-2">
-                   <button className="flex items-center gap-1 text-xs font-bold text-slate-500 hover:text-[#0F4C81] px-2 py-1 rounded">
+                   <button className="flex items-center gap-1 text-xs font-semibold text-slate-500 hover:text-[#0F4C81] px-2 py-1 rounded transition-colors">
                       <Edit2 size={12} /> Edit
                    </button>
-                   <button className="flex items-center gap-1 text-xs font-bold text-red-500 hover:text-red-700 px-2 py-1 rounded">
+                   <button className="flex items-center gap-1 text-xs font-semibold text-red-500 hover:text-red-700 px-2 py-1 rounded transition-colors">
                       <Trash2 size={12} /> Delete
                    </button>
                 </div>
@@ -246,27 +246,27 @@ export const CalendarSettings: React.FC<CalendarSettingsProps> = ({ onBack }) =>
         </div>
 
         {/* Scheduling Window */}
-        <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
+        <div className="bg-white rounded-xl border border-gray-200/60 p-6 shadow-soft">
           <div className="flex justify-between items-start mb-6">
             <div className="flex items-start gap-3">
               <div className="mt-1 text-slate-400"><Calendar size={20} /></div>
               <div>
-                <h3 className="text-base font-bold text-slate-800">Appointment Scheduling Window</h3>
+                <h3 className="text-base font-semibold text-slate-800">Appointment Scheduling Window</h3>
                 <p className="text-xs text-slate-500 mt-1">Define how soon and how far out appointments can be booked on your calendar.</p>
               </div>
             </div>
-            <button className="px-6 py-2 bg-[#0F4C81] text-white text-sm font-bold rounded-lg hover:bg-[#09355E] transition-colors shadow-sm">
+            <button className="px-6 py-2 bg-[#0F4C81] text-white text-sm font-semibold rounded-lg hover:bg-[#09355E] transition-all duration-200 shadow-sm">
               Save
             </button>
           </div>
 
           <div className="max-w-lg space-y-6 ml-8">
              <div className="flex items-center justify-between">
-                <label className="text-sm font-bold text-slate-700">Sooner available appointment</label>
+                <label className="text-sm font-semibold text-slate-700">Sooner available appointment</label>
                 <div className="flex gap-2">
-                   <input type="number" value={sooner.val} onChange={e => setSooner({...sooner, val: parseInt(e.target.value)})} className="w-16 border border-gray-300 rounded-lg px-3 py-2 text-sm text-center outline-none focus:border-[#0F4C81]" />
+                   <input type="number" value={sooner.val} onChange={e => setSooner({...sooner, val: parseInt(e.target.value)})} className="w-16 border border-gray-300 rounded-lg px-3 py-2 text-sm text-center outline-none focus:ring-2 focus:ring-[#0F4C81]/20 focus:border-[#0F4C81] transition-all" />
                    <div className="relative">
-                      <select className="appearance-none bg-white border border-gray-300 rounded-lg px-3 py-2 pr-8 text-sm outline-none focus:border-[#0F4C81]">
+                      <select className="appearance-none bg-white border border-gray-300 rounded-lg px-3 py-2 pr-8 text-sm outline-none focus:ring-2 focus:ring-[#0F4C81]/20 focus:border-[#0F4C81] transition-all">
                          <option>Hours</option>
                          <option>Days</option>
                       </select>
@@ -276,11 +276,11 @@ export const CalendarSettings: React.FC<CalendarSettingsProps> = ({ onBack }) =>
              </div>
 
              <div className="flex items-center justify-between">
-                <label className="text-sm font-bold text-slate-700">Furthest available appointment</label>
+                <label className="text-sm font-semibold text-slate-700">Furthest available appointment</label>
                 <div className="flex gap-2">
-                   <input type="number" value={furthest.val} onChange={e => setFurthest({...furthest, val: parseInt(e.target.value)})} className="w-16 border border-gray-300 rounded-lg px-3 py-2 text-sm text-center outline-none focus:border-[#0F4C81]" />
+                   <input type="number" value={furthest.val} onChange={e => setFurthest({...furthest, val: parseInt(e.target.value)})} className="w-16 border border-gray-300 rounded-lg px-3 py-2 text-sm text-center outline-none focus:ring-2 focus:ring-[#0F4C81]/20 focus:border-[#0F4C81] transition-all" />
                    <div className="relative">
-                      <select className="appearance-none bg-white border border-gray-300 rounded-lg px-3 py-2 pr-8 text-sm outline-none focus:border-[#0F4C81]">
+                      <select className="appearance-none bg-white border border-gray-300 rounded-lg px-3 py-2 pr-8 text-sm outline-none focus:ring-2 focus:ring-[#0F4C81]/20 focus:border-[#0F4C81] transition-all">
                          <option>Days</option>
                          <option>Weeks</option>
                          <option>Months</option>
@@ -293,12 +293,12 @@ export const CalendarSettings: React.FC<CalendarSettingsProps> = ({ onBack }) =>
         </div>
 
         {/* Appointment Types */}
-        <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
+        <div className="bg-white rounded-xl border border-gray-200/60 p-6 shadow-soft">
           <div className="flex justify-between items-start mb-6">
             <div className="flex items-start gap-3">
               <div className="mt-1 text-slate-400"><Briefcase size={20} /></div>
               <div>
-                <h3 className="text-base font-bold text-slate-800">Customize Appointment Type</h3>
+                <h3 className="text-base font-semibold text-slate-800">Customize Appointment Type</h3>
                 <p className="text-xs text-slate-500 mt-1">Appointment types are managed at the practice level. Changes will affect all providers in this practice.</p>
               </div>
             </div>
@@ -306,24 +306,24 @@ export const CalendarSettings: React.FC<CalendarSettingsProps> = ({ onBack }) =>
 
           <div className="space-y-3 ml-8 max-w-2xl">
              {APPOINTMENT_TYPES.map(type => (
-                <div key={type.id} className="flex items-center justify-between py-2 border-b border-gray-50 last:border-0 hover:bg-slate-50 px-2 rounded-lg transition-colors">
-                   <span className="text-sm font-bold text-slate-700">{type.name}</span>
+                <div key={type.id} className="flex items-center justify-between py-2 border-b border-gray-50/60 last:border-0 hover:bg-slate-50/60 px-2 rounded-lg transition-all duration-200">
+                   <span className="text-sm font-semibold text-slate-700">{type.name}</span>
                    <div className="flex items-center gap-4">
                       <div className={`w-12 h-4 rounded ${type.color}`}></div>
                       <div className="flex items-center gap-2">
-                        <button className="flex items-center gap-1 text-xs font-bold text-slate-500 hover:text-[#0F4C81] px-2 py-1 rounded">
+                        <button className="flex items-center gap-1 text-xs font-semibold text-slate-500 hover:text-[#0F4C81] px-2 py-1 rounded transition-colors">
                             <Edit2 size={12} /> Edit
                         </button>
-                        <button className="flex items-center gap-1 text-xs font-bold text-red-500 hover:text-red-700 px-2 py-1 rounded">
+                        <button className="flex items-center gap-1 text-xs font-semibold text-red-500 hover:text-red-700 px-2 py-1 rounded transition-colors">
                             <Trash2 size={12} /> Delete
                         </button>
                       </div>
                    </div>
                 </div>
              ))}
-             
+
              <div className="pt-4">
-                <button className="px-4 py-2 border border-[#0F4C81] text-[#0F4C81] text-sm font-bold rounded-lg hover:bg-blue-50 transition-colors">
+                <button className="px-4 py-2 border border-[#0F4C81] text-[#0F4C81] text-sm font-semibold rounded-lg hover:bg-blue-50 transition-all duration-200">
                    Add New Appointment Type
                 </button>
              </div>
@@ -331,12 +331,12 @@ export const CalendarSettings: React.FC<CalendarSettingsProps> = ({ onBack }) =>
         </div>
 
         {/* Integrations */}
-        <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
+        <div className="bg-white rounded-xl border border-gray-200/60 p-6 shadow-soft">
           <div className="flex justify-between items-start mb-6">
             <div className="flex items-start gap-3">
               <div className="mt-1 text-slate-400"><Monitor size={20} /></div>
               <div>
-                <h3 className="text-base font-bold text-slate-800">Calendar Sync</h3>
+                <h3 className="text-base font-semibold text-slate-800">Calendar Sync</h3>
                 <p className="text-xs text-slate-500 mt-1">Connect your external calendar to display availability and prevent scheduling conflicts.</p>
               </div>
             </div>
@@ -346,17 +346,17 @@ export const CalendarSettings: React.FC<CalendarSettingsProps> = ({ onBack }) =>
              {/* Outlook */}
              <div className="flex items-center justify-between">
                 <div className="flex items-center gap-4">
-                   <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
+                   <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center shadow-sm">
                       <Mail className="text-blue-600" size={20} />
                    </div>
                    <div>
                       <div className="flex items-center gap-3">
-                         <span className="text-sm font-bold text-slate-800">Outlook</span>
-                         <span className="px-2 py-0.5 bg-gray-100 text-gray-500 text-[10px] font-bold rounded-full">Not Connected</span>
+                         <span className="text-sm font-semibold text-slate-800">Outlook</span>
+                         <span className="px-2 py-0.5 bg-gray-100 text-gray-500 text-[10px] font-semibold rounded-full">Not Connected</span>
                       </div>
                    </div>
                 </div>
-                <button className="px-6 py-2 bg-[#0F4C81] text-white text-sm font-bold rounded-lg hover:bg-[#09355E] transition-colors shadow-sm">
+                <button className="px-6 py-2 bg-[#0F4C81] text-white text-sm font-semibold rounded-lg hover:bg-[#09355E] transition-all duration-200 shadow-sm">
                    Connect
                 </button>
              </div>
@@ -364,18 +364,18 @@ export const CalendarSettings: React.FC<CalendarSettingsProps> = ({ onBack }) =>
              {/* Google */}
              <div className="flex items-center justify-between">
                 <div className="flex items-center gap-4">
-                   <div className="w-10 h-10 bg-white border border-gray-200 rounded-lg flex items-center justify-center p-2">
+                   <div className="w-10 h-10 bg-white border border-gray-200 rounded-lg flex items-center justify-center p-2 shadow-sm">
                       {/* Simple Google Calendar Icon Mock */}
-                      <div className="relative w-full h-full bg-white flex items-center justify-center font-bold text-blue-600 text-xs border-t-4 border-red-500 rounded-sm shadow-sm">31</div>
+                      <div className="relative w-full h-full bg-white flex items-center justify-center font-bold text-blue-600 text-xs border-t-4 border-red-500 rounded-sm">31</div>
                    </div>
                    <div>
                       <div className="flex items-center gap-3">
-                         <span className="text-sm font-bold text-slate-800">Google Calendar</span>
-                         <span className="px-2 py-0.5 bg-gray-100 text-gray-500 text-[10px] font-bold rounded-full">Not Connected</span>
+                         <span className="text-sm font-semibold text-slate-800">Google Calendar</span>
+                         <span className="px-2 py-0.5 bg-gray-100 text-gray-500 text-[10px] font-semibold rounded-full">Not Connected</span>
                       </div>
                    </div>
                 </div>
-                <button className="px-6 py-2 bg-[#0F4C81] text-white text-sm font-bold rounded-lg hover:bg-[#09355E] transition-colors shadow-sm">
+                <button className="px-6 py-2 bg-[#0F4C81] text-white text-sm font-semibold rounded-lg hover:bg-[#09355E] transition-all duration-200 shadow-sm">
                    Connect
                 </button>
              </div>
@@ -397,7 +397,7 @@ export const CalendarSettings: React.FC<CalendarSettingsProps> = ({ onBack }) =>
 
       {/* Toast Notification */}
       {showToast && (
-        <div className="fixed bottom-8 left-1/2 transform -translate-x-1/2 bg-slate-800 text-white px-6 py-3 rounded-lg shadow-lg z-[60] animate-in fade-in slide-in-from-bottom-4">
+        <div className="fixed bottom-8 left-1/2 transform -translate-x-1/2 bg-gradient-to-r from-slate-800 to-slate-700 text-white px-6 py-3 rounded-xl shadow-xl z-[60] animate-in fade-in slide-in-from-bottom-4">
           Link copied to clipboard
         </div>
       )}

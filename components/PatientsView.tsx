@@ -15,6 +15,8 @@ import {
 import { EncounterNotesEditor } from './EncounterNotesEditor';
 import { NotificationCenter } from './NotificationCenter';
 import { SidebarAiAssistant } from './SidebarAiAssistant';
+import { OrderDiagnosticTestsModal } from './OrderDiagnosticTestsModal';
+import { ScheduleAppointmentModal } from './ScheduleAppointmentModal';
 
 // --- Interfaces ---
 
@@ -478,12 +480,14 @@ const getPatientDetails = (id: string, patient: Patient) => {
 };
 
 export const PatientsView: React.FC = () => {
-  const [activePatientId, setActivePatientId] = useState('3'); 
+  const [activePatientId, setActivePatientId] = useState('3');
   const [chatInput, setChatInput] = useState('');
   const [isActionMenuOpen, setIsActionMenuOpen] = useState(false);
   const [viewMode, setViewMode] = useState<'dashboard' | 'encounter_note' | 'notifications'>('dashboard');
   const [activeTab, setActiveTab] = useState<'basics' | 'health' | 'calendar' | 'billing' | null>(null);
   const [pinnedItems, setPinnedItems] = useState<PinnedItem[]>([]);
+  const [showOrderModal, setShowOrderModal] = useState(false);
+  const [showScheduleModal, setShowScheduleModal] = useState(false);
   
   // Right Sidebar State
   const [pegBoardTab, setPegBoardTab] = useState<'cards' | 'ai'>('cards');
@@ -753,6 +757,7 @@ Plan:
   }
 
   return (
+    <>
     <div className="flex h-full bg-white overflow-hidden">
       
       {/* 1. Left Sidebar: Patient List */}
@@ -822,7 +827,7 @@ Plan:
                         <div className="border border-gray-200 rounded-xl bg-white shadow-sm overflow-visible focus-within:ring-2 focus-within:ring-[#0F4C81] transition-all relative">
                             <div className="flex items-center justify-between px-3 py-2 bg-slate-50 border-b border-gray-200 rounded-t-xl">
                                 <div className="flex items-center gap-1 relative">
-                                    <div className="relative"><button onClick={() => setIsActionMenuOpen(!isActionMenuOpen)} className="p-1.5 rounded transition-colors text-gray-400 hover:text-gray-600 hover:bg-gray-100"><Copy size={18} /></button>{isActionMenuOpen && <div className="absolute bottom-full left-0 mb-3 flex flex-col gap-2 min-w-[200px] z-50 animate-in slide-in-from-bottom-2 fade-in duration-200"><MenuOption icon={FileText} label="Encounter Notes" onClick={handleOpenEncounterNote} /><MenuOption icon={Pill} label="eRx" /><MenuOption icon={StickyNote} label="Internal Notes" /><MenuOption icon={MoreHorizontal} label="Other" /></div>}</div><ToolbarIcon icon={Clock} /><ToolbarIcon icon={Calendar} /><ToolbarIcon icon={Package} /><ToolbarIcon icon={FileText} /><ToolbarIcon icon={GitBranch} />
+                                    <div className="relative"><button onClick={() => setIsActionMenuOpen(!isActionMenuOpen)} className="p-1.5 rounded transition-colors text-gray-400 hover:text-gray-600 hover:bg-gray-100"><Copy size={18} /></button>{isActionMenuOpen && <div className="absolute bottom-full left-0 mb-3 flex flex-col gap-2 min-w-[200px] z-50 animate-in slide-in-from-bottom-2 fade-in duration-200"><MenuOption icon={FileText} label="Encounter Notes" onClick={handleOpenEncounterNote} /><MenuOption icon={Pill} label="eRx" /><MenuOption icon={StickyNote} label="Internal Notes" /><MenuOption icon={MoreHorizontal} label="Other" /></div>}</div><ToolbarIcon icon={Clock} /><button onClick={() => setShowScheduleModal(true)} className="p-1.5 rounded transition-colors text-gray-400 hover:text-gray-600 hover:bg-gray-100" title="Schedule Appointment"><Calendar size={18} /></button><button onClick={() => setShowOrderModal(true)} className="p-1.5 rounded transition-colors text-gray-400 hover:text-gray-600 hover:bg-gray-100" title="Order Tests"><Package size={18} /></button><ToolbarIcon icon={FileText} /><ToolbarIcon icon={GitBranch} />
                                 </div>
                                 <button className="flex items-center gap-1.5 text-xs font-semibold text-[#0F4C81] hover:text-[#09355E] px-2 py-1 rounded hover:bg-blue-50 transition-colors"><CheckCheck size={14} /> Mark as replied</button>
                             </div>
@@ -910,5 +915,42 @@ Plan:
       )}
 
     </div>
+
+    {/* Order Diagnostic Tests Modal */}
+    <OrderDiagnosticTestsModal
+      isOpen={showOrderModal}
+      onClose={() => setShowOrderModal(false)}
+      onOrder={(tests) => {
+        console.log('Ordered tests:', tests);
+        // Add system event for the order
+        const newEvent: SystemEventCardProps = {
+          icon: FlaskConical,
+          title: 'Lab Tests Ordered',
+          status: 'Pending',
+          date: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
+          variant: 'info',
+          details: `${tests.length} test${tests.length > 1 ? 's' : ''} ordered: ${tests.map(t => t.name).join(', ')}`
+        };
+      }}
+      patient={{
+        name: activePatient.name,
+        dob: activePatient.dob,
+        age: activePatient.age,
+        gender: activePatient.gender
+      }}
+    />
+
+    {/* Schedule Appointment Modal */}
+    <ScheduleAppointmentModal
+      isOpen={showScheduleModal}
+      onClose={() => setShowScheduleModal(false)}
+      onSchedule={(data) => {
+        console.log('Scheduled appointment:', data);
+      }}
+      patient={{
+        name: activePatient.name
+      }}
+    />
+  </>
   );
 };
