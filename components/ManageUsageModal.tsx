@@ -87,7 +87,7 @@ export const ManageUsageModal: React.FC<ManageUsageModalProps> = ({ isOpen, onCl
           </button>
         </div>
 
-        <div className="flex-1 overflow-y-auto p-6 bg-slate-50">
+        <div className="flex-1 overflow-y-auto p-6 bg-[#f8f8f8]">
           
           {/* Workflow Global Status */}
           <div className="bg-white p-4 rounded-xl shadow-sm border border-gray-100 flex items-center justify-between mb-6">

@@ -370,7 +370,7 @@ export const RightSidebar: React.FC<RightSidebarProps> = ({
              <label className="block text-sm font-semibold text-gray-700 mb-2">
                Communication Channels <span className="text-red-500">*</span>
              </label>
-             <div className="space-y-2 bg-slate-50 p-3 rounded-lg border border-slate-200">
+             <div className="space-y-2 bg-[#f8f8f8] p-3 rounded-lg border border-slate-200">
                 {[
                     { id: 'email', label: 'Email' },
                     { id: 'sms', label: 'SMS' },
@@ -388,7 +388,7 @@ export const RightSidebar: React.FC<RightSidebarProps> = ({
           </div>
 
           {isEmail && (
-             <div className="bg-slate-50 p-3 rounded-lg border border-slate-200 space-y-3">
+             <div className="bg-[#f8f8f8] p-3 rounded-lg border border-slate-200 space-y-3">
                 <div className="space-y-2">
                   <label className="block text-xs font-bold text-slate-500 uppercase">
                      Email Template
@@ -535,7 +535,7 @@ export const RightSidebar: React.FC<RightSidebarProps> = ({
                <label className="block text-sm font-semibold text-gray-700 mb-2">
                  Communication Channels
                </label>
-               <div className="space-y-2 bg-slate-50 p-3 rounded-lg border border-slate-200">
+               <div className="space-y-2 bg-[#f8f8f8] p-3 rounded-lg border border-slate-200">
                     {[
                         { id: 'email', label: 'Email' },
                         { id: 'sms', label: 'SMS' },
@@ -554,7 +554,7 @@ export const RightSidebar: React.FC<RightSidebarProps> = ({
 
             {/* If Email -> Template Selection */}
             {isEmail && (
-               <div className="bg-slate-50 p-3 rounded-lg border border-slate-200 space-y-3">
+               <div className="bg-[#f8f8f8] p-3 rounded-lg border border-slate-200 space-y-3">
                   <div className="space-y-2">
                     <label className="block text-xs font-bold text-slate-500 uppercase">
                        Message Template
@@ -705,7 +705,7 @@ export const RightSidebar: React.FC<RightSidebarProps> = ({
           )
         ) : (
           /* AI Chat Tab */
-          <div className="flex flex-col h-full bg-slate-50">
+          <div className="flex flex-col h-full bg-[#f8f8f8]">
              <div className="flex-1 overflow-y-auto p-4 space-y-4">
                  {aiHistory.map((msg, i) => (
                     <div key={i} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>

@@ -122,7 +122,7 @@ export const EmailTemplateModal: React.FC<EmailTemplateModalProps> = ({
         </div>
 
         {/* Content Body */}
-        <div className="flex-1 flex overflow-hidden bg-slate-50/50 relative">
+        <div className="flex-1 flex overflow-hidden bg-[#f8f8f8]/50 relative">
           
           {viewMode === 'edit' ? (
             <>
@@ -151,7 +151,7 @@ export const EmailTemplateModal: React.FC<EmailTemplateModalProps> = ({
                   
                   <div className="flex-1 border border-slate-200 rounded-lg flex flex-col bg-white overflow-hidden shadow-sm focus-within:ring-2 focus-within:ring-indigo-500 focus-within:border-indigo-500 transition-shadow">
                     {/* Toolbar */}
-                    <div className="px-3 py-2 border-b border-slate-100 bg-slate-50/50 flex items-center gap-1 shrink-0">
+                    <div className="px-3 py-2 border-b border-slate-100 bg-[#f8f8f8]/50 flex items-center gap-1 shrink-0">
                         <ToolbarButton icon={Bold} />
                         <ToolbarButton icon={Italic} />
                         <ToolbarButton icon={Underline} />
@@ -180,7 +180,7 @@ export const EmailTemplateModal: React.FC<EmailTemplateModalProps> = ({
               </div>
 
               {/* Sidebar: Variables */}
-              <div className="w-80 bg-slate-50 border-l border-slate-200 flex flex-col shrink-0">
+              <div className="w-80 bg-[#f8f8f8] border-l border-slate-200 flex flex-col shrink-0">
                 <div className="p-5 border-b border-slate-200/60">
                    <h3 className="text-sm font-bold text-slate-800 flex items-center gap-2">
                      <Type size={16} className="text-indigo-500"/>
@@ -278,7 +278,7 @@ export const EmailTemplateModal: React.FC<EmailTemplateModalProps> = ({
                       </div>
 
                       {/* Transactional Email Body Simulation */}
-                      <div className="flex-1 bg-slate-50 p-6 md:p-10 overflow-y-auto">
+                      <div className="flex-1 bg-[#f8f8f8] p-6 md:p-10 overflow-y-auto">
                         <div className="max-w-[600px] mx-auto bg-white rounded-lg shadow-sm border border-slate-200 overflow-hidden">
                             {/* Brand Header */}
                             <div className="bg-[#0F4C81] px-8 py-6 text-center">
@@ -306,7 +306,7 @@ export const EmailTemplateModal: React.FC<EmailTemplateModalProps> = ({
                             </div>
 
                             {/* Transactional Footer */}
-                            <div className="bg-slate-50 border-t border-slate-100 p-6 text-center">
+                            <div className="bg-[#f8f8f8] border-t border-slate-100 p-6 text-center">
                                 <p className="text-xs text-slate-500 mb-4">
                                     Questions? Contact our support team at <span className="text-[#0F4C81] font-medium">support@vibrant.com</span>
                                 </p>
@@ -337,7 +337,7 @@ export const EmailTemplateModal: React.FC<EmailTemplateModalProps> = ({
            <div className="flex gap-3">
             <button
                 onClick={onClose}
-                className="px-5 py-2.5 text-sm font-semibold text-slate-600 hover:bg-slate-50 hover:text-slate-800 rounded-lg transition-colors"
+                className="px-5 py-2.5 text-sm font-semibold text-slate-600 hover:bg-[#f8f8f8] hover:text-slate-800 rounded-lg transition-colors"
             >
                 Cancel
             </button>

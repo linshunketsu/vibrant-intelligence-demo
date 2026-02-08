@@ -137,7 +137,7 @@ export const TestRunModal: React.FC<TestRunModalProps> = ({ isOpen, onClose, nod
       <div className="bg-white w-full max-w-2xl min-h-[600px] max-h-[85vh] rounded-xl shadow-2xl flex flex-col overflow-hidden animate-in fade-in zoom-in duration-200 border border-slate-200">
         
         {/* Header */}
-        <div className="px-6 py-4 border-b border-gray-100 flex justify-between items-center bg-slate-50/50">
+        <div className="px-6 py-4 border-b border-gray-100 flex justify-between items-center bg-[#f8f8f8]/50">
           <div className="flex items-center gap-3">
              <div className="p-2 bg-blue-50 text-blue-600 rounded-lg">
                 <PlayCircle size={20} />
@@ -171,7 +171,7 @@ export const TestRunModal: React.FC<TestRunModalProps> = ({ isOpen, onClose, nod
         </div>
 
         {/* Content */}
-        <div className="flex-1 overflow-y-auto p-6 bg-slate-50/30 flex flex-col">
+        <div className="flex-1 overflow-y-auto p-6 bg-[#f8f8f8]/30 flex flex-col">
            {activeTab === 'test' ? (
               <>
                  <div className="flex justify-between items-center mb-4">
