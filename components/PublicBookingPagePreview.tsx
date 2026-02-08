@@ -316,116 +316,130 @@ export const PublicBookingPagePreview: React.FC<PublicBookingPagePreviewProps> =
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4" onClick={onClose}>
       <div
-        className="bg-white rounded-2xl shadow-2xl ring-1 ring-black/10 w-full max-w-4xl animate-in fade-in zoom-in-95 duration-200"
+        className="bg-white rounded-2xl shadow-2xl ring-1 ring-black/10 w-full max-w-3xl max-h-[85vh] overflow-hidden flex flex-col animate-in fade-in zoom-in-95 duration-200"
         onClick={(e) => e.stopPropagation()}
       >
-        {/* Header */}
-        <div className="flex items-center justify-between px-6 py-5 border-b border-gray-100">
-          <div>
-            <h2 className="text-xl font-bold text-slate-900">Book an Appointment</h2>
-            <p className="text-sm text-slate-500 mt-0.5">{clinicianName} · {practiceName}</p>
+        {/* Header - Compact */}
+        <div className="bg-gradient-to-r from-[#0F4C81] to-[#1673A8] text-white px-4 py-2">
+          <div className="flex justify-between items-center">
+            <button
+              onClick={onClose}
+              className="p-1 hover:bg-white/10 rounded-full transition-colors"
+            >
+              <X size={18} />
+            </button>
+            <div className="text-center">
+              <p className="text-[10px] font-medium text-blue-100 uppercase tracking-wide">Public Booking Page</p>
+              <p className="text-xs font-bold">Preview Mode</p>
+            </div>
+            <div className="w-5" />
           </div>
-          <button
-            onClick={onClose}
-            className="p-2 hover:bg-gray-100 rounded-full transition-colors"
-          >
-            <X size={20} className="text-slate-500" />
-          </button>
         </div>
 
-        <div className="p-6">
-          {/* Appointment Type */}
-          <div className="mb-6">
-            <label className="text-sm font-semibold text-slate-700 mb-2 block">Appointment Type</label>
-            <div className="flex flex-wrap gap-2">
-              {appointmentTypes.map((type) => (
-                <button
-                  key={type.id}
-                  onClick={() => setSelectedAppointmentType(type)}
-                  className={`
-                    px-4 py-2 rounded-lg text-sm font-medium transition-all
-                    ${selectedAppointmentType?.id === type.id
-                      ? `${type.color} text-white`
-                      : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
-                    }
-                  `}
-                >
-                  {type.name}
-                </button>
-              ))}
-            </div>
+        {/* Compact Clinician Info Row */}
+        <div className="px-4 py-2 border-b border-gray-100 flex items-center gap-3">
+          <img
+            src={clinicianPhoto || DEFAULT_AVATAR}
+            alt={clinicianName}
+            className="w-10 h-10 rounded-full object-cover border border-gray-200"
+          />
+          <div className="min-w-0 flex-1">
+            <h2 className="text-sm font-bold text-slate-800 truncate">{clinicianName}</h2>
+            <p className="text-xs text-slate-500 truncate">{practiceName}</p>
           </div>
+        </div>
 
-          {/* Calendar and Time Slots in Same Row */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-            {/* Calendar */}
-            <div>
+        {/* Appointment Type Selection - Compact Pills */}
+        <div className="px-4 py-2 border-b border-gray-100">
+          <div className="flex flex-wrap gap-1.5">
+            {appointmentTypes.map((type) => (
+              <button
+                key={type.id}
+                onClick={() => setSelectedAppointmentType(type)}
+                className={`
+                  px-2.5 py-1 rounded text-xs font-medium transition-all
+                  ${selectedAppointmentType?.id === type.id
+                    ? `${type.color} text-white shadow-sm`
+                    : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                  }
+                `}
+              >
+                {type.name}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Main Content - Calendar and Time Slots Side by Side */}
+        <div className="flex-1 overflow-y-auto">
+          <div className="grid grid-cols-1 md:grid-cols-2 divide-y md:divide-y-0 md:divide-x divide-gray-100">
+            {/* Calendar Section */}
+            <div className="p-4">
+              {/* Month Navigation */}
               <div className="flex items-center justify-between mb-3">
                 <button
                   onClick={handlePrevMonth}
-                  className="p-1.5 hover:bg-gray-100 rounded-lg transition-colors"
+                  className="p-1 hover:bg-slate-100 rounded transition-colors"
                 >
-                  <ChevronLeft size={18} className="text-slate-600" />
+                  <ChevronLeft size={16} className="text-slate-500" />
                 </button>
-                <span className="text-sm font-semibold text-slate-700">{monthName} 2026</span>
+                <h4 className="text-sm font-semibold text-slate-800">{monthName}</h4>
                 <button
                   onClick={handleNextMonth}
-                  className="p-1.5 hover:bg-gray-100 rounded-lg transition-colors"
+                  className="p-1 hover:bg-slate-100 rounded transition-colors"
                 >
-                  <ChevronRight size={18} className="text-slate-600" />
+                  <ChevronRight size={16} className="text-slate-500" />
                 </button>
               </div>
-              <div className="border border-gray-200 rounded-xl p-3">
-                <div className="grid grid-cols-7 gap-1 mb-2">
-                  {['S', 'M', 'T', 'W', 'T', 'F', 'S'].map((day) => (
-                    <div key={day} className="text-center text-xs font-medium text-slate-400 py-1">
-                      {day}
-                    </div>
-                  ))}
-                  {days.map((day, idx) => (
-                    <button
-                      key={idx}
-                      disabled={!isDateAvailable(day)}
-                      onClick={() => day && handleDateSelect(day)}
-                      className={`
-                        aspect-square rounded-lg text-sm font-medium transition-all
-                        ${day === null
-                          ? 'invisible'
-                          : !isDateAvailable(day)
-                          ? 'text-slate-300 cursor-not-allowed'
-                          : isSelectedDate(day)
-                          ? 'bg-[#0F4C81] text-white'
-                          : 'text-slate-700 hover:bg-gray-100 cursor-pointer'
-                        }
-                      `}
-                    >
-                      {day}
-                    </button>
-                  ))}
-                </div>
+
+              {/* Calendar Grid - Compact */}
+              <div className="grid grid-cols-7 gap-0.5 mb-1">
+                {['S', 'M', 'T', 'W', 'T', 'F', 'S'].map((day, idx) => (
+                  <div key={idx} className="text-center text-[10px] font-semibold text-slate-400 py-1">
+                    {day}
+                  </div>
+                ))}
+                {days.map((day, idx) => (
+                  <button
+                    key={idx}
+                    disabled={!isDateAvailable(day)}
+                    onClick={() => day && handleDateSelect(day)}
+                    className={`
+                      aspect-square rounded text-xs font-medium transition-all
+                      ${day === null
+                        ? 'invisible'
+                        : !isDateAvailable(day)
+                        ? 'text-slate-300 bg-slate-50 cursor-not-allowed'
+                        : isSelectedDate(day)
+                        ? 'bg-[#0F4C81] text-white shadow-sm'
+                        : 'bg-blue-50 text-[#0F4C81] hover:bg-blue-100 cursor-pointer font-semibold'
+                      }
+                    `}
+                  >
+                    {day}
+                  </button>
+                ))}
               </div>
             </div>
 
-            {/* Time Slots */}
-            <div>
-              <h3 className="text-sm font-semibold text-slate-700 mb-3">
-                {selectedDate ? `Available times · ${monthName} ${selectedDate}` : 'Select a date'}
+            {/* Time Slots Section */}
+            <div className="p-4">
+              <h3 className="text-xs font-bold text-slate-700 mb-2">
+                {selectedDate === null ? 'Select a date' : `${monthName} ${selectedDate}`}
               </h3>
               {selectedDate === null ? (
-                <div className="border border-dashed border-gray-300 rounded-xl h-44 flex items-center justify-center">
-                  <p className="text-sm text-slate-400">Choose a date to see times</p>
-                </div>
+                <p className="text-xs text-slate-400 italic">Choose a date to see available times</p>
               ) : availableSlots.length > 0 ? (
-                <div className="grid grid-cols-3 gap-2">
+                <div className="grid grid-cols-3 gap-1.5 max-h-[220px] overflow-y-auto pr-1">
                   {availableSlots.map((time) => (
                     <button
                       key={time}
                       onClick={() => setSelectedTime(time)}
                       className={`
-                        py-3 rounded-lg text-sm font-medium transition-all border
+                        px-2 py-1.5 rounded text-xs font-medium transition-all
                         ${selectedTime === time
-                          ? 'bg-[#0F4C81] text-white border-[#0F4C81]'
-                          : 'bg-white border-gray-200 text-slate-700 hover:border-[#0F4C81]'
+                          ? 'bg-[#0F4C81] text-white shadow-sm'
+                          : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
                         }
                       `}
                     >
@@ -434,53 +448,40 @@ export const PublicBookingPagePreview: React.FC<PublicBookingPagePreviewProps> =
                   ))}
                 </div>
               ) : (
-                <div className="border border-dashed border-gray-300 rounded-xl h-44 flex items-center justify-center">
-                  <p className="text-sm text-slate-400">No times available</p>
-                </div>
+                <p className="text-xs text-slate-500 italic">No available slots</p>
               )}
             </div>
           </div>
 
-          {/* Patient Info Form */}
-          {selectedTime && selectedDate && (
-            <div className="border-t border-gray-100 pt-5">
-              <h3 className="text-sm font-semibold text-slate-700 mb-3">Your Details</h3>
-              <div className="grid grid-cols-2 gap-4">
-                <input
-                  type="text"
-                  placeholder="Full name"
-                  className="px-4 py-2.5 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0F4C81] focus:border-transparent"
-                />
-                <input
-                  type="email"
-                  placeholder="Email address"
-                  className="px-4 py-2.5 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0F4C81] focus:border-transparent"
-                />
+          {/* Booking Summary - Compact */}
+          {selectedTime && selectedDate && selectedAppointmentType && (
+            <div className="mx-4 mb-3 p-3 bg-blue-50 rounded-lg border border-blue-100">
+              <div className="flex items-center gap-2">
+                <div className="w-8 h-8 bg-[#0F4C81] rounded-full flex items-center justify-center shrink-0">
+                  <Check size={16} className="text-white" />
+                </div>
+                <div className="min-w-0 flex-1">
+                  <p className="text-xs font-semibold text-slate-800">
+                    {monthName} {selectedDate} at {selectedTime}
+                  </p>
+                  <p className="text-[10px] text-slate-500 truncate">{selectedAppointmentType.name} with {clinicianName}</p>
+                </div>
               </div>
             </div>
           )}
         </div>
 
-        {/* Footer with Summary and Book Button */}
-        <div className="px-6 py-4 bg-slate-50 border-t border-gray-100 flex items-center justify-between rounded-b-2xl">
-          {selectedTime && selectedDate && selectedAppointmentType ? (
-            <div>
-              <p className="text-sm font-semibold text-slate-800">
-                {monthName} {selectedDate} · {selectedTime}
-              </p>
-              <p className="text-xs text-slate-500">{selectedAppointmentType.name}</p>
-            </div>
-          ) : (
-            <div className="text-sm text-slate-400">Select date and time to continue</div>
-          )}
+        {/* Footer - Compact */}
+        <div className="px-4 py-3 bg-white border-t border-gray-200 flex items-center justify-between shrink-0">
+          <p className="text-[10px] text-slate-400">Powered by Vibrant Intelligence</p>
           <button
             onClick={handleBookAppointment}
             disabled={!selectedTime}
             className={`
-              px-6 py-2.5 rounded-lg text-sm font-semibold transition-all
+              px-5 py-2 rounded-lg text-sm font-semibold transition-all shadow-sm
               ${selectedTime
-                ? 'bg-[#0F4C81] text-white hover:bg-[#09355E] shadow-sm'
-                : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                ? 'bg-[#0F4C81] text-white hover:bg-[#09355E]'
+                : 'bg-slate-200 text-slate-400 cursor-not-allowed'
               }
             `}
           >
