@@ -5,6 +5,9 @@ import {
   Briefcase, Eye
 } from 'lucide-react';
 import { PublicBookingPagePreview } from './PublicBookingPagePreview';
+import googleCalendarIcon from '../Google_Calendar_icon.svg.png';
+import outlookIcon from '../128px-Microsoft_Outlook_Icon_(2025–present).svg.png';
+import zoomIcon from '../zoom.jpeg';
 
 interface CalendarSettingsProps {
   onBack: () => void;
@@ -346,18 +349,8 @@ export const CalendarSettings: React.FC<CalendarSettingsProps> = ({ onBack }) =>
              {/* Google Calendar - Connected */}
              <div className="flex items-center justify-between p-4 bg-gradient-to-r from-green-50 to-emerald-50/50 rounded-xl border border-green-200/60 hover:shadow-sm transition-all duration-200">
                 <div className="flex items-center gap-4">
-                   <div className="w-11 h-11 bg-white rounded-xl flex items-center justify-center shadow-sm overflow-hidden">
-                      {/* Google Calendar Logo - Official colors */}
-                      <svg viewBox="0 0 24 24" className="w-full h-full">
-                         <rect width="24" height="24" fill="#4285F4" rx="4"/>
-                         <path d="M5 5h14v4H5z" fill="#EA4335"/>
-                         <path d="M5 9h14v6H5z" fill="#FBBC04"/>
-                         <path d="M5 15h14v4H5z" fill="#34A853"/>
-                         <rect x="7" y="6" width="10" height="12" fill="white" rx="1"/>
-                         <rect x="9" y="8" width="6" height="2" fill="#BDC1C6" rx="0.5"/>
-                         <rect x="9" y="11" width="6" height="2" fill="#BDC1C6" rx="0.5"/>
-                         <rect x="9" y="14" width="4" height="2" fill="#BDC1C6" rx="0.5"/>
-                      </svg>
+                   <div className="w-11 h-11 bg-white rounded-xl flex items-center justify-center shadow-sm overflow-hidden p-1">
+                      <img src={googleCalendarIcon} alt="Google Calendar" className="w-full h-full object-contain" />
                    </div>
                    <div>
                       <div className="flex items-center gap-3">
@@ -385,19 +378,8 @@ export const CalendarSettings: React.FC<CalendarSettingsProps> = ({ onBack }) =>
              {/* Outlook - Connected */}
              <div className="flex items-center justify-between p-4 bg-gradient-to-r from-green-50 to-emerald-50/50 rounded-xl border border-green-200/60 hover:shadow-sm transition-all duration-200">
                 <div className="flex items-center gap-4">
-                   <div className="w-11 h-11 bg-gradient-to-br from-[#0078D4] to-[#106EBE] rounded-xl flex items-center justify-center shadow-sm">
-                      {/* Microsoft Outlook Logo */}
-                      <svg viewBox="0 0 24 24" className="w-7 h-7">
-                         <rect x="2" y="3" width="14" height="18" rx="1" fill="#0F4A84"/>
-                         <rect x="3" y="4" width="12" height="14" fill="white" rx="0.5"/>
-                         <rect x="4" y="5" width="6" height="8" fill="#0078D4"/>
-                         <rect x="4" y="14" width="10" height="2" fill="#0078D4" rx="0.5"/>
-                         <rect x="4" y="17" width="8" height="1" fill="#B3B3B3" rx="0.5"/>
-                         <rect x="11" y="5" width="3" height="8" fill="#B3B3B3" rx="0.5"/>
-                         <path d="M16 6h5v12h-5z" fill="#0078D4"/>
-                         <path d="M18 8h2v2h-2z" fill="white"/>
-                         <circle cx="21" cy="19" r="2" fill="#0078D4"/>
-                      </svg>
+                   <div className="w-11 h-11 bg-white rounded-xl flex items-center justify-center shadow-sm overflow-hidden p-1">
+                      <img src={outlookIcon} alt="Microsoft Outlook" className="w-full h-full object-contain" />
                    </div>
                    <div>
                       <div className="flex items-center gap-3">
@@ -425,15 +407,8 @@ export const CalendarSettings: React.FC<CalendarSettingsProps> = ({ onBack }) =>
              {/* Zoom - Connected */}
              <div className="flex items-center justify-between p-4 bg-gradient-to-r from-green-50 to-emerald-50/50 rounded-xl border border-green-200/60 hover:shadow-sm transition-all duration-200">
                 <div className="flex items-center gap-4">
-                   <div className="w-11 h-11 bg-white rounded-xl flex items-center justify-center shadow-sm">
-                      {/* Zoom Logo - Official */}
-                      <svg viewBox="0 0 24 24" className="w-full h-full">
-                         <rect width="24" height="24" fill="#2D8CFF" rx="4"/>
-                         <rect x="4" y="8" width="10" height="8" rx="1" fill="white"/>
-                         <polygon points="16,10 22,7 22,17 16,14" fill="white"/>
-                         <circle cx="9" cy="12" r="2" fill="#2D8CFF"/>
-                         <path d="M16 16h2v1h-2z" fill="#2D8CFF"/>
-                      </svg>
+                   <div className="w-11 h-11 bg-white rounded-xl flex items-center justify-center shadow-sm overflow-hidden p-1">
+                      <img src={zoomIcon} alt="Zoom" className="w-full h-full object-contain" />
                    </div>
                    <div>
                       <div className="flex items-center gap-3">
