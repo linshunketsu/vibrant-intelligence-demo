@@ -14,6 +14,94 @@ import { MOCK_PRACTICE_WALLET, MOCK_AT_RISK_PATIENTS, MOCK_TRANSACTIONS, MOCK_DO
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, LineChart, Line, ComposedChart, LabelList } from 'recharts';
 import { analyzeEngagement, queryPracticeInsights } from '../services/practiceGeminiService';
 
+// Helper function to render markdown-like responses
+const renderMarkdownResponse = (text: string) => {
+    const lines = text.split('\n');
+    const elements: JSX.Element[] = [];
+    let i = 0;
+
+    while (i < lines.length) {
+        const line = lines[i];
+
+        // Headers (## or ###)
+        if (line.startsWith('##')) {
+            const isMain = line.startsWith('###');
+            const headerText = line.replace(/^#+\s*/, '');
+            elements.push(
+                <h3 key={i} className={`font-bold text-slate-800 ${isMain ? 'text-base mt-4 mb-2' : 'text-lg mt-5 mb-2'}`}>
+                    {headerText}
+                </h3>
+            );
+        }
+        // Bold text with **
+        else if (line.includes('**') && line.trim().length > 0) {
+            const parts = line.split(/\*\*(.+?)\*\*/g);
+            elements.push(
+                <p key={i} className="my-1">
+                    {parts.map((part, idx) => {
+                        if (idx % 2 === 1) {
+                            return <strong key={idx} className="font-semibold text-slate-800">{part}</strong>;
+                        }
+                        return part;
+                    })}
+                </p>
+            );
+        }
+        // Bullet points
+        else if (line.trim().startsWith('•') || line.trim().startsWith('-')) {
+            const bulletText = line.replace(/^[\s•-]+\s*/, '');
+            elements.push(
+                <p key={i} className="ml-2 my-1 text-slate-700">
+                    <span className="text-brand-primary mr-2">•</span>{bulletText}
+                </p>
+            );
+        }
+        // Tables
+        else if (line.includes('|')) {
+            const tableLines: string[] = [];
+            while (i < lines.length && lines[i].includes('|')) {
+                tableLines.push(lines[i]);
+                i++;
+            }
+            i--; // Adjust for outer increment
+
+            if (tableLines.length > 0) {
+                const rows = tableLines.map(line => line.split('|').filter(cell => cell.trim() !== ''));
+                const isHeader = tableLines[0].toLowerCase().includes('---');
+
+                elements.push(
+                    <div key={i} className="my-3 overflow-x-auto">
+                        <table className="min-w-full text-sm">
+                            <tbody>
+                                {rows.map((row, rowIdx) => {
+                                    const isHeaderRow = rowIdx === 0 || (rowIdx === 1 && isHeader);
+                                    return (
+                                        <tr key={rowIdx} className={isHeaderRow ? 'border-b-2 border-slate-200' : 'border-b border-slate-100'}>
+                                            {row.map((cell, cellIdx) => (
+                                                <td key={cellIdx} className={`py-1.5 px-2 ${cellIdx === 0 ? 'text-left font-medium' : 'text-left'} ${isHeaderRow ? 'font-semibold text-slate-700' : 'text-slate-600'}`}>
+                                                    {cell.trim()}
+                                                </td>
+                                            ))}
+                                        </tr>
+                                    );
+                                })}
+                            </tbody>
+                        </table>
+                    </div>
+                );
+            }
+        }
+        // Regular paragraph
+        else if (line.trim()) {
+            elements.push(<p key={i} className="my-1 text-slate-700">{line}</p>);
+        }
+
+        i++;
+    }
+
+    return <div className="space-y-1">{elements}</div>;
+};
+
 interface DashboardProps {
   onOpenSettings: () => void;
   currentUserRole: UserRole;
@@ -988,16 +1076,16 @@ export const PracticeView: React.FC<DashboardProps> = ({ onOpenSettings, current
                         <div className="pt-4 border-t border-slate-200 space-y-4">
                             <label className="block text-xs font-semibold text-slate-500 mb-2 uppercase tracking-wide">Deep Dive AI Assistant</label>
                             {(isAiDeepDiveLoading || aiDeepDiveResponse) && (
-                                <div className={`p-4 rounded-xl text-sm leading-relaxed border animate-in fade-in slide-in-from-top-2 duration-300 ${isAiDeepDiveLoading ? 'bg-slate-50 border-slate-100 text-slate-400 italic' : 'bg-brand-light/20 border-brand-primary/10 text-slate-700'}`}>
+                                <div className={`p-4 rounded-xl text-sm leading-relaxed border animate-in fade-in slide-in-from-top-2 duration-300 ${isAiDeepDiveLoading ? 'bg-slate-50 border-slate-100 text-slate-400 italic' : 'bg-brand-light/30 border-brand-primary/20 text-slate-700'}`}>
                                     {isAiDeepDiveLoading ? (
                                         <div className="flex items-center space-x-2">
                                             <LoadingIcon className="h-4 w-4 animate-spin text-brand-primary" />
-                                            <span>Analyzing scoped data...</span>
+                                            <span>Analyzing practice data...</span>
                                         </div>
                                     ) : (
                                         <div className="relative group/response">
                                             <button onClick={() => setAiDeepDiveResponse(null)} className="absolute -top-2 -right-2 p-1 bg-white border border-slate-200 rounded-full shadow-sm text-slate-400 hover:text-red-500 transition-colors opacity-0 group-hover/response:opacity-100"><XMarkIcon className="h-3 w-3" /></button>
-                                            {aiDeepDiveResponse}
+                                            {renderMarkdownResponse(aiDeepDiveResponse)}
                                         </div>
                                     )}
                                 </div>
@@ -1016,6 +1104,32 @@ export const PracticeView: React.FC<DashboardProps> = ({ onOpenSettings, current
                                 />
                                 <button onClick={handleAiDeepDiveSubmit} disabled={isAiDeepDiveLoading || !askAiQuery.trim()} className="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-brand-primary disabled:opacity-30 disabled:cursor-not-allowed transition-colors"><SendIcon className="h-4 w-4" /></button>
                             </div>
+                            {!aiDeepDiveResponse && (
+                                <div className="flex flex-wrap gap-2">
+                                    {[
+                                        { query: 'Show me no-show rates for the past month', icon: '📅' },
+                                        { query: 'What are my top revenue sources?', icon: '💰' },
+                                        { query: 'Patient engagement summary', icon: '📊' },
+                                        { query: 'Analyze financial performance', icon: '📈' }
+                                    ].map((prompt, idx) => (
+                                        <button
+                                            key={idx}
+                                            onClick={() => {
+                                                setAskAiQuery(prompt.query);
+                                                // Auto-submit after setting
+                                                setTimeout(() => {
+                                                    handleAiDeepDiveSubmit();
+                                                }, 100);
+                                            }}
+                                            disabled={isAiDeepDiveLoading}
+                                            className="flex items-center gap-1.5 px-3 py-1.5 bg-white border border-slate-200 rounded-full text-xs font-medium text-slate-600 hover:border-brand-primary hover:text-brand-primary hover:bg-brand-light/30 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                                        >
+                                            <span>{prompt.icon}</span>
+                                            <span>{prompt.query}</span>
+                                        </button>
+                                    ))}
+                                </div>
+                            )}
                         </div>
                     </div>
                 </Card>
