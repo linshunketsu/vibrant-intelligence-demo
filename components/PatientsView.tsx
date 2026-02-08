@@ -293,18 +293,39 @@ const ChatMessageCard: React.FC<ChatMessageProps> = ({ sender, senderName, messa
     const ChannelIcon = channel === 'email' ? Mail : channel === 'text' ? Smartphone : MessageSquare;
     const isEmail = channel === 'email';
 
+    // Helper to generate initials from name if not provided
+    const getInitials = (name: string) => {
+        if (initials) return initials;
+        return name.split(' ').map(n => n[0]).join('').toUpperCase();
+    };
+
     // Email format rendering - aligned left/right based on sender
     if (isEmail) {
+        // Generate email address based on sender type
+        const getEmailDomain = () => {
+            if (isFromPatient) {
+                // Patient uses common email providers
+                const domains = ['gmail.com', 'yahoo.com', 'outlook.com', 'icloud.com'];
+                const hash = senderName.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
+                return domains[hash % domains.length];
+            } else {
+                // Provider uses vibrantclinics.com
+                return 'vibrantclinics.com';
+            }
+        };
+        const emailAddress = senderName.toLowerCase().replace(/\s+/g, '.') + '@' + getEmailDomain();
+
         return (
             <div className={`w-full flex ${isFromPatient ? 'justify-start' : 'justify-end'} px-8 py-3`}>
                 <div className="max-w-xl w-full">
                     {/* Sender indicator strip */}
-                    <div className={`flex items-center gap-2 mb-1 px-1 ${isFromPatient ? '' : 'justify-end'}`}>
+                    <div className={`flex items-center gap-2 mb-1 px-1 ${isFromPatient ? '' : 'flex-row-reverse'}`}>
                         <div className={`w-5 h-5 rounded-full flex items-center justify-center text-[9px] font-bold ${
                             isFromPatient ? 'bg-slate-200 text-slate-600' : 'bg-[#0F4C81] text-white'
                         }`}>
-                            {initials || senderName.charAt(0)}
+                            {getInitials(senderName)}
                         </div>
+                        <span className="text-[11px] font-semibold text-gray-700">{senderName}</span>
                         <span className="text-[10px] text-gray-400">{timestamp}</span>
                         <span className={`flex items-center gap-1 px-2 py-0.5 rounded text-[9px] font-bold uppercase tracking-wide ${channelStyles.bg} ${channelStyles.color} ${channelStyles.border} border`}>
                             <ChannelIcon size={8} />
@@ -319,7 +340,7 @@ const ChatMessageCard: React.FC<ChatMessageProps> = ({ sender, senderName, messa
                             <div className="text-xs text-gray-800 font-semibold mb-1">{subject || 'No Subject'}</div>
                             <div className="text-[10px] text-gray-500">
                                 <span className="font-medium text-gray-600">{senderName}</span>
-                                <span className="text-gray-400 mx-1">&lt;{senderName.toLowerCase().replace(/\s/g, '.')}@email.com&gt;</span>
+                                <span className="text-gray-400 mx-1">&lt;{emailAddress}&gt;</span>
                             </div>
                         </div>
 
@@ -343,7 +364,7 @@ const ChatMessageCard: React.FC<ChatMessageProps> = ({ sender, senderName, messa
                         ? 'bg-slate-200 text-slate-600'
                         : 'bg-[#0F4C81] text-white'
                 }`}>
-                    {avatar ? <img src={avatar} className="w-full h-full object-cover rounded-full" alt={senderName} /> : (initials || senderName.charAt(0))}
+                    {avatar ? <img src={avatar} className="w-full h-full object-cover rounded-full" alt={senderName} /> : getInitials(senderName)}
                 </div>
 
                 {/* Message Group */}
@@ -1743,9 +1764,9 @@ Dr. Johnson
           { type: 'event', icon: Truck, title: 'Kit Delivered', variant: 'success', date: '02-05-2026 02:22 PM', details: 'Delivered to front porch.' },
           { type: 'separator', date: '02-06-2026' },
           // Mixed channels for demo
-          { type: 'chat', sender: 'patient', senderName: patient?.name || 'Patient', message: 'Hi, I received the kit but I have a question about the fasting requirements. How many hours should I fast before collecting the sample?', timestamp: '09:30 AM', channel: 'email', subject: 'Question about fasting requirements' },
+          { type: 'chat', sender: 'patient', senderName: patient?.name || 'Jane Smith', message: 'Hi, I received the kit but I have a question about the fasting requirements. How many hours should I fast before collecting the sample?', timestamp: '09:30 AM', channel: 'email', subject: 'Question about fasting requirements', initials: 'JS' },
           { type: 'chat', sender: 'provider', senderName: 'Irene Hoffman', message: 'Great question! You should fast for at least 12 hours before collecting your sample. This means no food or drinks other than water.', timestamp: '10:15 AM', channel: 'text', initials: 'IH' },
-          { type: 'chat', sender: 'patient', senderName: patient?.name || 'Patient', message: 'Thank you for the quick response! Can I still take my morning medications?', timestamp: '10:45 AM', channel: 'portal' },
+          { type: 'chat', sender: 'patient', senderName: patient?.name || 'Jane Smith', message: 'Thank you for the quick response! Can I still take my morning medications?', timestamp: '10:45 AM', channel: 'portal', initials: 'JS' },
           { type: 'chat', sender: 'provider', senderName: 'Irene Hoffman', message: 'Yes, please continue with your regular medications unless specifically instructed otherwise. Just avoid any supplements or vitamins during the fasting window.', timestamp: '11:00 AM', channel: 'email', subject: 'Re: Question about fasting requirements', initials: 'IH' },
           { type: 'separator', date: 'Today' },
           { type: 'event', icon: Package, title: 'Kit Returned to Lab', variant: 'neutral', date: '10:05 AM', details: 'Sample received at intake.' }
