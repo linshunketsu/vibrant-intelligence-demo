@@ -336,48 +336,115 @@ export const CalendarSettings: React.FC<CalendarSettingsProps> = ({ onBack }) =>
             <div className="flex items-start gap-3">
               <div className="mt-1 text-slate-400"><Monitor size={20} /></div>
               <div>
-                <h3 className="text-base font-semibold text-slate-800">Calendar Sync</h3>
-                <p className="text-xs text-slate-500 mt-1">Connect your external calendar to display availability and prevent scheduling conflicts.</p>
+                <h3 className="text-base font-semibold text-slate-800">Calendar & Video Integrations</h3>
+                <p className="text-xs text-slate-500 mt-1">Connect your external calendars and video conferencing tools for seamless scheduling.</p>
               </div>
             </div>
           </div>
 
-          <div className="space-y-6 ml-8 max-w-4xl">
-             {/* Outlook */}
-             <div className="flex items-center justify-between">
+          <div className="space-y-5 ml-8 max-w-4xl">
+             {/* Google Calendar - Connected */}
+             <div className="flex items-center justify-between p-4 bg-gradient-to-r from-green-50 to-emerald-50/50 rounded-xl border border-green-200/60 hover:shadow-sm transition-all duration-200">
                 <div className="flex items-center gap-4">
-                   <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center shadow-sm">
-                      <Mail className="text-blue-600" size={20} />
-                   </div>
-                   <div>
-                      <div className="flex items-center gap-3">
-                         <span className="text-sm font-semibold text-slate-800">Outlook</span>
-                         <span className="px-2 py-0.5 bg-gray-100 text-gray-500 text-[10px] font-semibold rounded-full">Not Connected</span>
-                      </div>
-                   </div>
-                </div>
-                <button className="px-6 py-2 bg-[#0F4C81] text-white text-sm font-semibold rounded-lg hover:bg-[#09355E] transition-all duration-200 shadow-sm">
-                   Connect
-                </button>
-             </div>
-
-             {/* Google */}
-             <div className="flex items-center justify-between">
-                <div className="flex items-center gap-4">
-                   <div className="w-10 h-10 bg-white border border-gray-200 rounded-lg flex items-center justify-center p-2 shadow-sm">
-                      {/* Simple Google Calendar Icon Mock */}
-                      <div className="relative w-full h-full bg-white flex items-center justify-center font-bold text-blue-600 text-xs border-t-4 border-red-500 rounded-sm">31</div>
+                   <div className="w-11 h-11 bg-white border border-gray-200 rounded-xl flex items-center justify-center p-1.5 shadow-sm">
+                      {/* Google Calendar Logo */}
+                      <svg viewBox="0 0 24 24" className="w-full h-full">
+                         <path fill="#4285F4" d="M22 6c0-1.1-.9-2-2-2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6z"/>
+                         <path fill="#FFF" d="M12 12.5c1.38 0 2.5-1.12 2.5-2.5s-1.12-2.5-2.5-2.5S9.5 8.62 9.5 10s1.12 2.5 2.5 2.5z"/>
+                         <text x="7.5" y="9" fill="#FFF" fontSize="5" fontWeight="bold">31</text>
+                      </svg>
                    </div>
                    <div>
                       <div className="flex items-center gap-3">
                          <span className="text-sm font-semibold text-slate-800">Google Calendar</span>
-                         <span className="px-2 py-0.5 bg-gray-100 text-gray-500 text-[10px] font-semibold rounded-full">Not Connected</span>
+                         <span className="flex items-center gap-1 px-2.5 py-0.5 bg-green-100 text-green-700 text-[10px] font-bold rounded-full">
+                           <Check size={10} strokeWidth={3} /> Connected
+                         </span>
                       </div>
+                      <p className="text-xs text-slate-500 mt-0.5">irene.hoffman@vibrantclinics.com</p>
+                      <p className="text-xs text-green-600 mt-0.5 flex items-center gap-1">
+                         <Check size={10} /> Sync active • Last sync: 2 min ago
+                      </p>
                    </div>
                 </div>
-                <button className="px-6 py-2 bg-[#0F4C81] text-white text-sm font-semibold rounded-lg hover:bg-[#09355E] transition-all duration-200 shadow-sm">
-                   Connect
-                </button>
+                <div className="flex items-center gap-2">
+                   <button className="px-3 py-1.5 text-xs font-semibold text-slate-600 hover:text-slate-800 hover:bg-slate-100 rounded-lg transition-all">
+                      Settings
+                   </button>
+                   <button className="px-3 py-1.5 text-xs font-semibold text-red-600 hover:text-red-700 hover:bg-red-50 rounded-lg transition-all">
+                      Disconnect
+                   </button>
+                </div>
+             </div>
+
+             {/* Outlook - Connected */}
+             <div className="flex items-center justify-between p-4 bg-gradient-to-r from-green-50 to-emerald-50/50 rounded-xl border border-green-200/60 hover:shadow-sm transition-all duration-200">
+                <div className="flex items-center gap-4">
+                   <div className="w-11 h-11 bg-gradient-to-br from-blue-500 to-blue-700 rounded-xl flex items-center justify-center shadow-sm">
+                      <Mail className="text-white" size={20} />
+                   </div>
+                   <div>
+                      <div className="flex items-center gap-3">
+                         <span className="text-sm font-semibold text-slate-800">Microsoft Outlook</span>
+                         <span className="flex items-center gap-1 px-2.5 py-0.5 bg-green-100 text-green-700 text-[10px] font-bold rounded-full">
+                           <Check size={10} strokeWidth={3} /> Connected
+                         </span>
+                      </div>
+                      <p className="text-xs text-slate-500 mt-0.5">ihoffman@vibrantclinics.com</p>
+                      <p className="text-xs text-green-600 mt-0.5 flex items-center gap-1">
+                         <Check size={10} /> Sync active • Last sync: 5 min ago
+                      </p>
+                   </div>
+                </div>
+                <div className="flex items-center gap-2">
+                   <button className="px-3 py-1.5 text-xs font-semibold text-slate-600 hover:text-slate-800 hover:bg-slate-100 rounded-lg transition-all">
+                      Settings
+                   </button>
+                   <button className="px-3 py-1.5 text-xs font-semibold text-red-600 hover:text-red-700 hover:bg-red-50 rounded-lg transition-all">
+                      Disconnect
+                   </button>
+                </div>
+             </div>
+
+             {/* Zoom - Connected */}
+             <div className="flex items-center justify-between p-4 bg-gradient-to-r from-green-50 to-emerald-50/50 rounded-xl border border-green-200/60 hover:shadow-sm transition-all duration-200">
+                <div className="flex items-center gap-4">
+                   <div className="w-11 h-11 bg-gradient-to-br from-blue-600 to-blue-800 rounded-xl flex items-center justify-center shadow-sm">
+                      {/* Video camera icon for Zoom */}
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                         <polygon points="23 7 16 12 23 17 23 7"></polygon>
+                         <rect x="1" y="5" width="15" height="14" rx="2" ry="2"></rect>
+                      </svg>
+                   </div>
+                   <div>
+                      <div className="flex items-center gap-3">
+                         <span className="text-sm font-semibold text-slate-800">Zoom</span>
+                         <span className="flex items-center gap-1 px-2.5 py-0.5 bg-green-100 text-green-700 text-[10px] font-bold rounded-full">
+                           <Check size={10} strokeWidth={3} /> Connected
+                         </span>
+                      </div>
+                      <p className="text-xs text-slate-500 mt-0.5">Pro Plan • Video meetings enabled</p>
+                      <p className="text-xs text-green-600 mt-0.5 flex items-center gap-1">
+                         <Check size={10} /> Meeting links auto-generated
+                      </p>
+                   </div>
+                </div>
+                <div className="flex items-center gap-2">
+                   <button className="px-3 py-1.5 text-xs font-semibold text-slate-600 hover:text-slate-800 hover:bg-slate-100 rounded-lg transition-all">
+                      Settings
+                   </button>
+                   <button className="px-3 py-1.5 text-xs font-semibold text-red-600 hover:text-red-700 hover:bg-red-50 rounded-lg transition-all">
+                      Disconnect
+                   </button>
+                </div>
+             </div>
+
+             {/* Add more integrations CTA */}
+             <div className="flex items-center justify-center p-4 border-2 border-dashed border-gray-200 rounded-xl hover:border-gray-300 hover:bg-gray-50/50 transition-all cursor-pointer group">
+                <div className="flex items-center gap-2 text-sm font-medium text-slate-500 group-hover:text-slate-700">
+                   <Plus size={16} />
+                   Add more integrations
+                </div>
              </div>
           </div>
         </div>
