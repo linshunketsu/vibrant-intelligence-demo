@@ -1,5 +1,8 @@
 import React, { useState, useMemo } from 'react';
-import { X, Search, Plus, Calendar, AlertCircle } from 'lucide-react';
+import { X, Search, Plus, Calendar, AlertCircle, CreditCard, Package, Building2 } from 'lucide-react';
+
+type PaymentMethod = 'provider-bill' | 'patient-pay-later' | 'patient-pay-now';
+type DeliveryMethod = 'office' | 'ship';
 
 interface Test {
   id: string;
@@ -19,7 +22,7 @@ interface OrderDiagnosticTestsModalProps {
   isOpen: boolean;
   onClose: () => void;
   patient: PatientInfo;
-  onOrder: (tests: Test[]) => void;
+  onOrder: (tests: Test[], paymentMethod: PaymentMethod, deliveryMethod: DeliveryMethod) => void;
 }
 
 // Available tests
@@ -45,6 +48,8 @@ export const OrderDiagnosticTestsModal: React.FC<OrderDiagnosticTestsModalProps>
 }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedTests, setSelectedTests] = useState<Set<string>>(new Set());
+  const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>('provider-bill');
+  const [deliveryMethod, setDeliveryMethod] = useState<DeliveryMethod>('office');
 
   // Filter tests based on search
   const filteredTests = useMemo(() => {
@@ -76,7 +81,7 @@ export const OrderDiagnosticTestsModal: React.FC<OrderDiagnosticTestsModalProps>
         tests.push(test);
       }
     });
-    onOrder(tests);
+    onOrder(tests, paymentMethod, deliveryMethod);
     onClose();
   };
 
@@ -211,6 +216,121 @@ export const OrderDiagnosticTestsModal: React.FC<OrderDiagnosticTestsModalProps>
                   ))}
                 </div>
               )}
+
+              {/* Payment Method */}
+              <div className="mt-6">
+                <h3 className="text-sm font-bold text-gray-700 mb-2 flex items-center gap-2">
+                  <CreditCard size={14} className="text-[#0F4C81]" />
+                  Payment Method
+                </h3>
+                <div className="space-y-2">
+                  <label
+                    className={`flex items-start gap-2 p-2.5 rounded-lg cursor-pointer transition-all border ${
+                      paymentMethod === 'provider-bill'
+                        ? 'bg-blue-50 border-blue-300'
+                        : 'bg-white border-gray-200 hover:bg-gray-50'
+                    }`}
+                  >
+                    <input
+                      type="radio"
+                      name="payment"
+                      checked={paymentMethod === 'provider-bill'}
+                      onChange={() => setPaymentMethod('provider-bill')}
+                      className="mt-0.5 w-4 h-4 text-[#0F4C81] focus:ring-[#0F4C81]"
+                    />
+                    <div className="flex-1">
+                      <p className="text-sm font-medium text-gray-900">Provider Bill</p>
+                      <p className="text-xs text-gray-500">Billed to practice account</p>
+                    </div>
+                  </label>
+                  <label
+                    className={`flex items-start gap-2 p-2.5 rounded-lg cursor-pointer transition-all border ${
+                      paymentMethod === 'patient-pay-later'
+                        ? 'bg-blue-50 border-blue-300'
+                        : 'bg-white border-gray-200 hover:bg-gray-50'
+                    }`}
+                  >
+                    <input
+                      type="radio"
+                      name="payment"
+                      checked={paymentMethod === 'patient-pay-later'}
+                      onChange={() => setPaymentMethod('patient-pay-later')}
+                      className="mt-0.5 w-4 h-4 text-[#0F4C81] focus:ring-[#0F4C81]"
+                    />
+                    <div className="flex-1">
+                      <p className="text-sm font-medium text-gray-900">Patient Pay Later</p>
+                      <p className="text-xs text-gray-500">Bill sent to patient</p>
+                    </div>
+                  </label>
+                  <label
+                    className={`flex items-start gap-2 p-2.5 rounded-lg cursor-pointer transition-all border ${
+                      paymentMethod === 'patient-pay-now'
+                        ? 'bg-blue-50 border-blue-300'
+                        : 'bg-white border-gray-200 hover:bg-gray-50'
+                    }`}
+                  >
+                    <input
+                      type="radio"
+                      name="payment"
+                      checked={paymentMethod === 'patient-pay-now'}
+                      onChange={() => setPaymentMethod('patient-pay-now')}
+                      className="mt-0.5 w-4 h-4 text-[#0F4C81] focus:ring-[#0F4C81]"
+                    />
+                    <div className="flex-1">
+                      <p className="text-sm font-medium text-gray-900">Patient Pay Now</p>
+                      <p className="text-xs text-gray-500">Collect payment at checkout</p>
+                    </div>
+                  </label>
+                </div>
+              </div>
+
+              {/* Delivery Method */}
+              <div className="mt-6">
+                <h3 className="text-sm font-bold text-gray-700 mb-2 flex items-center gap-2">
+                  <Package size={14} className="text-[#0F4C81]" />
+                  Delivery Method
+                </h3>
+                <div className="space-y-2">
+                  <label
+                    className={`flex items-start gap-2 p-2.5 rounded-lg cursor-pointer transition-all border ${
+                      deliveryMethod === 'office'
+                        ? 'bg-blue-50 border-blue-300'
+                        : 'bg-white border-gray-200 hover:bg-gray-50'
+                    }`}
+                  >
+                    <input
+                      type="radio"
+                      name="delivery"
+                      checked={deliveryMethod === 'office'}
+                      onChange={() => setDeliveryMethod('office')}
+                      className="mt-0.5 w-4 h-4 text-[#0F4C81] focus:ring-[#0F4C81]"
+                    />
+                    <div className="flex-1">
+                      <p className="text-sm font-medium text-gray-900">Provided by Office</p>
+                      <p className="text-xs text-gray-500">Patient picks up kit at practice</p>
+                    </div>
+                  </label>
+                  <label
+                    className={`flex items-start gap-2 p-2.5 rounded-lg cursor-pointer transition-all border ${
+                      deliveryMethod === 'ship'
+                        ? 'bg-blue-50 border-blue-300'
+                        : 'bg-white border-gray-200 hover:bg-gray-50'
+                    }`}
+                  >
+                    <input
+                      type="radio"
+                      name="delivery"
+                      checked={deliveryMethod === 'ship'}
+                      onChange={() => setDeliveryMethod('ship')}
+                      className="mt-0.5 w-4 h-4 text-[#0F4C81] focus:ring-[#0F4C81]"
+                    />
+                    <div className="flex-1">
+                      <p className="text-sm font-medium text-gray-900">Ship to Patient</p>
+                      <p className="text-xs text-gray-500">Kit mailed to patient address</p>
+                    </div>
+                  </label>
+                </div>
+              </div>
             </div>
 
             {/* Total & Order Button */}

@@ -52,6 +52,18 @@ interface SystemEventCardProps {
     variant?: 'neutral' | 'success' | 'info' | 'warning' | 'error';
     details?: string;
     actionLabel?: string;
+    channel?: 'portal' | 'email' | 'text';
+}
+
+interface ChatMessageProps {
+    sender: 'patient' | 'provider';
+    senderName: string;
+    message: string;
+    timestamp: string;
+    channel: 'portal' | 'email' | 'text';
+    avatar?: string;
+    initials?: string;
+    subject?: string; // For email messages
 }
 
 // --- Helper Components ---
@@ -216,7 +228,7 @@ const WorkflowProgressBar: React.FC<{ status: 'on-track' | 'exception' | 'comple
     );
 };
 
-const SystemEventCard: React.FC<SystemEventCardProps> = ({ icon: Icon, title, status, date, variant = 'neutral', details, actionLabel }) => {
+const SystemEventCard: React.FC<SystemEventCardProps> = ({ icon: Icon, title, status, date, variant = 'neutral', details, actionLabel, channel }) => {
     const styles = {
         neutral: { bg: 'bg-white', border: 'border-slate-200', iconBg: 'bg-slate-100', iconColor: 'text-slate-500', title: 'text-slate-900', text: 'text-slate-600' },
         success: { bg: 'bg-white', border: 'border-slate-200', iconBg: 'bg-[#0F4C81]', iconColor: 'text-white', title: 'text-slate-900', text: 'text-slate-600' },
@@ -224,7 +236,16 @@ const SystemEventCard: React.FC<SystemEventCardProps> = ({ icon: Icon, title, st
         warning: { bg: 'bg-amber-50', border: 'border-amber-200', iconBg: 'bg-amber-100', iconColor: 'text-amber-600', title: 'text-slate-900', text: 'text-slate-600' },
         error: { bg: 'bg-red-50', border: 'border-red-200', iconBg: 'bg-red-100', iconColor: 'text-red-600', title: 'text-slate-900', text: 'text-slate-700' },
     };
+
+    const channelConfig = {
+        portal: { label: 'Portal Chat', icon: MessageSquare, color: 'text-blue-600', bg: 'bg-blue-50' },
+        email: { label: 'Email', icon: Mail, color: 'text-purple-600', bg: 'bg-purple-50' },
+        text: { label: 'Text', icon: Smartphone, color: 'text-emerald-600', bg: 'bg-emerald-50' },
+    };
+
     const s = styles[variant] || styles.neutral;
+    const channelInfo = channel ? channelConfig[channel] : null;
+
     return (
         <div className="flex justify-center w-full">
             <div className={`rounded-xl p-4 border max-w-2xl w-full flex items-start gap-4 shadow-sm transition-all hover:shadow-md ${s.bg} ${s.border}`}>
@@ -233,8 +254,16 @@ const SystemEventCard: React.FC<SystemEventCardProps> = ({ icon: Icon, title, st
                 </div>
                 <div className="flex-1 min-w-0">
                     <div className="flex justify-between items-start">
-                        <h4 className={`font-semibold text-sm ${s.title}`}>{title}</h4>
-                        <span className={`text-[11px] opacity-60 ml-2 whitespace-nowrap font-medium ${s.text}`}>{date}</span>
+                        <div className="flex items-center gap-2">
+                            <h4 className={`font-semibold text-sm ${s.title}`}>{title}</h4>
+                            {channelInfo && (
+                                <span className={`px-2 py-0.5 rounded-full text-[9px] font-semibold flex items-center gap-1 ${channelInfo.bg} ${channelInfo.color}`}>
+                                    <channelInfo.icon size={10} />
+                                    {channelInfo.label}
+                                </span>
+                            )}
+                        </div>
+                        <span className={`text-[11px] opacity-60 ml-auto whitespace-nowrap font-medium ${s.text}`}>{date}</span>
                     </div>
                     {details && <p className={`text-xs mt-1 leading-relaxed ${s.text}`}>{details}</p>}
                     {actionLabel && (
@@ -242,6 +271,102 @@ const SystemEventCard: React.FC<SystemEventCardProps> = ({ icon: Icon, title, st
                             {actionLabel} <ArrowRight size={12} />
                         </button>
                     )}
+                </div>
+            </div>
+        </div>
+    );
+};
+
+const ChatMessageCard: React.FC<ChatMessageProps> = ({ sender, senderName, message, timestamp, channel = 'portal', avatar, initials, subject }) => {
+    const isFromPatient = sender === 'patient';
+
+    // Get channel styling
+    const getChannelStyles = (ch: string) => {
+        switch(ch) {
+            case 'email': return { label: 'Email', color: 'text-purple-700', bg: 'bg-purple-100', messageBg: 'bg-purple-50', border: 'border-purple-200' };
+            case 'text': return { label: 'Text', color: 'text-emerald-700', bg: 'bg-emerald-100', messageBg: 'bg-emerald-50', border: 'border-emerald-200' };
+            default: return { label: 'Portal', color: 'text-blue-700', bg: 'bg-blue-100', messageBg: 'bg-blue-50', border: 'border-blue-200' };
+        }
+    };
+
+    const channelStyles = getChannelStyles(channel);
+    const ChannelIcon = channel === 'email' ? Mail : channel === 'text' ? Smartphone : MessageSquare;
+    const isEmail = channel === 'email';
+
+    // Email format rendering - aligned left/right based on sender
+    if (isEmail) {
+        return (
+            <div className={`w-full flex ${isFromPatient ? 'justify-start' : 'justify-end'} px-8 py-3`}>
+                <div className="max-w-xl w-full">
+                    {/* Sender indicator strip */}
+                    <div className={`flex items-center gap-2 mb-1 px-1 ${isFromPatient ? '' : 'justify-end'}`}>
+                        <div className={`w-5 h-5 rounded-full flex items-center justify-center text-[9px] font-bold ${
+                            isFromPatient ? 'bg-slate-200 text-slate-600' : 'bg-[#0F4C81] text-white'
+                        }`}>
+                            {initials || senderName.charAt(0)}
+                        </div>
+                        <span className="text-[10px] text-gray-400">{timestamp}</span>
+                        <span className={`flex items-center gap-1 px-2 py-0.5 rounded text-[9px] font-bold uppercase tracking-wide ${channelStyles.bg} ${channelStyles.color} ${channelStyles.border} border`}>
+                            <ChannelIcon size={8} />
+                            {channelStyles.label}
+                        </span>
+                    </div>
+
+                    {/* Email card */}
+                    <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+                        {/* Email Header */}
+                        <div className="bg-gray-50 px-4 py-2.5 border-b border-gray-200">
+                            <div className="text-xs text-gray-800 font-semibold mb-1">{subject || 'No Subject'}</div>
+                            <div className="text-[10px] text-gray-500">
+                                <span className="font-medium text-gray-600">{senderName}</span>
+                                <span className="text-gray-400 mx-1">&lt;{senderName.toLowerCase().replace(/\s/g, '.')}@email.com&gt;</span>
+                            </div>
+                        </div>
+
+                        {/* Email Body */}
+                        <div className={`p-4 ${channelStyles.messageBg}`}>
+                            <p className="text-sm leading-relaxed text-gray-700 whitespace-pre-wrap">{message}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        );
+    }
+
+    // Regular chat format for portal and text
+    return (
+        <div className={`w-full flex ${isFromPatient ? 'justify-start' : 'justify-end'} px-8 py-2`}>
+            <div className={`flex gap-2 max-w-[600px] ${isFromPatient ? '' : 'flex-row-reverse'}`}>
+                {/* Avatar */}
+                <div className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 text-xs font-bold ${
+                    isFromPatient
+                        ? 'bg-slate-200 text-slate-600'
+                        : 'bg-[#0F4C81] text-white'
+                }`}>
+                    {avatar ? <img src={avatar} className="w-full h-full object-cover rounded-full" alt={senderName} /> : (initials || senderName.charAt(0))}
+                </div>
+
+                {/* Message Group */}
+                <div className={`flex flex-col ${isFromPatient ? 'items-start' : 'items-end'} max-w-[480px]`}>
+                    {/* Header with name, timestamp, and channel badge */}
+                    <div className={`flex items-center gap-2 mb-1 px-1 ${isFromPatient ? '' : 'flex-row-reverse'}`}>
+                        <span className="text-[11px] font-semibold text-gray-700">{senderName}</span>
+                        <span className="text-[10px] text-gray-400">{timestamp}</span>
+                        {/* Channel Badge - inline with header, clearly associated with message */}
+                        <span className={`flex items-center gap-1 px-2 py-0.5 rounded-md text-[9px] font-bold uppercase tracking-wide ${channelStyles.bg} ${channelStyles.color} ${channelStyles.border} border`}>
+                            <ChannelIcon size={9} />
+                            {channelStyles.label}
+                        </span>
+                    </div>
+
+                    {/* Message Bubble */}
+                    <div className={`px-3.5 py-2 rounded-xl ${
+                        isFromPatient
+                            ? `${channelStyles.messageBg} text-gray-800 rounded-tl-sm border ${channelStyles.border}`
+                            : 'bg-[#0F4C81] text-white rounded-tr-sm'
+                    }`}>
+                        <p className="text-sm leading-relaxed">{message}</p>
+                    </div>
                 </div>
             </div>
         </div>
@@ -1608,9 +1733,71 @@ Dr. Johnson
   };
 
   const getPatientHistory = (id: string) => {
-      const defaultFlow = [{ type: 'separator', date: '02-01-2026' }, { type: 'event', icon: ShoppingCart, title: 'Order Created: Gut Zoomer 3.0', variant: 'success', date: '02-01-2026 09:15 AM', details: 'Order placed via Portal. Workflow instantiated.' }, { type: 'event', icon: Truck, title: 'Kit Delivered', variant: 'success', date: '02-05-2026 02:22 PM', details: 'Delivered to front porch.' }, { type: 'separator', date: 'Today' }, { type: 'event', icon: Package, title: 'Kit Returned to Lab', variant: 'neutral', date: '10:05 AM', details: 'Sample received at intake.' }];
-      if (id === '3') return [{ type: 'separator', date: '02-01-2026' }, { type: 'event', icon: ShoppingCart, title: 'Order Created: Gut Zoomer 3.0', variant: 'success', date: '02-01-2026 09:15 AM', details: 'Order #2026020101 placed.' }, { type: 'separator', date: '02-05-2026' }, { type: 'event', icon: Truck, title: 'Kit Delivered', variant: 'success', date: '02-05-2026 02:22 PM', details: 'FedEx Tracking #1Z999...' }, { type: 'separator', date: '02-08-2026' }, { type: 'event', icon: Package, title: 'Kit Returned to Lab', variant: 'success', date: '02-08-2026 11:05 AM', details: 'Sample scanned at Lab Intake.' }, { type: 'separator', date: 'Today' }, { type: 'event', icon: FlaskConical, title: 'Lab Processing Started', variant: 'neutral', date: '10:30 AM', details: 'Sample prepared for analysis.' }, { type: 'exception', title: 'Test Not Performed (TNP)', reason: 'Sample Rejected: Gross Hemolysis detected during centrifugation.', suggestion: 'A redraw is required to proceed with this workflow.' }];
-      if (id === '1') return [{ type: 'separator', date: '02-01-2026' }, { type: 'event', icon: ShoppingCart, title: 'Order Created', variant: 'success', date: '09:00 AM', details: 'Standard Panel' }, { type: 'separator', date: '02-10-2026' }, { type: 'event', icon: FlaskConical, title: 'Lab Processing Started', variant: 'success', date: '08:30 AM', details: 'Analysis in progress.' }, { type: 'separator', date: 'Today' }, { type: 'event', icon: ClipboardCheck, title: 'Report Ready', variant: 'success', date: '10:30 AM', details: 'Results released to patient portal.' }, { type: 'event', icon: Activity, title: 'Next Step: Follow-up Appointment', variant: 'info', date: '', details: 'Scheduled for Feb 27, 2026 at 2:00 PM', actionLabel: 'View Details' }];
+      // Get patient name for chat messages
+      const getPatient = (patientId: string) => PATIENTS.find(p => p.id === patientId);
+      const patient = getPatient(id);
+
+      const defaultFlow = [
+          { type: 'separator', date: '02-01-2026' },
+          { type: 'event', icon: ShoppingCart, title: 'Order Created: Gut Zoomer 3.0', variant: 'success', date: '02-01-2026 09:15 AM', details: 'Order placed via Portal. Workflow instantiated.' },
+          { type: 'event', icon: Truck, title: 'Kit Delivered', variant: 'success', date: '02-05-2026 02:22 PM', details: 'Delivered to front porch.' },
+          { type: 'separator', date: '02-06-2026' },
+          // Mixed channels for demo
+          { type: 'chat', sender: 'patient', senderName: patient?.name || 'Patient', message: 'Hi, I received the kit but I have a question about the fasting requirements. How many hours should I fast before collecting the sample?', timestamp: '09:30 AM', channel: 'email', subject: 'Question about fasting requirements' },
+          { type: 'chat', sender: 'provider', senderName: 'Irene Hoffman', message: 'Great question! You should fast for at least 12 hours before collecting your sample. This means no food or drinks other than water.', timestamp: '10:15 AM', channel: 'text', initials: 'IH' },
+          { type: 'chat', sender: 'patient', senderName: patient?.name || 'Patient', message: 'Thank you for the quick response! Can I still take my morning medications?', timestamp: '10:45 AM', channel: 'portal' },
+          { type: 'chat', sender: 'provider', senderName: 'Irene Hoffman', message: 'Yes, please continue with your regular medications unless specifically instructed otherwise. Just avoid any supplements or vitamins during the fasting window.', timestamp: '11:00 AM', channel: 'email', subject: 'Re: Question about fasting requirements', initials: 'IH' },
+          { type: 'separator', date: 'Today' },
+          { type: 'event', icon: Package, title: 'Kit Returned to Lab', variant: 'neutral', date: '10:05 AM', details: 'Sample received at intake.' }
+      ];
+
+      if (id === '3') return [
+          { type: 'separator', date: '02-01-2026' },
+          { type: 'event', icon: ShoppingCart, title: 'Order Created: Gut Zoomer 3.0', variant: 'success', date: '02-01-2026 09:15 AM', details: 'Order #2026020101 placed.' },
+          { type: 'separator', date: '02-04-2026' },
+          // Mixed channels - showing patients and providers can use any channel
+          { type: 'chat', sender: 'patient', senderName: 'Kevin Johnson', message: 'Hello, I just ordered the Gut Zoomer 3.0 kit online. Could you confirm my shipping address is correct in your system? I recently moved.', timestamp: '09:30 AM', channel: 'email', initials: 'KJ', subject: 'Shipping address confirmation - Order #2026020101' },
+          { type: 'chat', sender: 'provider', senderName: 'Irene Hoffman', message: 'Hi Kevin, I\'ve checked your account and we have your current address on file: 2456 Oak Avenue, San Diego, CA 92101. Your kit is scheduled to arrive on February 5th via FedEx.', timestamp: '10:45 AM', channel: 'text', initials: 'IH' },
+          { type: 'chat', sender: 'patient', senderName: 'Kevin Johnson', message: 'Perfect, thank you for confirming! Also, are there any dietary restrictions I should know about before starting the test?', timestamp: '11:30 AM', channel: 'portal', initials: 'KJ' },
+          { type: 'chat', sender: 'provider', senderName: 'Irene Hoffman', message: 'Great question! You\'ll need to fast for 12 hours before the sample collection. Avoid antibiotics, antifungals, and probiotics for 2 weeks prior if possible. I\'ll email you the full preparation guide.', timestamp: '01:15 PM', channel: 'email', initials: 'IH', subject: 'Re: Shipping address confirmation - Order #2026020101' },
+          { type: 'separator', date: '02-05-2026' },
+          { type: 'event', icon: Truck, title: 'Kit Delivered', variant: 'success', date: '02-05-2026 02:22 PM', details: 'FedEx Tracking #1Z999...' },
+          { type: 'separator', date: '02-06-2026' },
+          // More mixed channels
+          { type: 'chat', sender: 'patient', senderName: 'Kevin Johnson', message: 'I got the kit today! Quick question - can I do the sample collection in the evening instead of morning?', timestamp: '03:45 PM', channel: 'text', initials: 'KJ' },
+          { type: 'chat', sender: 'provider', senderName: 'Irene Hoffman', message: 'Hi Kevin! Yes, you can collect in the evening. Just make sure to follow the fasting guidelines and overnight the sample ASAP after collection for the best results.', timestamp: '04:15 PM', channel: 'portal', initials: 'IH' },
+          { type: 'separator', date: '02-08-2026' },
+          { type: 'event', icon: Package, title: 'Kit Returned to Lab', variant: 'success', date: '02-08-2026 11:05 AM', details: 'Sample scanned at Lab Intake.' },
+          { type: 'separator', date: 'Today' },
+          { type: 'event', icon: FlaskConical, title: 'Lab Processing Started', variant: 'neutral', date: '10:30 AM', details: 'Sample prepared for analysis.' },
+          // Mixed channels for TNP notification
+          { type: 'chat', sender: 'provider', senderName: 'Irene Hoffman', message: 'Hi Kevin, we received your sample but unfortunately there was an issue during processing (hemolysis). We\'ll need to collect a new sample. I\'ve already arranged a free redraw kit for you - should arrive in 2 days.', timestamp: '11:30 AM', channel: 'email', initials: 'IH', subject: 'Action Required: Sample Redraw Needed' },
+          { type: 'chat', sender: 'patient', senderName: 'Kevin Johnson', message: 'Oh no, that\'s frustrating. Is this something I did wrong?', timestamp: '11:45 AM', channel: 'text', initials: 'KJ' },
+          { type: 'chat', sender: 'provider', senderName: 'Irene Hoffman', message: 'Not at all! Hemolysis can happen during transport or processing. The important thing is we caught it and can get you accurate results with the redraw.', timestamp: '12:00 PM', channel: 'portal', initials: 'IH' },
+          { type: 'exception', title: 'Test Not Performed (TNP)', reason: 'Sample Rejected: Gross Hemolysis detected during centrifugation.', suggestion: 'A redraw is required to proceed with this workflow.' }
+      ];
+
+      if (id === '1') return [
+          { type: 'separator', date: '02-01-2026' },
+          { type: 'event', icon: ShoppingCart, title: 'Order Created', variant: 'success', date: '09:00 AM', details: 'Standard Panel' },
+          { type: 'separator', date: '02-03-2026' },
+          // Mixed channels after order
+          { type: 'chat', sender: 'patient', senderName: 'Amanda Lee', message: 'Hi Irene, I just ordered the Standard Panel. The system asked about current medications - I wanted to make sure I included everything correctly. I take Levothyroxine 50mcg and a daily multivitamin.', timestamp: '08:15 AM', channel: 'email', initials: 'AL', subject: 'Question about medications - Standard Panel Order' },
+          { type: 'chat', sender: 'provider', senderName: 'Irene Hoffman', message: 'Hi Amanda, thanks for reaching out! I see your order in the system and your medications are correctly listed. The Levothyroxine and multivitamin are fine to continue - no special preparation needed for this panel. Your kit should arrive by February 5th.', timestamp: '10:30 AM', channel: 'text', initials: 'IH' },
+          { type: 'chat', sender: 'patient', senderName: 'Amanda Lee', message: 'Thank you for the confirmation. One more question - since I have hypothyroidism, should I be concerned about any of the markers in this test?', timestamp: '11:00 AM', channel: 'portal', initials: 'AL' },
+          { type: 'chat', sender: 'provider', senderName: 'Irene Hoffman', message: 'That\'s a thoughtful question! The Standard Panel includes TSH which we\'ll use to monitor your thyroid function. Given your current medication, this is actually a good opportunity to verify your levels are well-controlled. I\'ll make a note to flag your results for review once they\'re ready.', timestamp: '02:45 PM', channel: 'email', initials: 'IH', subject: 'Re: Question about medications - Standard Panel Order' },
+          { type: 'separator', date: '02-10-2026' },
+          { type: 'event', icon: FlaskConical, title: 'Lab Processing Started', variant: 'success', date: '08:30 AM', details: 'Analysis in progress.' },
+          { type: 'separator', date: 'Today' },
+          { type: 'event', icon: ClipboardCheck, title: 'Report Ready', variant: 'success', date: '10:30 AM', details: 'Results released to patient portal.' },
+          // Mixed channels after results
+          { type: 'chat', sender: 'patient', senderName: 'Amanda Lee', message: 'Hi! I just saw my results are ready. Can you help me understand the TSH value?', timestamp: '11:00 AM', channel: 'text', initials: 'AL' },
+          { type: 'chat', sender: 'provider', senderName: 'Irene Hoffman', message: 'Of course Amanda! Your TSH is 2.8 mIU/L, which is within the normal range (0.4-4.0). This is great news - your thyroid medication appears to be working well!', timestamp: '11:15 AM', channel: 'email', initials: 'IH', subject: 'Re: Your TSH Results' },
+          { type: 'chat', sender: 'patient', senderName: 'Amanda Lee', message: 'That\'s such a relief! Should I continue with the same dosage?', timestamp: '11:20 AM', channel: 'portal', initials: 'AL' },
+          { type: 'chat', sender: 'provider', senderName: 'Irene Hoffman', message: 'Yes, please continue your current dosage. We\'ll recheck in 6 months to make sure everything stays stable. Great job staying on top of your health!', timestamp: '11:25 AM', channel: 'text', initials: 'IH' },
+          { type: 'event', icon: Activity, title: 'Next Step: Follow-up Appointment', variant: 'info', date: '', details: 'Scheduled for Feb 27, 2026 at 2:00 PM', actionLabel: 'View Details' }
+      ];
+
       return defaultFlow;
   };
 
@@ -1619,10 +1806,19 @@ Dr. Johnson
     return (
         <>
             {history.map((item: any, idx: number) => {
+                console.log('Rendering item:', item.type, item);
                 if (item.type === 'separator') return <DateSeparator key={idx} date={item.date} />;
                 if (item.type === 'exception') return <ExceptionCard key={idx} title={item.title} reason={item.reason} suggestion={item.suggestion} />;
                 if (item.type === 'event') return <SystemEventCard key={idx} icon={item.icon} title={item.title} variant={item.variant} date={item.date} details={item.details} actionLabel={item.actionLabel} />;
-                return null;
+                if (item.type === 'chat') {
+                    try {
+                        return <ChatMessageCard key={`${item.type}-${idx}`} sender={item.sender} senderName={item.senderName} message={item.message} timestamp={item.timestamp} channel={item.channel} initials={item.initials} subject={item.subject} />;
+                    } catch (e) {
+                        console.error('Error rendering chat message:', e);
+                        return <div key={idx} className="text-red-500">Error: {String(e)}</div>;
+                    }
+                }
+                return <div key={idx} className="text-gray-400">Unknown type: {item.type}</div>;
             })}
         </>
     );
@@ -1711,7 +1907,7 @@ Dr. Johnson
                 <div className="flex-1 flex flex-col relative min-h-0" ref={centerContainerRef}>
                     <div className={`absolute top-0 z-50 mt-2 transition duration-200 ease-out origin-top-left ${activeTab ? 'scale-100 opacity-100' : 'scale-95 opacity-0 invisible pointer-events-none'}`} style={{ left: panelLeft }}><div className="w-[520px] bg-white rounded-xl shadow-2xl border border-gray-100 overflow-hidden flex flex-col max-h-[calc(100vh-250px)]"><div className="h-1 bg-[#0F4C81] w-full shrink-0"></div> <div className="flex-1 overflow-y-auto bg-slate-50 p-4 space-y-3 custom-scrollbar">{renderDropdownContent()}</div></div></div>
                     <WorkflowProgressBar status={activePatient.workflowStatus} />
-                    <div className="flex-1 overflow-y-auto px-8 py-6 space-y-8 bg-slate-50/50">{renderActivityStream()}</div>
+                    <div className="flex-1 overflow-y-auto px-8 py-6 space-y-4 bg-slate-50/50">{renderActivityStream()}</div>
                     <div className="p-4 pt-3 shrink-0 bg-white border-t border-gray-200 z-10 relative">
                         <div className="border border-gray-200 rounded-xl bg-white shadow-sm overflow-visible focus-within:ring-2 focus-within:ring-[#0F4C81] transition-all relative">
                             <div className="flex items-center justify-between px-3 py-2 bg-slate-50 border-b border-gray-200 rounded-t-xl">
@@ -1809,8 +2005,8 @@ Dr. Johnson
     <OrderDiagnosticTestsModal
       isOpen={showOrderModal}
       onClose={() => setShowOrderModal(false)}
-      onOrder={(tests) => {
-        console.log('Ordered tests:', tests);
+      onOrder={(tests, paymentMethod, deliveryMethod) => {
+        console.log('Ordered tests:', tests, 'Payment:', paymentMethod, 'Delivery:', deliveryMethod);
         // Add system event for the order
         const newEvent: SystemEventCardProps = {
           icon: FlaskConical,
