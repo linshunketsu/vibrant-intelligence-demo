@@ -99,16 +99,6 @@ export const CreateEventModal: React.FC<CreateEventModalProps> = ({
     <AnimatePresence>
       {isOpen && (
         <>
-          {/* Backdrop */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: checkReducedMotion() ? 0 : 0.2 }}
-            className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 backdrop-blur-sm"
-            onClick={onClose}
-          />
-
           {/* Modal */}
           <motion.div
             initial={{ opacity: 0, scale: 0.95, y: 10 }}
@@ -120,7 +110,8 @@ export const CreateEventModal: React.FC<CreateEventModalProps> = ({
               damping: 25,
               duration: checkReducedMotion() ? 0 : undefined
             }}
-            className="fixed inset-0 z-50 flex items-center justify-center pointer-events-none p-4"
+            className="fixed inset-0 z-50 flex items-center justify-center p-4"
+            onClick={onClose}
           >
             <div
               className="bg-white w-full max-w-lg rounded-xl shadow-2xl overflow-hidden border border-gray-200 pointer-events-auto"

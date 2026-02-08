@@ -95,7 +95,7 @@ export const OrderDiagnosticTestsModal: React.FC<OrderDiagnosticTestsModalProps>
   const total = selectedTestsList.reduce((sum, test) => sum + test.price, 0);
 
   return (
-    <div className="fixed inset-0 bg-black/40 backdrop-blur-md z-50 flex items-center justify-center p-4 animate-in fade-in duration-200" onClick={onClose}>
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 animate-in fade-in duration-200" onClick={onClose}>
       <div
         className="bg-white rounded-2xl shadow-xl w-full max-w-4xl max-h-[90vh] overflow-hidden flex flex-col animate-in zoom-in-95 duration-200 slide-in-from-bottom-4"
         onClick={(e) => e.stopPropagation()}
