@@ -347,7 +347,7 @@ export const CalendarSettings: React.FC<CalendarSettingsProps> = ({ onBack }) =>
 
           <div className="space-y-5 ml-8 max-w-4xl">
              {/* Google Calendar - Connected */}
-             <div className="flex items-center justify-between p-4 bg-gradient-to-r from-green-50 to-emerald-50/50 rounded-xl border border-green-200/60 hover:shadow-sm transition-all duration-200">
+             <div className="flex items-center justify-between p-4 bg-white rounded-xl border border-gray-200/60 hover:shadow-sm transition-all duration-200">
                 <div className="flex items-center gap-4">
                    <div className="w-11 h-11 bg-white rounded-xl flex items-center justify-center shadow-sm overflow-hidden p-1">
                       <img src={googleCalendarIcon} alt="Google Calendar" className="w-full h-full object-contain" />
@@ -355,12 +355,12 @@ export const CalendarSettings: React.FC<CalendarSettingsProps> = ({ onBack }) =>
                    <div>
                       <div className="flex items-center gap-3">
                          <span className="text-sm font-semibold text-slate-800">Google Calendar</span>
-                         <span className="flex items-center gap-1 px-2.5 py-0.5 bg-green-100 text-green-700 text-[10px] font-bold rounded-full">
+                         <span className="flex items-center gap-1 px-2.5 py-0.5 bg-slate-100 text-slate-600 text-[10px] font-bold rounded-full">
                            <Check size={10} strokeWidth={3} /> Connected
                          </span>
                       </div>
                       <p className="text-xs text-slate-500 mt-0.5">irene.hoffman@vibrantclinics.com</p>
-                      <p className="text-xs text-green-600 mt-0.5 flex items-center gap-1">
+                      <p className="text-xs text-slate-500 mt-0.5 flex items-center gap-1">
                          <Check size={10} /> Sync active • Last sync: 2 min ago
                       </p>
                    </div>
@@ -376,7 +376,7 @@ export const CalendarSettings: React.FC<CalendarSettingsProps> = ({ onBack }) =>
              </div>
 
              {/* Outlook - Connected */}
-             <div className="flex items-center justify-between p-4 bg-gradient-to-r from-green-50 to-emerald-50/50 rounded-xl border border-green-200/60 hover:shadow-sm transition-all duration-200">
+             <div className="flex items-center justify-between p-4 bg-white rounded-xl border border-gray-200/60 hover:shadow-sm transition-all duration-200">
                 <div className="flex items-center gap-4">
                    <div className="w-11 h-11 bg-white rounded-xl flex items-center justify-center shadow-sm overflow-hidden p-1">
                       <img src={outlookIcon} alt="Microsoft Outlook" className="w-full h-full object-contain" />
@@ -384,12 +384,12 @@ export const CalendarSettings: React.FC<CalendarSettingsProps> = ({ onBack }) =>
                    <div>
                       <div className="flex items-center gap-3">
                          <span className="text-sm font-semibold text-slate-800">Microsoft Outlook</span>
-                         <span className="flex items-center gap-1 px-2.5 py-0.5 bg-green-100 text-green-700 text-[10px] font-bold rounded-full">
+                         <span className="flex items-center gap-1 px-2.5 py-0.5 bg-slate-100 text-slate-600 text-[10px] font-bold rounded-full">
                            <Check size={10} strokeWidth={3} /> Connected
                          </span>
                       </div>
                       <p className="text-xs text-slate-500 mt-0.5">ihoffman@vibrantclinics.com</p>
-                      <p className="text-xs text-green-600 mt-0.5 flex items-center gap-1">
+                      <p className="text-xs text-slate-500 mt-0.5 flex items-center gap-1">
                          <Check size={10} /> Sync active • Last sync: 5 min ago
                       </p>
                    </div>
@@ -405,7 +405,7 @@ export const CalendarSettings: React.FC<CalendarSettingsProps> = ({ onBack }) =>
              </div>
 
              {/* Zoom - Connected */}
-             <div className="flex items-center justify-between p-4 bg-gradient-to-r from-green-50 to-emerald-50/50 rounded-xl border border-green-200/60 hover:shadow-sm transition-all duration-200">
+             <div className="flex items-center justify-between p-4 bg-white rounded-xl border border-gray-200/60 hover:shadow-sm transition-all duration-200">
                 <div className="flex items-center gap-4">
                    <div className="w-11 h-11 bg-white rounded-xl flex items-center justify-center shadow-sm overflow-hidden p-1">
                       <img src={zoomIcon} alt="Zoom" className="w-full h-full object-contain" />
@@ -413,12 +413,12 @@ export const CalendarSettings: React.FC<CalendarSettingsProps> = ({ onBack }) =>
                    <div>
                       <div className="flex items-center gap-3">
                          <span className="text-sm font-semibold text-slate-800">Zoom</span>
-                         <span className="flex items-center gap-1 px-2.5 py-0.5 bg-green-100 text-green-700 text-[10px] font-bold rounded-full">
+                         <span className="flex items-center gap-1 px-2.5 py-0.5 bg-slate-100 text-slate-600 text-[10px] font-bold rounded-full">
                            <Check size={10} strokeWidth={3} /> Connected
                          </span>
                       </div>
                       <p className="text-xs text-slate-500 mt-0.5">Pro Plan • Video meetings enabled</p>
-                      <p className="text-xs text-green-600 mt-0.5 flex items-center gap-1">
+                      <p className="text-xs text-slate-500 mt-0.5 flex items-center gap-1">
                          <Check size={10} /> Meeting links auto-generated
                       </p>
                    </div>
