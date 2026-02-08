@@ -511,7 +511,7 @@ export const WorkbenchView: React.FC = () => {
     }
 
     return (
-      <div className="flex h-full bg-[#f8f8f8]">
+      <div className="flex h-full bg-slate-50">
         {/* App Sidebar */}
         <div className="w-20 bg-white border-r border-gray-200 flex flex-col items-center py-4 shrink-0 z-20 space-y-2">
           <SidebarIcon icon={DollarSign} label="eZ-Bill" active={sidebarTab === 'ezbill'} onClick={() => setSidebarTab('ezbill')} />
@@ -521,7 +521,7 @@ export const WorkbenchView: React.FC = () => {
           <SidebarIcon icon={Archive} label="Archive" active={sidebarTab === 'archive'} onClick={() => setSidebarTab('archive')} />
         </div>
 
-        <div className="flex-1 overflow-y-auto bg-[#f8f8f8] p-8">
+        <div className="flex-1 overflow-y-auto bg-slate-50 p-8">
           <FormTemplatesHome
             onNavigate={handleNavigateToFormBuilder}
             existingForms={existingForms}
@@ -534,7 +534,7 @@ export const WorkbenchView: React.FC = () => {
 
   // Default Workflow View
   return (
-    <div className="flex h-full bg-[#f8f8f8]">
+    <div className="flex h-full bg-slate-50">
 
       {/* App Sidebar (Specific to Workbench) */}
       <div className="w-20 bg-white border-r border-gray-200 flex flex-col items-center py-4 shrink-0 z-20 space-y-2">

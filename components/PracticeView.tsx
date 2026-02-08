@@ -45,7 +45,7 @@ const renderMarkdownResponse = (text: string) => {
             sections.push(
                 <div className="my-4 rounded-lg border border-slate-200 overflow-hidden">
                     <table className="w-full text-sm">
-                        <thead className="bg-[#f8f8f8]">
+                        <thead className="bg-slate-50">
                             <tr>
                                 {currentTable.headers.map((header, idx) => (
                                     <th key={idx} className="px-3 py-2 text-left text-xs font-semibold text-slate-600 uppercase tracking-wide">
@@ -56,7 +56,7 @@ const renderMarkdownResponse = (text: string) => {
                         </thead>
                         <tbody className="divide-y divide-slate-100">
                             {currentTable.rows.map((row, rowIdx) => (
-                                <tr key={rowIdx} className="hover:bg-[#f8f8f8]/50 transition-colors">
+                                <tr key={rowIdx} className="hover:bg-slate-50/50 transition-colors">
                                     {row.map((cell, cellIdx) => (
                                         <td key={cellIdx} className="px-3 py-2.5 text-slate-700">
                                             {cell}
@@ -184,7 +184,7 @@ const SidePanel: React.FC<SidePanelProps> = ({ title, isOpen, onClose, children,
                         </button>
                     </div>
                 )}
-                <div className="flex-grow overflow-y-auto bg-[#f8f8f8]">
+                <div className="flex-grow overflow-y-auto bg-slate-50">
                     {children}
                 </div>
                 {footer && (
@@ -239,7 +239,7 @@ const FilterDropdown: React.FC<FilterDropdownProps> = ({ label, options, value, 
                                 onChange(option);
                                 setIsOpen(false);
                             }}
-                            className={`w-full text-left relative py-2 pl-9 pr-4 text-xs font-medium transition-colors ${value === option ? 'text-brand-primary bg-[#f8f8f8]' : 'text-slate-700 hover:bg-[#f8f8f8] hover:text-slate-900'}`}
+                            className={`w-full text-left relative py-2 pl-9 pr-4 text-xs font-medium transition-colors ${value === option ? 'text-brand-primary bg-slate-50' : 'text-slate-700 hover:bg-slate-50 hover:text-slate-900'}`}
                         >
                             {value === option && (
                                 <div className="absolute left-3 top-1/2 -translate-y-1/2 text-brand-primary">
@@ -273,7 +273,7 @@ const UploadDocumentModal = ({ isOpen, onClose }: { isOpen: boolean, onClose: ()
       <div className="space-y-6">
         <div>
           <label className="block text-sm font-medium text-slate-700 mb-2">Upload File</label>
-          <div className="border-2 border-dashed border-slate-300 rounded-xl p-8 flex flex-col items-center justify-center text-center hover:bg-[#f8f8f8] transition-colors relative">
+          <div className="border-2 border-dashed border-slate-300 rounded-xl p-8 flex flex-col items-center justify-center text-center hover:bg-slate-50 transition-colors relative">
             {file ? (
               <div className="flex items-center justify-between w-full max-w-md bg-brand-light/30 p-4 rounded-lg border border-brand-primary/20">
                 <div className="flex items-center space-x-3">
@@ -326,8 +326,8 @@ const UploadDocumentModal = ({ isOpen, onClose }: { isOpen: boolean, onClose: ()
         </div>
       </div>
 
-      <div className="mt-8 flex justify-end space-x-3 pt-6 border-t border-slate-200 bg-[#f8f8f8]/50 -mx-6 -mb-6 p-6 rounded-b-xl">
-        <button onClick={onClose} className="px-4 py-2 bg-white border border-slate-300 rounded-lg text-sm font-medium text-slate-700 hover:bg-[#f8f8f8] transition-colors shadow-sm">Cancel</button>
+      <div className="mt-8 flex justify-end space-x-3 pt-6 border-t border-slate-200 bg-slate-50/50 -mx-6 -mb-6 p-6 rounded-b-xl">
+        <button onClick={onClose} className="px-4 py-2 bg-white border border-slate-300 rounded-lg text-sm font-medium text-slate-700 hover:bg-slate-50 transition-colors shadow-sm">Cancel</button>
         <button
           onClick={onClose}
           className={`px-6 py-2 rounded-lg text-sm font-medium text-white shadow-sm transition-all flex items-center ${file && title ? 'bg-brand-primary hover:bg-brand-primary/90' : 'bg-slate-300 cursor-not-allowed'}`}
@@ -688,7 +688,7 @@ export const PracticeView: React.FC<DashboardProps> = ({ onOpenSettings, current
   };
 
   return (
-    <div className="flex flex-col min-h-screen bg-[#f8f8f8]">
+    <div className="flex flex-col min-h-screen bg-slate-50">
       {/* Practice Header */}
       <header className="bg-white shadow-sm sticky top-0 z-20">
         <div className="max-w-screen-2xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -739,7 +739,7 @@ export const PracticeView: React.FC<DashboardProps> = ({ onOpenSettings, current
                                         <>
                                             <button
                                                 onClick={() => { setActiveProviderId('all'); setTempProviderId('all'); setIsScopeDropdownOpen(false); }}
-                                                className={`w-full text-left relative py-2.5 pl-10 pr-4 text-xs font-semibold transition-colors ${activeProviderId === 'all' ? 'text-brand-primary bg-brand-light/20' : 'text-slate-700 hover:bg-[#f8f8f8]'}`}
+                                                className={`w-full text-left relative py-2.5 pl-10 pr-4 text-xs font-semibold transition-colors ${activeProviderId === 'all' ? 'text-brand-primary bg-brand-light/20' : 'text-slate-700 hover:bg-slate-50'}`}
                                             >
                                                 {activeProviderId === 'all' && <div className="absolute left-3 top-1/2 -translate-y-1/2 text-brand-primary"><CheckIcon className="h-4 w-4" /></div>}
                                                 Practice View (All Providers)
@@ -753,7 +753,7 @@ export const PracticeView: React.FC<DashboardProps> = ({ onOpenSettings, current
                                         <button
                                             key={p.id}
                                             onClick={() => { setActiveProviderId(p.id); setTempProviderId(p.id); setIsScopeDropdownOpen(false); }}
-                                            className={`w-full text-left relative py-2.5 pl-10 pr-4 text-xs font-semibold transition-colors ${activeProviderId === p.id ? 'text-brand-primary bg-brand-light/20' : 'text-slate-700 hover:bg-[#f8f8f8]'}`}
+                                            className={`w-full text-left relative py-2.5 pl-10 pr-4 text-xs font-semibold transition-colors ${activeProviderId === p.id ? 'text-brand-primary bg-brand-light/20' : 'text-slate-700 hover:bg-slate-50'}`}
                                         >
                                             {activeProviderId === p.id && <div className="absolute left-3 top-1/2 -translate-y-1/2 text-brand-primary"><CheckIcon className="h-4 w-4" /></div>}
                                             <div className="flex items-center space-x-2">
@@ -822,7 +822,7 @@ export const PracticeView: React.FC<DashboardProps> = ({ onOpenSettings, current
                                             ) : (
                                                 <button
                                                     onClick={() => handleDateSelect(option)}
-                                                    className={`w-full text-left relative py-2 pl-9 pr-4 text-sm font-medium transition-colors ${timeRange === option ? 'text-slate-900 bg-[#f8f8f8]' : 'text-slate-700 hover:bg-[#f8f8f8] hover:text-slate-900'}`}
+                                                    className={`w-full text-left relative py-2 pl-9 pr-4 text-sm font-medium transition-colors ${timeRange === option ? 'text-slate-900 bg-slate-50' : 'text-slate-700 hover:bg-slate-50 hover:text-slate-900'}`}
                                                 >
                                                     {timeRange === option && (
                                                         <div className="absolute left-3 top-1/2 -translate-y-1/2 text-brand-primary">
@@ -963,7 +963,7 @@ export const PracticeView: React.FC<DashboardProps> = ({ onOpenSettings, current
                                 <p className="text-xs text-slate-500 leading-relaxed">
                                     Summarizes overall engagement quality based on chat responsiveness and sentiment signals.
                                 </p>
-                                <div className="flex items-center space-x-3 p-3 bg-[#f8f8f8] rounded-lg border border-slate-100">
+                                <div className="flex items-center space-x-3 p-3 bg-slate-50 rounded-lg border border-slate-100">
                                     <span className="text-2xl" role="img" aria-label="Overall sentiment indicator">🙂</span>
                                     <span className="text-sm font-bold text-slate-800">Overall Engagement: Healthy</span>
                                 </div>
@@ -1036,7 +1036,7 @@ export const PracticeView: React.FC<DashboardProps> = ({ onOpenSettings, current
                                                                 <div className="flex justify-between"><span>Lab (Provider Pay)</span><span className="font-medium">${data.labProviderPay}</span></div>
                                                             </div>
                                                         </div>
-                                                        <div className="pt-2 border-t border-slate-100 flex justify-between items-center bg-[#f8f8f8] -mx-4 -mb-4 p-4 rounded-b-xl">
+                                                        <div className="pt-2 border-t border-slate-100 flex justify-between items-center bg-slate-50 -mx-4 -mb-4 p-4 rounded-b-xl">
                                                             <span className="font-bold text-slate-900">Total Scoped Volume</span>
                                                             <span className="font-bold text-slate-900">${data.totalRevenue.toLocaleString()}</span>
                                                         </div>
@@ -1127,7 +1127,7 @@ export const PracticeView: React.FC<DashboardProps> = ({ onOpenSettings, current
                         <div className="pt-4 border-t border-slate-200 space-y-4">
                             <label className="block text-xs font-semibold text-slate-500 mb-2 uppercase tracking-wide">Deep Dive AI Assistant</label>
                             {(isAiDeepDiveLoading || aiDeepDiveResponse) && (
-                                <div className={`p-4 rounded-xl text-sm leading-relaxed border animate-in fade-in slide-in-from-top-2 duration-300 ${isAiDeepDiveLoading ? 'bg-[#f8f8f8] border-slate-100 text-slate-400 italic' : 'bg-brand-light/30 border-brand-primary/20 text-slate-700'}`}>
+                                <div className={`p-4 rounded-xl text-sm leading-relaxed border animate-in fade-in slide-in-from-top-2 duration-300 ${isAiDeepDiveLoading ? 'bg-slate-50 border-slate-100 text-slate-400 italic' : 'bg-brand-light/30 border-brand-primary/20 text-slate-700'}`}>
                                     {isAiDeepDiveLoading ? (
                                         <div className="flex items-center space-x-2">
                                             <LoadingIcon className="h-4 w-4 animate-spin text-brand-primary" />
@@ -1199,7 +1199,7 @@ export const PracticeView: React.FC<DashboardProps> = ({ onOpenSettings, current
                           <span>Upload Document</span>
                       </button>
                   </div>
-                  <div className="p-4 bg-[#f8f8f8] border-b border-slate-200">
+                  <div className="p-4 bg-slate-50 border-b border-slate-200">
                       <div className="flex flex-col md:flex-row gap-4">
                           <div className="relative flex-grow">
                               <SearchIcon className="absolute left-3 top-2.5 h-4 w-4 text-slate-400" />
@@ -1212,7 +1212,7 @@ export const PracticeView: React.FC<DashboardProps> = ({ onOpenSettings, current
                   </div>
                   <div className="overflow-x-auto overflow-visible">
                       <table className="min-w-full divide-y divide-slate-100">
-                          <thead className="bg-[#f8f8f8]/50">
+                          <thead className="bg-slate-50/50">
                               <tr>
                                   <th className="px-6 py-3 text-left text-xs font-semibold text-slate-500 uppercase">Document Title</th>
                                   <th className="px-6 py-3 text-left text-xs font-semibold text-slate-500 uppercase">Uploaded By</th>
@@ -1224,7 +1224,7 @@ export const PracticeView: React.FC<DashboardProps> = ({ onOpenSettings, current
                           </thead>
                           <tbody className="bg-white divide-y divide-slate-100">
                               {sortedDocuments.map((doc) => (
-                                  <tr key={doc.id} className="hover:bg-[#f8f8f8]/80 transition-colors group relative">
+                                  <tr key={doc.id} className="hover:bg-slate-50/80 transition-colors group relative">
                                       <td className="px-6 py-4 whitespace-nowrap"><div className="flex items-center"><FileIcon className="h-5 w-5 text-slate-400 group-hover:text-brand-primary mr-3" /><span className="text-sm font-semibold text-slate-900 group-hover:text-brand-primary">{doc.title}</span></div></td>
                                       <td className="px-6 py-4 whitespace-nowrap"><div className="flex items-center"><img className="h-6 w-6 rounded-full border border-slate-200" src={doc.uploadedByAvatar} alt="" /><span className="ml-2.5 text-sm font-medium text-slate-700">{doc.uploadedBy}</span></div></td>
                                       <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-500">{formatDate(doc.date)}</td>
@@ -1269,22 +1269,22 @@ export const PracticeView: React.FC<DashboardProps> = ({ onOpenSettings, current
             <div className="p-6 border-b border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div><h3 className="text-lg font-bold text-slate-900">{activeScopeLabel} Transactions</h3><p className="text-sm text-slate-500 mt-1">Review financial activity for this scope</p></div>
                 <div className="flex items-center space-x-3">
-                    <button onClick={handleExport} className="flex items-center justify-center space-x-2 bg-white border border-slate-300 text-slate-700 hover:bg-[#f8f8f8] px-4 py-2 rounded-lg text-sm font-medium transition-all shadow-sm"><DownloadIcon className="h-4 w-4" /><span>Export CSV</span></button>
+                    <button onClick={handleExport} className="flex items-center justify-center space-x-2 bg-white border border-slate-300 text-slate-700 hover:bg-slate-50 px-4 py-2 rounded-lg text-sm font-medium transition-all shadow-sm"><DownloadIcon className="h-4 w-4" /><span>Export CSV</span></button>
                     <button disabled={selectedTxIds.size === 0} onClick={handleDownloadSelected} className={`flex items-center justify-center space-x-2 px-4 py-2 rounded-lg text-sm font-medium transition-all shadow-sm ${selectedTxIds.size > 0 ? 'bg-brand-primary text-white hover:bg-brand-primary/90 shadow-md' : 'bg-slate-100 text-slate-400 cursor-not-allowed border border-slate-200'}`}><DownloadIcon className="h-4 w-4" /><span>Download {selectedTxIds.size > 0 ? `(${selectedTxIds.size})` : 'Selected'}</span></button>
                 </div>
             </div>
-            <div className="p-4 bg-[#f8f8f8] border-b border-slate-200">
+            <div className="p-4 bg-slate-50 border-b border-slate-200">
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
                     <div className="relative"><SearchIcon className="absolute left-3 top-2.5 h-4 w-4 text-slate-400" /><input type="text" placeholder="Search transactions..." value={txSearchQuery} onChange={(e) => setTxSearchQuery(e.target.value)} className="w-full pl-10 pr-4 py-2 bg-white border border-slate-300 rounded-lg text-xs font-medium focus:ring-brand-primary focus:border-brand-primary shadow-sm" /></div>
                     <FilterDropdown label="Transaction Type" value={txTypeFilter} onChange={setTxTypeFilter} options={["All Transaction Types", "Lab Tests", "Practice Products", "Quick Bill", "Top Up", "Cash Out", "Refund to Card", "Refund to Wallet", "Subscription"]} />
                     <FilterDropdown label="Method" value={paymentMethodFilter} onChange={setPaymentMethodFilter} options={["All Payment Methods", "Card", "Bank Transfer", "Wallet Credit"]} />
                     <FilterDropdown label="Payer" value={payerFilter} onChange={setPayerFilter} options={["All Payers", "Patient", "Provider", "System"]} />
-                    <div className="relative"><button className="w-full flex items-center justify-between bg-white border border-slate-300 rounded-lg py-2 px-3 text-xs font-medium text-slate-700 shadow-sm hover:bg-[#f8f8f8] transition-colors"><span className="truncate">05/01/2024 – 05/31/2024</span><CalendarIcon className="h-4 w-4 text-slate-400" /></button></div>
+                    <div className="relative"><button className="w-full flex items-center justify-between bg-white border border-slate-300 rounded-lg py-2 px-3 text-xs font-medium text-slate-700 shadow-sm hover:bg-slate-50 transition-colors"><span className="truncate">05/01/2024 – 05/31/2024</span><CalendarIcon className="h-4 w-4 text-slate-400" /></button></div>
                 </div>
             </div>
             <div className="overflow-x-auto">
                 <table className="min-w-full divide-y divide-slate-100">
-                    <thead className="bg-[#f8f8f8]">
+                    <thead className="bg-slate-50">
                         <tr>
                             <th scope="col" className="px-4 py-3 text-left w-10"><input type="checkbox" className="rounded text-brand-primary focus:ring-brand-primary border-slate-300 h-4 w-4 cursor-pointer" checked={filteredTransactions.length > 0 && selectedTxIds.size === filteredTransactions.length} onChange={(e) => handleSelectAllTransactions(e.target.checked)} /></th>
                             <th scope="col" className="w-10"></th>
@@ -1305,7 +1305,7 @@ export const PracticeView: React.FC<DashboardProps> = ({ onOpenSettings, current
                             const isExpanded = expandedTxIds.has(t.id);
                             return (
                                 <React.Fragment key={t.id}>
-                                    <tr className={`group transition-colors ${selectedTxIds.has(t.id) ? 'bg-brand-light/20' : 'hover:bg-[#f8f8f8]/80'} ${isExpanded ? 'bg-[#f8f8f8]/50' : ''}`}>
+                                    <tr className={`group transition-colors ${selectedTxIds.has(t.id) ? 'bg-brand-light/20' : 'hover:bg-slate-50/80'} ${isExpanded ? 'bg-slate-50/50' : ''}`}>
                                         <td className="px-4 py-4 whitespace-nowrap"><input type="checkbox" className="rounded text-brand-primary focus:ring-brand-primary border-slate-300 h-4 w-4 cursor-pointer" checked={selectedTxIds.has(t.id)} onChange={() => toggleTxSelection(t.id)} /></td>
                                         <td className="px-2 py-4 whitespace-nowrap"><button onClick={() => toggleTxExpansion(t.id)} className="p-1 rounded-md hover:bg-white border border-transparent hover:border-slate-200 text-slate-400 hover:text-slate-600 transition-all"><ChevronDownIcon className={`h-4 w-4 transition-transform ${isExpanded ? 'rotate-180' : ''}`} /></button></td>
                                         <td className="px-4 py-4 whitespace-nowrap text-[11px] text-slate-500 font-medium">{t.date}</td>
@@ -1320,13 +1320,13 @@ export const PracticeView: React.FC<DashboardProps> = ({ onOpenSettings, current
                                         <td className="px-4 py-4 whitespace-nowrap"><button onClick={() => handleDownloadSingle(t.id)} className="text-xs font-semibold text-brand-primary hover:text-brand-secondary hover:underline transition-colors">Download</button></td>
                                     </tr>
                                     {isExpanded && (
-                                        <tr className="bg-[#f8f8f8]/30">
+                                        <tr className="bg-slate-50/30">
                                             <td colSpan={12} className="px-12 py-4 border-l-4 border-brand-primary">
                                                 <div className="animate-in slide-in-from-top-2 duration-300">
                                                     <h5 className="text-xs font-bold text-slate-900 uppercase tracking-widest mb-3 flex items-center"><CreditCardIcon className="h-3.5 w-3.5 mr-2 text-brand-primary" />Payment Breakdown</h5>
                                                     <div className="bg-white border border-slate-200 rounded-lg overflow-hidden shadow-sm max-w-4xl">
                                                         <table className="min-w-full divide-y divide-slate-50">
-                                                            <thead className="bg-[#f8f8f8]"><tr><th className="px-4 py-2 text-left text-[10px] font-bold text-slate-400 uppercase">Payment Date</th><th className="px-4 py-2 text-left text-[10px] font-bold text-slate-400 uppercase">Amount</th><th className="px-4 py-2 text-left text-[10px] font-bold text-slate-400 uppercase">Method</th><th className="px-4 py-2 text-left text-[10px] font-bold text-slate-400 uppercase">Status</th></tr></thead>
+                                                            <thead className="bg-slate-50"><tr><th className="px-4 py-2 text-left text-[10px] font-bold text-slate-400 uppercase">Payment Date</th><th className="px-4 py-2 text-left text-[10px] font-bold text-slate-400 uppercase">Amount</th><th className="px-4 py-2 text-left text-[10px] font-bold text-slate-400 uppercase">Method</th><th className="px-4 py-2 text-left text-[10px] font-bold text-slate-400 uppercase">Status</th></tr></thead>
                                                             <tbody className="divide-y divide-slate-50">{t.payments.map(p => (<tr key={p.id}><td className="px-4 py-2 text-xs text-slate-600">{p.date}</td><td className="px-4 py-2 text-xs font-bold text-slate-900">${p.amount.toFixed(2)}</td><td className="px-4 py-2 text-xs text-slate-600"><div className="flex items-center space-x-2">{getPaymentIcon(p.method)}<span>{p.method}</span></div></td><td className="px-4 py-2"><span className={`inline-flex px-1.5 py-0.5 rounded text-[9px] leading-4 font-bold uppercase border ${statusColor[p.status]}`}>{p.status}</span></td></tr>))}</tbody>
                                                         </table>
                                                     </div>
@@ -1343,19 +1343,19 @@ export const PracticeView: React.FC<DashboardProps> = ({ onOpenSettings, current
           </Card>
 
           <SidePanel title="Follow-ups" isOpen={isPanelOpen} onClose={() => setIsPanelOpen(false)} className="max-w-lg" footer={<div className="text-xs text-slate-500">{displayedFollowUps.length} items for this scope</div>}>
-            <div className="flex flex-col h-full"><div className="px-6 pt-4 border-b border-slate-200"><div className="flex space-x-6"><button onClick={() => setActiveFollowUpTab('Active')} className={`pb-3 text-sm font-medium border-b-2 ${activeFollowUpTab === 'Active' ? 'border-brand-primary text-brand-primary' : 'border-transparent text-slate-500'}`}>Active</button><button onClick={() => setActiveFollowUpTab('Archived')} className={`pb-3 text-sm font-medium border-b-2 ${activeFollowUpTab === 'Archived' ? 'border-brand-primary text-brand-primary' : 'border-transparent text-slate-500'}`}>Archived</button></div></div><div className="p-6 space-y-4">{displayedFollowUps.map(p => (<div key={p.id} className="p-4 bg-white rounded-xl border border-slate-200 shadow-sm flex flex-col gap-3"><div className="flex justify-between items-start"><h4 className="font-bold text-slate-900">{p.name}</h4><span className="text-[10px] font-bold px-2 py-1 rounded bg-red-50 text-red-600 border border-red-100 uppercase">Alert</span></div><p className="text-sm text-slate-700">{p.reason}</p><div className="flex gap-2"><button className="flex-1 py-1.5 border border-slate-200 rounded text-xs font-semibold hover:bg-[#f8f8f8] transition-colors">Chat</button><button onClick={() => handleResolvePatient(p.id)} className="flex-1 py-1.5 bg-brand-primary text-white rounded text-xs font-semibold hover:bg-brand-primary/90 shadow-sm transition-colors">Resolve</button></div></div>))}</div></div>
+            <div className="flex flex-col h-full"><div className="px-6 pt-4 border-b border-slate-200"><div className="flex space-x-6"><button onClick={() => setActiveFollowUpTab('Active')} className={`pb-3 text-sm font-medium border-b-2 ${activeFollowUpTab === 'Active' ? 'border-brand-primary text-brand-primary' : 'border-transparent text-slate-500'}`}>Active</button><button onClick={() => setActiveFollowUpTab('Archived')} className={`pb-3 text-sm font-medium border-b-2 ${activeFollowUpTab === 'Archived' ? 'border-brand-primary text-brand-primary' : 'border-transparent text-slate-500'}`}>Archived</button></div></div><div className="p-6 space-y-4">{displayedFollowUps.map(p => (<div key={p.id} className="p-4 bg-white rounded-xl border border-slate-200 shadow-sm flex flex-col gap-3"><div className="flex justify-between items-start"><h4 className="font-bold text-slate-900">{p.name}</h4><span className="text-[10px] font-bold px-2 py-1 rounded bg-red-50 text-red-600 border border-red-100 uppercase">Alert</span></div><p className="text-sm text-slate-700">{p.reason}</p><div className="flex gap-2"><button className="flex-1 py-1.5 border border-slate-200 rounded text-xs font-semibold hover:bg-slate-50 transition-colors">Chat</button><button onClick={() => handleResolvePatient(p.id)} className="flex-1 py-1.5 bg-brand-primary text-white rounded text-xs font-semibold hover:bg-brand-primary/90 shadow-sm transition-colors">Resolve</button></div></div>))}</div></div>
           </SidePanel>
 
           <SidePanel title="Select Provider Scope" isOpen={isFilterDrawerOpen} onClose={() => setIsFilterDrawerOpen(false)} footer={<div className="flex space-x-3"><button onClick={handleClearProviderFilter} className="flex-1 px-4 py-2 border border-slate-300 rounded-lg text-sm font-medium text-slate-700">Practice View</button><button onClick={handleApplyProviderFilter} className="flex-1 px-4 py-2 bg-brand-primary text-white rounded-lg text-sm font-medium shadow-sm">Apply Scope</button></div>}>
             <div className="p-6">
                 <div className="space-y-3">
-                    <label className="flex items-center space-x-3 cursor-pointer p-2 hover:bg-[#f8f8f8] rounded-lg border border-transparent hover:border-slate-200 transition-all">
+                    <label className="flex items-center space-x-3 cursor-pointer p-2 hover:bg-slate-50 rounded-lg border border-transparent hover:border-slate-200 transition-all">
                         <input type="radio" checked={tempProviderId === 'all'} onChange={() => setTempProviderId('all')} className="text-brand-primary focus:ring-brand-primary" />
                         <span className="text-sm font-semibold">Entire Practice View</span>
                     </label>
                     <div className="my-2 border-t border-slate-100"></div>
                     {MOCK_PROVIDERS.map(p => (
-                        <label key={p.id} className="flex items-center space-x-3 cursor-pointer p-2 hover:bg-[#f8f8f8] rounded-lg border border-transparent hover:border-slate-200 transition-all">
+                        <label key={p.id} className="flex items-center space-x-3 cursor-pointer p-2 hover:bg-slate-50 rounded-lg border border-transparent hover:border-slate-200 transition-all">
                             <input type="radio" checked={tempProviderId === p.id} onChange={() => setTempProviderId(p.id)} className="text-brand-primary focus:ring-brand-primary" />
                             <div className="flex items-center space-x-3">
                                 <img src={p.avatar} alt="" className="w-8 h-8 rounded-full border border-white shadow-sm" />
@@ -1387,7 +1387,7 @@ export const PracticeView: React.FC<DashboardProps> = ({ onOpenSettings, current
               </div>
 
               {docToDelete && (
-                <div className="p-4 bg-[#f8f8f8] rounded-xl border border-slate-200">
+                <div className="p-4 bg-slate-50 rounded-xl border border-slate-200">
                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Document Name</p>
                    <p className="text-sm font-bold text-slate-900 break-all">{docToDelete.title}</p>
                 </div>
@@ -1396,7 +1396,7 @@ export const PracticeView: React.FC<DashboardProps> = ({ onOpenSettings, current
               <div className="flex space-x-3 pt-2">
                  <button
                     onClick={() => setIsDeleteDocModalOpen(false)}
-                    className="flex-1 px-4 py-2.5 bg-white border border-slate-300 rounded-lg text-sm font-semibold text-slate-700 hover:bg-[#f8f8f8] transition-colors shadow-sm"
+                    className="flex-1 px-4 py-2.5 bg-white border border-slate-300 rounded-lg text-sm font-semibold text-slate-700 hover:bg-slate-50 transition-colors shadow-sm"
                  >
                    Cancel
                  </button>

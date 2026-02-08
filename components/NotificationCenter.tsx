@@ -278,7 +278,7 @@ export const NotificationCenter: React.FC = () => {
             </div>
 
             {/* Bulk Actions */}
-            <div className="px-6 py-3 bg-[#f8f8f8] border-b border-gray-200 flex items-center justify-between text-sm shrink-0">
+            <div className="px-6 py-3 bg-slate-50 border-b border-gray-200 flex items-center justify-between text-sm shrink-0">
                 <div className="flex items-center gap-3">
                     <label className="flex items-center gap-2 cursor-pointer select-none">
                         <input 
@@ -308,7 +308,7 @@ export const NotificationCenter: React.FC = () => {
             </div>
 
             {/* Notifications List */}
-            <div className="flex-1 overflow-y-auto p-6 space-y-4 bg-[#f8f8f8]/30">
+            <div className="flex-1 overflow-y-auto p-6 space-y-4 bg-slate-50/30">
                 {filteredNotifications.map(notification => (
                     <div 
                         key={notification.id}
@@ -388,7 +388,7 @@ export const NotificationCenter: React.FC = () => {
         {/* --- RIGHT PANEL: AI COMPOSER (ASSISTANT) --- */}
         <div className="w-[400px] flex flex-col bg-white border-l border-gray-200 shrink-0 shadow-[-4px_0_15px_-3px_rgba(0,0,0,0.02)] z-10">
             {/* Header */}
-            <div className="px-5 py-4 border-b border-gray-100 flex items-center gap-3 bg-[#f8f8f8]/50">
+            <div className="px-5 py-4 border-b border-gray-100 flex items-center gap-3 bg-slate-50/50">
                 <div className="w-8 h-8 bg-indigo-100 text-indigo-600 rounded-lg flex items-center justify-center">
                     <Bot size={18} />
                 </div>
@@ -462,7 +462,7 @@ export const NotificationCenter: React.FC = () => {
         {diffModalOpen && selectedDiff && (
             <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 backdrop-blur-sm p-4">
                 <div className="bg-white w-full max-w-2xl rounded-xl shadow-2xl overflow-hidden animate-in fade-in zoom-in duration-200">
-                    <div className="px-6 py-4 border-b border-gray-200 flex justify-between items-center bg-[#f8f8f8]">
+                    <div className="px-6 py-4 border-b border-gray-200 flex justify-between items-center bg-slate-50">
                         <h3 className="font-bold text-gray-900 flex items-center gap-2">
                             <FileDiff size={18} className="text-blue-600"/> 
                             Review Proposed Changes

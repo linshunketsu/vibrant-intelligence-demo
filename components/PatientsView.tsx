@@ -267,7 +267,7 @@ const SystemEventCard: React.FC<SystemEventCardProps> = ({ icon: Icon, title, st
                     </div>
                     {details && <p className={`text-xs mt-1 leading-relaxed ${s.text}`}>{details}</p>}
                     {actionLabel && (
-                        <button className="mt-3 px-4 py-2 bg-white border border-slate-200 rounded-lg text-xs font-bold text-slate-700 hover:bg-[#f0f0f0] hover:border-slate-300 transition-colors shadow-sm flex items-center gap-1">
+                        <button className="mt-3 px-4 py-2 bg-white border border-slate-200 rounded-lg text-xs font-bold text-slate-700 hover:bg-slate-50 hover:border-slate-300 transition-colors shadow-sm flex items-center gap-1">
                             {actionLabel} <ArrowRight size={12} />
                         </button>
                     )}
@@ -2097,7 +2097,7 @@ Dr. Johnson
                 <div className="flex-1 flex flex-col relative min-h-0" ref={centerContainerRef}>
                     <div className={`absolute top-0 z-50 mt-2 transition duration-200 ease-out origin-top-left ${activeTab ? 'scale-100 opacity-100' : 'scale-95 opacity-0 invisible pointer-events-none'}`} style={{ left: panelLeft }}><div className="w-[520px] bg-white rounded-xl shadow-2xl border border-gray-100 overflow-hidden flex flex-col max-h-[calc(100vh-250px)]"><div className="h-1 bg-[#0F4C81] w-full shrink-0"></div> <div className="flex-1 overflow-y-auto bg-slate-50 p-4 space-y-3 custom-scrollbar">{renderDropdownContent()}</div></div></div>
                     <WorkflowProgressBar status={activePatient.workflowStatus} />
-                    <div className="flex-1 overflow-y-auto px-8 py-6 space-y-4 bg-[#f8f8f8]">{renderActivityStream()}</div>
+                    <div className="flex-1 overflow-y-auto px-8 py-6 space-y-4 bg-slate-50/50">{renderActivityStream()}</div>
                     <div className="p-4 pt-3 shrink-0 bg-white border-t border-gray-200 z-10 relative">
                         <div className="border border-gray-200 rounded-xl bg-white shadow-sm overflow-visible focus-within:ring-2 focus-within:ring-[#0F4C81] transition-all relative">
                             <div className="flex items-center justify-between px-3 py-2 bg-slate-50 border-b border-gray-200 rounded-t-xl">
