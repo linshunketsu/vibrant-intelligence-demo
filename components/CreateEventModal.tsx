@@ -110,11 +110,11 @@ export const CreateEventModal: React.FC<CreateEventModalProps> = ({
               damping: 25,
               duration: checkReducedMotion() ? 0 : undefined
             }}
-            className="fixed inset-0 z-50 flex items-center justify-center p-4"
+            className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6"
             onClick={onClose}
           >
             <div
-              className="bg-white w-full max-w-lg rounded-xl shadow-2xl overflow-hidden border border-gray-200 pointer-events-auto"
+              className="bg-white w-full max-w-lg rounded-xl shadow-2xl ring-1 ring-black/10 overflow-hidden pointer-events-auto"
               onClick={(e) => e.stopPropagation()}
             >
               {/* Header with Title */}

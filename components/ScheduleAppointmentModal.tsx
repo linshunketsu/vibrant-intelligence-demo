@@ -90,9 +90,9 @@ export const ScheduleAppointmentModal: React.FC<ScheduleAppointmentModalProps> =
   const isFormValid = selectedType && selectedDate && selectedTime && selectedLocation;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4" onClick={onClose}>
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 animate-in fade-in duration-200" onClick={onClose}>
       <div
-        className="bg-white rounded-xl shadow-2xl w-full max-w-md"
+        className="bg-white rounded-xl shadow-2xl ring-1 ring-black/10 w-full max-w-md animate-in zoom-in-95 duration-200 slide-in-from-bottom-4"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
