@@ -1,15 +1,16 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { 
-  ArrowLeft, UserCircle, RefreshCw, ChevronDown, Edit2, 
-  Trash2, Mic, Bold, Italic, Underline, Type, PenTool, 
-  List, ListOrdered, Phone, Mail, MapPin, Expand, Copy, 
+import {
+  ArrowLeft, UserCircle, RefreshCw, ChevronDown, Edit2,
+  Trash2, Mic, Bold, Italic, Underline, Type, PenTool,
+  List, ListOrdered, Phone, Mail, MapPin, Expand, Copy,
   Edit, Calendar, Mars, Venus, FileText, ClipboardList, StickyNote,
   Play, Pause, Square, RotateCcw, Sparkles, Check, Wand2,
   Pill, CheckSquare, ShoppingCart, Search, ChevronsLeftRight,
   Send, MessageSquare, Loader2, ThumbsUp, X, CheckCircle2,
   ArrowUp, User as UserIcon, Bot, Feather, Pin, Plus, Layout,
   Activity, Zap, FlaskConical, Stethoscope, AlertTriangle, CheckCheck, Clock, ChevronRight,
-  Thermometer, Scale, Ruler, Heart, Video
+  Thermometer, Scale, Ruler, Heart, Video, PenLine, Users, AtSign, Paperclip, MessageCircle,
+  Signature, Undo, History, UserPlus, Eye
 } from 'lucide-react';
 import { SidebarAiAssistant } from './SidebarAiAssistant';
 
@@ -145,12 +146,43 @@ export const EncounterNotesEditor: React.FC<EncounterNotesEditorProps> = ({ onBa
   // Modal States
   const [isAppointmentModalOpen, setIsAppointmentModalOpen] = useState(false);
   const [isOrderModalOpen, setIsOrderModalOpen] = useState(false);
-  
+
   const [apptForm, setApptForm] = useState({ date: '', time: '', reason: 'Follow-up', location: 'Zoom' });
   const [orderForm, setOrderForm] = useState({ testId: 'gut', deliveryMethod: 'office', paymentMethod: 'office_bill' });
-  
+
   // Selection saving for modal insertion
   const savedRange = useRef<Range | null>(null);
+
+  // Signature/Co-sign States
+  const [noteStatus, setNoteStatus] = useState<'draft' | 'signed' | 'cosigned'>('draft');
+  const [showSignatureModal, setShowSignatureModal] = useState(false);
+  const [showCoSignModal, setShowCoSignModal] = useState(false);
+  const [signerInfo, setSignerInfo] = useState({
+    signedBy: 'Dr. Irene Hoffman',
+    signedAt: '',
+    credentials: 'MD, FACP'
+  });
+  const [cosignerInfo, setCosignerInfo] = useState({
+    cosignedBy: '',
+    cosignedAt: '',
+    credentials: ''
+  });
+  const [signedNoteContent, setSignedNoteContent] = useState('');
+
+  // Collaboration States
+  const [collaborators, setCollaborators] = useState([
+    { id: '1', name: 'Dr. Sarah Chen', initials: 'SC', color: 'bg-purple-500', status: 'online', cursor: null },
+    { id: '2', name: 'Nurse Amy', initials: 'NA', color: 'bg-teal-500', status: 'away', cursor: null }
+  ]);
+  const [showCommentPopover, setShowCommentPopover] = useState(false);
+  const [commentPosition, setCommentPosition] = useState({ x: 0, y: 0 });
+  const [selectedText, setSelectedText] = useState('');
+  const [comments, setComments] = useState<{id: string, text: string, author: string, time: string, selection: string}[]>([]);
+  const [newComment, setNewComment] = useState('');
+  const [showMentionMenu, setShowMentionMenu] = useState(false);
+  const [mentionFilter, setMentionFilter] = useState('');
+  const [showAttachMenu, setShowAttachMenu] = useState(false);
+  const [isCollaborationMode, setIsCollaborationMode] = useState(true);
   // Ref for tracking which card is currently being edited (if any)
   const editingCardRef = useRef<HTMLElement | null>(null);
 
@@ -193,10 +225,42 @@ export const EncounterNotesEditor: React.FC<EncounterNotesEditorProps> = ({ onBa
       if (menuConfig.open) {
         setMenuConfig(prev => ({ ...prev, open: false }));
       }
+      // Close comment popover when clicking outside
+      if (showCommentPopover) {
+        const target = e.target as HTMLElement;
+        if (!target.closest('.comment-popover') && !target.closest('.comment-highlight')) {
+          setShowCommentPopover(false);
+        }
+      }
+      // Close mention and attachment menus
+      if (showMentionMenu || showAttachMenu) {
+        const target = e.target as HTMLElement;
+        if (!target.closest('.mention-menu') && !target.closest('.attach-menu') && !target.closest('[data-mention-trigger]') && !target.closest('[data-attach-trigger]')) {
+          setShowMentionMenu(false);
+          setShowAttachMenu(false);
+        }
+      }
     };
     window.addEventListener('click', handleGlobalClick);
     return () => window.removeEventListener('click', handleGlobalClick);
-  }, [isTemplateMenuOpen, menuConfig.open]);
+  }, [isTemplateMenuOpen, menuConfig.open, showCommentPopover, showMentionMenu, showAttachMenu]);
+
+  // Text selection for comments
+  useEffect(() => {
+    const handleSelectionChange = () => {
+      if (isCollaborationMode && noteStatus === 'draft') {
+        handleTextSelection();
+      }
+    };
+
+    document.addEventListener('mouseup', handleSelectionChange);
+    document.addEventListener('keyup', handleSelectionChange);
+
+    return () => {
+      document.removeEventListener('mouseup', handleSelectionChange);
+      document.removeEventListener('keyup', handleSelectionChange);
+    };
+  }, [isCollaborationMode, noteStatus]);
 
   const formatTime = (totalSeconds: number) => {
     const hours = Math.floor(totalSeconds / 3600);
@@ -618,6 +682,119 @@ export const EncounterNotesEditor: React.FC<EncounterNotesEditorProps> = ({ onBa
         pendingAiDiffRef.current = null;
     }
   };
+
+  // --- Signature & Co-sign Handlers ---
+
+  const handleSignNote = () => {
+    const now = new Date();
+    const signedAt = now.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+    setSignerInfo(prev => ({ ...prev, signedAt }));
+    setSignedNoteContent(editorRef.current?.innerHTML || '');
+    setNoteStatus('signed');
+    setShowSignatureModal(false);
+  };
+
+  const handleCoSignNote = () => {
+    const now = new Date();
+    const cosignedAt = now.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+    setCosignerInfo({
+      cosignedBy: 'Dr. James Wilson',
+      cosignedAt,
+      credentials: 'MD, Cardiology'
+    });
+    setNoteStatus('cosigned');
+    setShowCoSignModal(false);
+  };
+
+  const handleRequestCoSign = () => {
+    setShowCoSignModal(true);
+  };
+
+  const handleAddAppendage = () => {
+    // Allow adding addendum to signed note
+    setNoteStatus('draft');
+  };
+
+  // --- Collaboration Handlers ---
+
+  const handleTextSelection = () => {
+    const selection = window.getSelection();
+    const text = selection?.toString().trim();
+
+    if (text && text.length > 0) {
+      const range = selection.getRangeAt(0);
+      const rect = range.getBoundingClientRect();
+
+      setSelectedText(text);
+      setCommentPosition({
+        x: rect.left + rect.width / 2,
+        y: rect.top - 10
+      });
+      setShowCommentPopover(true);
+    } else {
+      setShowCommentPopover(false);
+    }
+  };
+
+  const handleAddComment = () => {
+    if (newComment.trim()) {
+      const comment = {
+        id: Date.now().toString(),
+        text: newComment,
+        author: 'Dr. Irene Hoffman',
+        time: new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }),
+        selection: selectedText
+      };
+      setComments(prev => [...prev, comment]);
+      setNewComment('');
+      setShowCommentPopover(false);
+      setSelectedText('');
+
+      // Add comment indicator to the editor
+      if (editorRef.current) {
+        const selection = window.getSelection();
+        if (selection && selection.rangeCount > 0) {
+          const range = selection.getRangeAt(0);
+          const span = document.createElement('span');
+          span.className = 'comment-highlight bg-yellow-100 border-b-2 border-yellow-400 cursor-pointer relative';
+          span.dataset.commentId = comment.id;
+          span.title = comment.text;
+
+          try {
+            range.surroundContents(span);
+          } catch (e) {
+            // For complex selections, fallback to highlighting
+            span.textContent = range.toString();
+            range.deleteContents();
+            range.insertNode(span);
+          }
+        }
+      }
+    }
+  };
+
+  const handleAddMention = (userId: string) => {
+    insertAtCursor(`<span class="mention-tag bg-blue-100 text-blue-700 px-1.5 py-0.5 rounded text-sm font-medium">@${userId}</span>&nbsp;`);
+    setShowMentionMenu(false);
+    setMentionFilter('');
+  };
+
+  const handleAttachFile = (fileType: string) => {
+    const fileIcon = fileType === 'image' ? '🖼️' : fileType === 'lab' ? '🔬' : '📎';
+    insertAtCursor(`<span class="attachment-tag inline-flex items-center gap-1 px-2 py-1 bg-slate-100 border border-slate-200 rounded text-sm">${fileIcon} ${fileType.charAt(0).toUpperCase() + fileType.slice(1)} Attached</span>&nbsp;`);
+    setShowAttachMenu(false);
+  };
+
+  const availableProviders = [
+    { id: 'dr-wilson', name: 'Dr. James Wilson', role: 'Cardiologist' },
+    { id: 'dr-chen', name: 'Dr. Sarah Chen', role: 'Radiologist' },
+    { id: 'nurse-amy', name: 'Nurse Amy Johnson', role: 'RN' },
+    { id: 'pa-mike', name: 'Mike Thompson', role: 'PA-C' }
+  ];
+
+  const filteredProviders = availableProviders.filter(p =>
+    p.name.toLowerCase().includes(mentionFilter.toLowerCase())
+  );
 
   const handleAiMessage = (msg: string) => {
     // Safety check: ensure msg is a valid string
@@ -1126,10 +1303,34 @@ export const EncounterNotesEditor: React.FC<EncounterNotesEditorProps> = ({ onBa
                    <div className="flex items-center gap-2">
                       <h2 className="text-2xl font-medium text-gray-800">{noteTitle}</h2>
                       <button className="text-gray-400 hover:text-gray-600 transition-colors"><Edit2 size={18} /></button>
+                      {noteStatus !== 'draft' && (
+                        <span className={`ml-2 px-2.5 py-0.5 text-[10px] font-bold uppercase rounded-full ${noteStatus === 'signed' ? 'bg-emerald-100 text-emerald-700' : 'bg-blue-100 text-blue-700'}`}>
+                          {noteStatus === 'signed' ? '✓ Signed' : '✓✓ Co-Signed'}
+                        </span>
+                      )}
                    </div>
                    <div className="flex gap-2">
                        <button className="px-4 py-1.5 border border-red-200 text-red-600 text-sm font-bold rounded hover:bg-red-50 transition-colors">Delete</button>
-                       <button className="px-4 py-1.5 bg-[#0F4C81] text-white text-sm font-bold rounded hover:bg-[#09355E] transition-colors shadow-sm">Complete Encounter</button>
+                       {noteStatus === 'draft' ? (
+                         <>
+                           <button onClick={() => setShowSignatureModal(true)} className="px-4 py-1.5 bg-[#0F4C81] text-white text-sm font-bold rounded hover:bg-[#09355E] transition-colors shadow-sm flex items-center gap-2">
+                             <Signature size={14} /> Sign Note
+                           </button>
+                         </>
+                       ) : noteStatus === 'signed' ? (
+                         <>
+                           <button onClick={handleRequestCoSign} className="px-4 py-1.5 border border-blue-200 text-blue-600 text-sm font-bold rounded hover:bg-blue-50 transition-colors flex items-center gap-2">
+                             <Users size={14} /> Request Co-Sign
+                           </button>
+                           <button onClick={handleAddAppendage} className="px-4 py-1.5 bg-amber-500 text-white text-sm font-bold rounded hover:bg-amber-600 transition-colors shadow-sm flex items-center gap-2">
+                             <Plus size={14} /> Add Addendum
+                           </button>
+                         </>
+                       ) : (
+                         <button className="px-4 py-1.5 bg-gray-100 text-gray-400 text-sm font-bold rounded cursor-not-allowed">
+                           <Check size={14} /> Fully Signed
+                         </button>
+                       )}
                    </div>
                 </div>
 
@@ -1287,10 +1488,45 @@ export const EncounterNotesEditor: React.FC<EncounterNotesEditorProps> = ({ onBa
                    )}
 
                    <div className="flex-1 flex flex-col bg-white overflow-hidden relative">
+                       {/* Collaboration Toolbar */}
+                       {isCollaborationMode && noteStatus === 'draft' && (
+                         <div className="px-3 py-1.5 bg-slate-50 border-b border-slate-100 flex items-center justify-between">
+                           <div className="flex items-center gap-2">
+                             {/* Active Collaborators */}
+                             <div className="flex items-center -space-x-1.5">
+                               {collaborators.map(c => (
+                                 <div
+                                   key={c.id}
+                                   className={`w-7 h-7 rounded-full ${c.color} flex items-center justify-center text-white text-[9px] font-bold border-2 border-white ${c.status === 'online' ? 'ring-2 ring-green-400' : 'opacity-60'}`}
+                                   title={`${c.name} (${c.status})`}
+                                 >
+                                   {c.initials}
+                                 </div>
+                               ))}
+                               <button className="w-7 h-7 rounded-full bg-slate-200 hover:bg-slate-300 flex items-center justify-center text-slate-600 border-2 border-white transition-colors" title="Add collaborator">
+                                 <UserPlus size={12} />
+                               </button>
+                             </div>
+                             <span className="text-[10px] text-slate-500 font-medium ml-1">
+                               {collaborators.filter(c => c.status === 'online').length} viewing
+                             </span>
+                           </div>
+                           <div className="flex items-center gap-1">
+                             <button
+                               onClick={() => setIsCollaborationMode(false)}
+                               className="p-1 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded transition-colors"
+                               title="Exit collaboration mode"
+                             >
+                               <X size={14} />
+                             </button>
+                           </div>
+                         </div>
+                       )}
+
                        <div className="px-4 py-3 border-b border-gray-200 flex items-center justify-between bg-[#F8F9FA]">
                           <div className="flex items-center gap-4 text-gray-600">
                              <div className="relative">
-                                <button 
+                                <button
                                   ref={templateBtnRef}
                                   onClick={(e) => { e.stopPropagation(); setIsTemplateMenuOpen(!isTemplateMenuOpen); }}
                                   className="flex items-center gap-1.5 px-3 py-1.5 bg-white border border-gray-200 rounded text-xs font-bold text-gray-600 hover:bg-gray-50 transition-colors shadow-sm"
@@ -1316,20 +1552,178 @@ export const EncounterNotesEditor: React.FC<EncounterNotesEditorProps> = ({ onBa
                              <button className="p-1 hover:bg-slate-200 rounded transition-colors italic font-serif">I</button>
                              <button className="p-1 hover:bg-slate-200 rounded transition-colors underline font-serif">U</button>
                              <button className="p-1 hover:bg-slate-200 rounded transition-colors"><List size={18} /></button>
+
+                             {/* Collaboration Tools */}
+                             {noteStatus === 'draft' && (
+                               <>
+                                 <div className="w-px h-4 bg-gray-300 mx-1"></div>
+                                 <div className="relative">
+                                   <button
+                                     onClick={() => setShowMentionMenu(!showMentionMenu)}
+                                     className="p-1.5 hover:bg-slate-200 rounded transition-colors text-slate-600 flex items-center gap-1"
+                                     title="Mention someone"
+                                   >
+                                     <AtSign size={16} />
+                                   </button>
+                                   {showMentionMenu && (
+                                     <div className="mention-menu absolute top-full left-0 mt-1 w-56 bg-white rounded-lg shadow-xl border border-gray-100 z-[100] py-2 animate-in slide-in-from-top-1 duration-100">
+                                       <div className="px-3 pb-2">
+                                         <input
+                                           type="text"
+                                           placeholder="Search providers..."
+                                           className="w-full text-xs border border-gray-200 rounded px-2 py-1.5 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                           value={mentionFilter}
+                                           onChange={(e) => setMentionFilter(e.target.value)}
+                                           autoFocus
+                                         />
+                                       </div>
+                                       <div className="max-h-48 overflow-y-auto">
+                                         {filteredProviders.map(p => (
+                                           <button
+                                             key={p.id}
+                                             onClick={() => handleAddMention(p.name)}
+                                             className="w-full px-3 py-2 hover:bg-slate-50 flex items-center gap-3 transition-colors"
+                                           >
+                                             <div className="w-8 h-8 rounded-full bg-slate-200 flex items-center justify-center text-slate-600 text-xs font-bold">
+                                               {p.name.split(' ').map(n => n[0]).join('')}
+                                             </div>
+                                             <div className="text-left">
+                                               <div className="text-sm font-medium text-slate-700">{p.name}</div>
+                                               <div className="text-[10px] text-slate-400">{p.role}</div>
+                                             </div>
+                                           </button>
+                                         ))}
+                                       </div>
+                                     </div>
+                                   )}
+                                 </div>
+                                 <div className="relative">
+                                   <button
+                                     onClick={() => setShowAttachMenu(!showAttachMenu)}
+                                     className="p-1.5 hover:bg-slate-200 rounded transition-colors text-slate-600"
+                                     title="Attach file"
+                                   >
+                                     <Paperclip size={16} />
+                                   </button>
+                                   {showAttachMenu && (
+                                     <div className="attach-menu absolute top-full left-0 mt-1 w-40 bg-white rounded-lg shadow-xl border border-gray-100 z-[100] py-1 animate-in slide-in-from-top-1 duration-100">
+                                       <button onClick={() => handleAttachFile('image')} className="w-full px-3 py-2 hover:bg-slate-50 text-left text-sm text-slate-700 flex items-center gap-2 transition-colors">
+                                         <span>🖼️</span> Image
+                                       </button>
+                                       <button onClick={() => handleAttachFile('lab')} className="w-full px-3 py-2 hover:bg-slate-50 text-left text-sm text-slate-700 flex items-center gap-2 transition-colors">
+                                         <span>🔬</span> Lab Result
+                                       </button>
+                                       <button onClick={() => handleAttachFile('document')} className="w-full px-3 py-2 hover:bg-slate-50 text-left text-sm text-slate-700 flex items-center gap-2 transition-colors">
+                                         <span>📎</span> Document
+                                       </button>
+                                     </div>
+                                   )}
+                                 </div>
+                                 <button
+                                   onClick={() => setIsCollaborationMode(!isCollaborationMode)}
+                                   className={`p-1.5 rounded transition-colors flex items-center gap-1 ${isCollaborationMode ? 'bg-blue-100 text-blue-600' : 'hover:bg-slate-200 text-slate-600'}`}
+                                   title="Toggle collaboration"
+                                 >
+                                   <MessageCircle size={16} />
+                                   <span className="text-[10px] font-bold hidden sm:inline">Comments</span>
+                                   {comments.length > 0 && (
+                                     <span className="ml-0.5 px-1.5 py-0.5 bg-blue-600 text-white text-[9px] font-bold rounded-full">{comments.length}</span>
+                                   )}
+                                 </button>
+                               </>
+                             )}
                           </div>
-                          <button onClick={() => { setIsPanelOpen(true); setRecordingState('recording'); setRecordingSeconds(0); }} className="flex items-center gap-2 px-4 py-1.5 bg-[#2D8CFF] hover:bg-[#1E7ADC] text-white text-xs font-bold rounded-lg shadow-sm transition-all active:scale-95">
-                             <Video size={16} fill="currentColor" /> Connected from Zoom
-                          </button>
+                          <div className="flex items-center gap-2">
+                             {noteStatus === 'draft' && (
+                               <button onClick={() => { setIsPanelOpen(true); setRecordingState('recording'); setRecordingSeconds(0); }} className="flex items-center gap-2 px-4 py-1.5 bg-[#2D8CFF] hover:bg-[#1E7ADC] text-white text-xs font-bold rounded-lg shadow-sm transition-all active:scale-95">
+                                 <Video size={16} fill="currentColor" /> Connected from Zoom
+                               </button>
+                             )}
+                             {noteStatus !== 'draft' && (
+                               <div className="flex items-center gap-2 text-xs text-slate-500">
+                                 <Eye size={14} />
+                                 <span>Read-only</span>
+                               </div>
+                             )}
+                          </div>
                        </div>
-                       <div 
+
+                       {/* Comment Popover */}
+                       {showCommentPopover && (
+                         <div
+                           className="comment-popover fixed z-[1000] w-72 bg-white rounded-xl shadow-2xl border border-gray-100 overflow-hidden animate-in fade-in zoom-in-95 duration-150"
+                           style={{
+                             left: `${commentPosition.x - 144}px`,
+                             top: `${commentPosition.y - 10}px`,
+                             transform: 'translateY(-100%)'
+                           }}
+                           onClick={(e) => e.stopPropagation()}
+                         >
+                           <div className="p-3">
+                             <div className="flex items-center justify-between mb-2">
+                               <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Add Comment</span>
+                               <button onClick={() => setShowCommentPopover(false)} className="text-slate-400 hover:text-slate-600">
+                                 <X size={14} />
+                               </button>
+                             </div>
+                             <div className="bg-slate-50 rounded p-2 mb-2 text-xs text-slate-600 italic">
+                               "{selectedText.length > 50 ? selectedText.slice(0, 50) + '...' : selectedText}"
+                             </div>
+                             <textarea
+                               className="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none resize-none"
+                               rows={3}
+                               placeholder="Type your comment..."
+                               value={newComment}
+                               onChange={(e) => setNewComment(e.target.value)}
+                               autoFocus
+                             />
+                             <div className="flex items-center justify-between mt-2">
+                               <button className="text-slate-400 hover:text-slate-600 transition-colors" title="Attach to comment">
+                                 <Paperclip size={14} />
+                               </button>
+                               <button
+                                 onClick={handleAddComment}
+                                 disabled={!newComment.trim()}
+                                 className="px-3 py-1.5 bg-blue-600 text-white text-xs font-bold rounded hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center gap-1"
+                               >
+                                 <Send size={12} /> Comment
+                               </button>
+                             </div>
+                           </div>
+                         </div>
+                       )}
+
+                       <div
                           ref={editorRef}
-                          contentEditable
+                          contentEditable={noteStatus === 'draft'}
                           onClick={handleEditorClick}
                           onKeyDown={handleEditorKeyDown}
                           onKeyUp={handleEditorKeyUp}
                           className="flex-1 w-full p-8 bg-white outline-none overflow-y-auto text-gray-700 leading-relaxed text-sm"
-                          data-placeholder="Start typing clinical notes... (Use 3 letters for items or $ for variables)"
+                          data-placeholder={noteStatus === 'draft' ? "Start typing clinical notes... (Use 3 letters for items or $ for variables)" : ""}
+                          style={noteStatus !== 'draft' ? { cursor: 'default' } : {}}
                        ></div>
+
+                       {/* Comments Sidebar (visible when collaboration is on) */}
+                       {isCollaborationMode && comments.length > 0 && (
+                         <div className="border-t border-gray-100 bg-slate-50 p-3 max-h-40 overflow-y-auto">
+                           <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-2">Comments ({comments.length})</div>
+                           <div className="space-y-2">
+                             {comments.map(c => (
+                               <div key={c.id} className="bg-white rounded-lg p-2.5 border border-gray-100 shadow-sm">
+                                 <div className="flex items-center justify-between mb-1">
+                                   <span className="text-xs font-bold text-slate-700">{c.author}</span>
+                                   <span className="text-[9px] text-slate-400">{c.time}</span>
+                                 </div>
+                                 <p className="text-xs text-slate-600 mb-1">{c.text}</p>
+                                 <div className="text-[10px] text-slate-400 italic bg-slate-50 rounded px-1.5 py-0.5">
+                                   "{c.selection.length > 40 ? c.selection.slice(0, 40) + '...' : c.selection}"
+                                 </div>
+                               </div>
+                             ))}
+                           </div>
+                         </div>
+                       )}
                    </div>
                 </div>
             </div>
@@ -1663,6 +2057,121 @@ export const EncounterNotesEditor: React.FC<EncounterNotesEditorProps> = ({ onBa
                   <button onClick={handleConfirmOrder} className="px-4 py-2 text-sm font-bold text-white bg-emerald-600 hover:bg-emerald-700 rounded-lg shadow-sm flex items-center gap-2"><Check size={14} /> Place Order</button>
               </div>
            </div>
+        </div>
+      )}
+      {/* Signature Modal */}
+      {showSignatureModal && (
+        <div className="fixed inset-0 z-[1000] flex items-center justify-center bg-slate-900/40 backdrop-blur-sm">
+          <div className="bg-white rounded-xl shadow-2xl w-full max-w-lg overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+            <div className="px-6 py-4 border-b border-gray-100 flex justify-between items-center bg-emerald-50/50">
+              <h3 className="font-bold text-gray-800 flex items-center gap-2">
+                <PenLine className="text-emerald-600" size={18} /> Sign Encounter Note
+              </h3>
+              <button onClick={() => setShowSignatureModal(false)} className="text-gray-400 hover:text-gray-600 transition-colors">
+                <X size={18} />
+              </button>
+            </div>
+            <div className="p-6 space-y-4">
+              <div className="bg-slate-50 rounded-lg p-4 border border-slate-100">
+                <div className="flex items-center gap-3 mb-3">
+                  <div className="w-12 h-12 bg-slate-600 rounded-full flex items-center justify-center text-white font-bold">IH</div>
+                  <div>
+                    <div className="font-bold text-slate-800">Dr. Irene Hoffman</div>
+                    <div className="text-xs text-slate-500">MD, FACP • NPI: 1234567890</div>
+                  </div>
+                </div>
+                <div className="text-sm text-slate-600 space-y-1">
+                  <div><span className="font-medium text-slate-700">Patient:</span> {patient.name}</div>
+                  <div><span className="font-medium text-slate-700">Note Title:</span> {noteTitle}</div>
+                  <div><span className="font-medium text-slate-700">Date of Service:</span> Dec 10, 2025</div>
+                </div>
+              </div>
+
+              <div className="bg-amber-50 border border-amber-200 rounded-lg p-3 flex gap-3">
+                <AlertTriangle size={16} className="text-amber-600 shrink-0 mt-0.5" />
+                <div className="text-xs text-amber-800">
+                  <strong>Electronic Signature Agreement:</strong> By signing this note, I certify that this documentation is accurate, complete, and was created by me or under my direct supervision. This electronic signature has the same legal effect as a handwritten signature.
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-gray-500 uppercase mb-2">Signature Preview</label>
+                <div className="border-2 border-dashed border-gray-200 rounded-lg p-6 bg-slate-50 text-center">
+                  <div className="font-script text-2xl text-slate-700 italic" style={{ fontFamily: 'cursive' }}>Irene Hoffman, MD</div>
+                  <div className="text-[10px] text-slate-400 mt-1">Electronically signed on {new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}</div>
+                </div>
+              </div>
+            </div>
+            <div className="px-6 py-4 bg-gray-50 border-t border-gray-100 flex justify-between gap-3">
+              <button onClick={() => setShowSignatureModal(false)} className="px-4 py-2 text-sm font-semibold text-gray-600 hover:bg-gray-100 rounded-lg transition-colors">
+                Cancel
+              </button>
+              <button onClick={handleSignNote} className="px-6 py-2 text-sm font-bold text-white bg-emerald-600 hover:bg-emerald-700 rounded-lg shadow-sm flex items-center gap-2">
+                <PenLine size={16} /> Sign Note
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Co-Sign Request Modal */}
+      {showCoSignModal && (
+        <div className="fixed inset-0 z-[1000] flex items-center justify-center bg-slate-900/40 backdrop-blur-sm">
+          <div className="bg-white rounded-xl shadow-2xl w-full max-w-md overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+            <div className="px-6 py-4 border-b border-gray-100 flex justify-between items-center bg-blue-50/50">
+              <h3 className="font-bold text-gray-800 flex items-center gap-2">
+                <Users className="text-blue-600" size={18} /> Request Co-Signature
+              </h3>
+              <button onClick={() => setShowCoSignModal(false)} className="text-gray-400 hover:text-gray-600 transition-colors">
+                <X size={18} />
+              </button>
+            </div>
+            <div className="p-6 space-y-4">
+              <div className="text-sm text-slate-600 mb-4">
+                Select a provider to co-sign this encounter note. The co-signer will receive a notification and can review before signing.
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-gray-500 uppercase mb-2">Select Co-Signer</label>
+                <div className="space-y-2">
+                  {availableProviders.map((provider, idx) => (
+                    <button
+                      key={provider.id}
+                      className={`w-full p-3 rounded-lg border text-left flex items-center gap-3 transition-all ${
+                        idx === 0 ? 'bg-blue-50 border-blue-500 ring-2 ring-blue-200' : 'bg-white border-gray-200 hover:bg-slate-50'
+                      }`}
+                    >
+                      <div className="w-10 h-10 rounded-full bg-slate-200 flex items-center justify-center text-slate-600 text-sm font-bold">
+                        {provider.name.split(' ').map(n => n[0]).join('')}
+                      </div>
+                      <div className="flex-1">
+                        <div className="text-sm font-semibold text-slate-800">{provider.name}</div>
+                        <div className="text-[10px] text-slate-500">{provider.role}</div>
+                      </div>
+                      {idx === 0 && <Check className="text-blue-600" size={16} />}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-gray-500 uppercase mb-2">Message to Co-Signer (Optional)</label>
+                <textarea
+                  className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none resize-none"
+                  rows={2}
+                  placeholder="Add a note for the co-signer..."
+                />
+              </div>
+            </div>
+            <div className="px-6 py-4 bg-gray-50 border-t border-gray-100 flex justify-between gap-3">
+              <button onClick={() => setShowCoSignModal(false)} className="px-4 py-2 text-sm font-semibold text-gray-600 hover:bg-gray-100 rounded-lg transition-colors">
+                Cancel
+              </button>
+              <button onClick={handleCoSignNote} className="px-5 py-2 text-sm font-bold text-white bg-blue-600 hover:bg-blue-700 rounded-lg shadow-sm flex items-center gap-2">
+                <Send size={14} /> Send Request
+              </button>
+            </div>
+          </div>
         </div>
       )}
 
