@@ -314,119 +314,81 @@ export const PublicBookingPagePreview: React.FC<PublicBookingPagePreviewProps> =
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 lg:p-6" onClick={onClose}>
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4" onClick={onClose}>
       <div
-        className="bg-white rounded-2xl shadow-2xl ring-1 ring-black/10 w-full max-w-6xl h-[90vh] overflow-hidden flex flex-col animate-in fade-in zoom-in-95 duration-200"
+        className="bg-white rounded-2xl shadow-2xl ring-1 ring-black/10 w-full max-w-5xl h-[88vh] overflow-hidden flex flex-col animate-in fade-in zoom-in-95 duration-200"
         onClick={(e) => e.stopPropagation()}
       >
-        {/* Header - Full Size with Branding */}
-        <div className="bg-gradient-to-r from-[#0F4C81] to-[#1673A8] text-white px-8 py-6">
-          <div className="flex justify-between items-center mb-4">
-            <button
-              onClick={onClose}
-              className="p-2 hover:bg-white/10 rounded-full transition-colors"
-            >
-              <X size={22} />
-            </button>
-            <div className="text-center">
-              <p className="text-xs font-medium text-blue-100 uppercase tracking-wide">Public Booking Page</p>
-              <p className="text-sm font-bold">Preview Mode</p>
-            </div>
-            <div className="w-7" />
-          </div>
-          <div className="text-center">
-            <h1 className="text-2xl font-bold">Schedule Your Appointment</h1>
-            <p className="text-blue-100 text-sm mt-1">Select a date and time that works best for you</p>
-          </div>
-        </div>
-
-        {/* Clinician Info Section - Enhanced */}
-        <div className="px-8 py-6 bg-gradient-to-r from-slate-50 to-white border-b border-gray-100">
-          <div className="flex items-center gap-5">
+        {/* Header - Clean with Close Button */}
+        <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100 bg-white">
+          <div className="flex items-center gap-3">
             <img
               src={clinicianPhoto || DEFAULT_AVATAR}
               alt={clinicianName}
-              className="w-20 h-20 rounded-2xl object-cover border-4 border-white shadow-lg"
+              className="w-12 h-12 rounded-xl object-cover"
             />
-            <div className="flex-1">
-              <h2 className="text-xl font-bold text-slate-800">{clinicianName}</h2>
-              <p className="text-slate-500 flex items-center gap-2 mt-1">
-                <span className="w-2 h-2 bg-green-500 rounded-full"></span>
-                {practiceName}
-              </p>
-              <div className="flex items-center gap-4 mt-3">
-                <div className="flex items-center gap-1.5 text-xs text-slate-500">
-                  <Mail size={14} />
-                  <span>Accepting new patients</span>
-                </div>
-                <div className="flex items-center gap-1.5 text-xs text-slate-500">
-                  <Clock size={14} />
-                  <span>Response time: &lt;24hrs</span>
-                </div>
-              </div>
+            <div>
+              <h1 className="text-lg font-bold text-slate-800">{clinicianName}</h1>
+              <p className="text-sm text-slate-500">{practiceName}</p>
             </div>
-            <div className="text-right">
-              <div className="flex items-center gap-1 bg-white px-3 py-1.5 rounded-full shadow-sm border border-gray-200">
-                <span className="text-yellow-500">★★★★★</span>
-                <span className="text-sm font-semibold text-slate-700">4.9</span>
-                <span className="text-xs text-slate-400">(127)</span>
-              </div>
-            </div>
+          </div>
+          <div className="flex items-center gap-3">
+            <span className="px-3 py-1 bg-green-100 text-green-700 text-xs font-medium rounded-full">Accepting new patients</span>
+            <button
+              onClick={onClose}
+              className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+            >
+              <X size={20} className="text-slate-500" />
+            </button>
           </div>
         </div>
 
-        {/* Appointment Type Selection - Enhanced */}
-        <div className="px-8 py-5 border-b border-gray-100 bg-white">
-          <p className="text-sm font-bold text-slate-700 mb-3">What type of appointment do you need?</p>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+        {/* Appointment Type Pills - Compact */}
+        <div className="px-6 py-3 border-b border-gray-100 bg-gray-50">
+          <div className="flex items-center gap-2 overflow-x-auto pb-1">
             {appointmentTypes.map((type) => (
               <button
                 key={type.id}
                 onClick={() => setSelectedAppointmentType(type)}
                 className={`
-                  p-4 rounded-xl text-sm font-medium transition-all border-2
+                  px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-all
                   ${selectedAppointmentType?.id === type.id
-                    ? `${type.color} bg-white border-current shadow-lg scale-[1.02]`
-                    : 'bg-slate-50 border-slate-200 text-slate-600 hover:bg-slate-100 hover:border-slate-300'
+                    ? `${type.color} text-white shadow-sm`
+                    : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-100'
                   }
                 `}
               >
-                <div className="flex flex-col items-center gap-2">
-                  <div className={`w-10 h-10 rounded-full flex items-center justify-center ${selectedAppointmentType?.id === type.id ? 'bg-white/20' : 'bg-slate-200'}`}>
-                    <Calendar size={20} />
-                  </div>
-                  <span className="text-center leading-tight">{type.name}</span>
-                </div>
+                {type.name}
               </button>
             ))}
           </div>
         </div>
 
-        {/* Main Content - Calendar and Time Slots Side by Side */}
-        <div className="flex-1 overflow-hidden flex">
-          <div className="grid grid-cols-1 md:grid-cols-2 divide-y md:divide-y-0 md:divide-x divide-gray-100 w-full h-full">
+        {/* Main Content - Calendar and Time Slots */}
+        <div className="flex-1 overflow-hidden">
+          <div className="grid grid-cols-1 md:grid-cols-2 h-full">
             {/* Calendar Section */}
-            <div className="p-8 overflow-y-auto">
-              <div className="flex items-center justify-between mb-6">
+            <div className="p-6 border-r border-gray-100 overflow-y-auto">
+              <div className="flex items-center justify-between mb-4">
                 <button
                   onClick={handlePrevMonth}
-                  className="p-2 hover:bg-slate-100 rounded-full transition-colors"
+                  className="p-1.5 hover:bg-gray-100 rounded-full transition-colors"
                 >
-                  <ChevronLeft size={22} className="text-slate-600" />
+                  <ChevronLeft size={20} className="text-slate-600" />
                 </button>
-                <h4 className="text-lg font-bold text-slate-800">{monthName} 2026</h4>
+                <h3 className="text-base font-semibold text-slate-800">{monthName} 2026</h3>
                 <button
                   onClick={handleNextMonth}
-                  className="p-2 hover:bg-slate-100 rounded-full transition-colors"
+                  className="p-1.5 hover:bg-gray-100 rounded-full transition-colors"
                 >
-                  <ChevronRight size={22} className="text-slate-600" />
+                  <ChevronRight size={20} className="text-slate-600" />
                 </button>
               </div>
 
               {/* Calendar Grid */}
-              <div className="grid grid-cols-7 gap-2 mb-4">
-                {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map((day) => (
-                  <div key={day} className="text-center text-xs font-bold text-slate-400 uppercase py-2">
+              <div className="grid grid-cols-7 gap-1">
+                {['S', 'M', 'T', 'W', 'T', 'F', 'S'].map((day) => (
+                  <div key={day} className="text-center text-xs font-medium text-slate-400 py-2">
                     {day}
                   </div>
                 ))}
@@ -436,14 +398,14 @@ export const PublicBookingPagePreview: React.FC<PublicBookingPagePreviewProps> =
                     disabled={!isDateAvailable(day)}
                     onClick={() => day && handleDateSelect(day)}
                     className={`
-                      aspect-square rounded-xl text-base font-semibold transition-all
+                      aspect-square rounded-lg text-sm font-medium transition-all
                       ${day === null
                         ? 'invisible'
                         : !isDateAvailable(day)
                         ? 'text-slate-300 bg-slate-50 cursor-not-allowed'
                         : isSelectedDate(day)
-                        ? 'bg-[#0F4C81] text-white shadow-lg scale-105'
-                        : 'bg-slate-50 text-slate-700 hover:bg-blue-50 hover:text-[#0F4C81] cursor-pointer'
+                        ? 'bg-[#0F4C81] text-white shadow-md'
+                        : 'bg-white border border-gray-200 text-slate-700 hover:bg-blue-50 hover:border-blue-200 hover:text-[#0F4C81] cursor-pointer'
                       }
                     `}
                   >
@@ -451,48 +413,33 @@ export const PublicBookingPagePreview: React.FC<PublicBookingPagePreviewProps> =
                   </button>
                 ))}
               </div>
-
-              {/* Calendar Legend */}
-              <div className="flex items-center gap-4 pt-4 border-t border-gray-100">
-                <div className="flex items-center gap-2">
-                  <div className="w-3 h-3 rounded bg-blue-50 border border-slate-200"></div>
-                  <span className="text-xs text-slate-500">Available</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <div className="w-3 h-3 rounded bg-slate-100"></div>
-                  <span className="text-xs text-slate-500">Unavailable</span>
-                </div>
-              </div>
             </div>
 
-            {/* Time Slots Section - Enhanced */}
-            <div className="p-8 overflow-y-auto bg-slate-50/50">
-              <h3 className="text-base font-bold text-slate-700 mb-1">
-                {selectedDate === null ? 'Select a date first' : `Available Times`}
+            {/* Time Slots Section */}
+            <div className="p-6 bg-gray-50/50 overflow-y-auto">
+              <h3 className="text-base font-semibold text-slate-800 mb-1">
+                {selectedDate === null ? 'Available Times' : `${monthName} ${selectedDate}`}
               </h3>
-              {selectedDate !== null && (
-                <p className="text-sm text-slate-500 mb-4">{monthName} {selectedDate}, 2026</p>
-              )}
+              <p className="text-sm text-slate-500 mb-4">
+                {selectedDate === null ? 'Select a date to see times' : 'Select a time slot'}
+              </p>
 
               {selectedDate === null ? (
-                <div className="flex flex-col items-center justify-center h-64 text-center">
-                  <div className="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mb-4">
-                    <Calendar size={32} className="text-slate-400" />
-                  </div>
-                  <p className="text-slate-500">Select a date from the calendar</p>
-                  <p className="text-sm text-slate-400 mt-1">to see available time slots</p>
+                <div className="flex flex-col items-center justify-center h-48 text-center">
+                  <Calendar size={40} className="text-slate-300 mb-2" />
+                  <p className="text-slate-500 text-sm">Select a date from the calendar</p>
                 </div>
               ) : availableSlots.length > 0 ? (
-                <div className="grid grid-cols-2 gap-3">
+                <div className="grid grid-cols-3 gap-2">
                   {availableSlots.map((time) => (
                     <button
                       key={time}
                       onClick={() => setSelectedTime(time)}
                       className={`
-                        p-4 rounded-xl text-sm font-semibold transition-all border-2
+                        px-4 py-3 rounded-lg text-sm font-medium transition-all
                         ${selectedTime === time
-                          ? 'bg-[#0F4C81] text-white border-[#0F4C81] shadow-lg scale-[1.02]'
-                          : 'bg-white border-slate-200 text-slate-700 hover:border-[#0F4C81] hover:text-[#0F4C81]'
+                          ? 'bg-[#0F4C81] text-white shadow-md'
+                          : 'bg-white border border-gray-200 text-slate-700 hover:border-[#0F4C81] hover:text-[#0F4C81]'
                         }
                       `}
                     >
@@ -501,95 +448,53 @@ export const PublicBookingPagePreview: React.FC<PublicBookingPagePreviewProps> =
                   ))}
                 </div>
               ) : (
-                <div className="flex flex-col items-center justify-center h-64 text-center">
-                  <p className="text-slate-500">No available slots on this date</p>
-                  <p className="text-sm text-slate-400 mt-1">Please try another day</p>
+                <div className="flex flex-col items-center justify-center h-48 text-center">
+                  <p className="text-slate-500 text-sm">No available slots</p>
+                  <p className="text-slate-400 text-xs mt-1">Try another date</p>
                 </div>
               )}
             </div>
           </div>
         </div>
 
-        {/* Booking Summary - Enhanced */}
+        {/* Booking Summary - Shows when time selected */}
         {selectedTime && selectedDate && selectedAppointmentType && (
-          <div className="mx-8 mb-4 p-5 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-2xl border border-blue-200 shadow-sm">
-            <div className="flex items-center gap-4">
-              <div className="w-12 h-12 bg-[#0F4C81] rounded-full flex items-center justify-center shrink-0">
-                <Check size={24} className="text-white" />
+          <div className="px-6 py-4 bg-blue-50 border-t border-blue-100">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 bg-[#0F4C81] rounded-lg flex items-center justify-center">
+                  <Check size={20} className="text-white" />
+                </div>
+                <div>
+                  <p className="text-sm font-semibold text-slate-800">
+                    {monthName} {selectedDate} at {selectedTime} · {selectedAppointmentType.name}
+                  </p>
+                  <p className="text-xs text-slate-500">30 min appointment</p>
+                </div>
               </div>
-              <div className="flex-1">
-                <p className="text-base font-bold text-slate-800">
-                  {monthName} {selectedDate}, 2026 at {selectedTime}
-                </p>
-                <p className="text-sm text-slate-600">{selectedAppointmentType.name} · {clinicianName}</p>
-              </div>
-              <div className="text-right">
-                <p className="text-xs text-slate-500">Duration</p>
-                <p className="text-sm font-semibold text-slate-700">30 min</p>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* Patient Info Section */}
-        {selectedTime && selectedDate && selectedAppointmentType && (
-          <div className="mx-8 mb-4 p-5 bg-white rounded-2xl border border-slate-200">
-            <h3 className="text-sm font-bold text-slate-700 mb-3">Your Information</h3>
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <label className="text-xs text-slate-500 block mb-1">Full Name</label>
+              <div className="flex items-center gap-2">
+                <span className="text-xs text-slate-500">Your name:</span>
                 <input
                   type="text"
                   placeholder="Enter your name"
-                  className="w-full px-3 py-2.5 text-sm border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0F4C81] focus:border-transparent"
+                  className="px-3 py-2 text-sm border border-gray-300 rounded-lg w-40 focus:outline-none focus:ring-2 focus:ring-[#0F4C81] focus:border-transparent"
                 />
-              </div>
-              <div>
-                <label className="text-xs text-slate-500 block mb-1">Email Address</label>
-                <input
-                  type="email"
-                  placeholder="your@email.com"
-                  className="w-full px-3 py-2.5 text-sm border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0F4C81] focus:border-transparent"
-                />
-              </div>
-              <div>
-                <label className="text-xs text-slate-500 block mb-1">Phone Number</label>
-                <input
-                  type="tel"
-                  placeholder="(555) 123-4567"
-                  className="w-full px-3 py-2.5 text-sm border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0F4C81] focus:border-transparent"
-                />
-              </div>
-              <div>
-                <label className="text-xs text-slate-500 block mb-1">Reason for Visit</label>
-                <select className="w-full px-3 py-2.5 text-sm border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0F4C81] focus:border-transparent bg-white">
-                  <option>Select reason...</option>
-                  <option>Routine checkup</option>
-                  <option>Follow-up visit</option>
-                  <option>New symptom</option>
-                  <option>Other</option>
-                </select>
               </div>
             </div>
           </div>
         )}
 
-        {/* Footer - Enhanced */}
-        <div className="px-8 py-4 bg-white border-t border-gray-200 flex items-center justify-between shrink-0">
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-8 bg-slate-100 rounded-lg flex items-center justify-center">
-              <span className="text-xs font-bold text-slate-500">VI</span>
-            </div>
-            <span className="text-xs text-slate-400">Powered by Vibrant Intelligence</span>
-          </div>
+        {/* Footer - Book Button */}
+        <div className="px-6 py-4 bg-white border-t border-gray-200 flex items-center justify-between">
+          <span className="text-xs text-slate-400">Powered by Vibrant Intelligence</span>
           <button
             onClick={handleBookAppointment}
             disabled={!selectedTime}
             className={`
-              px-8 py-3.5 rounded-xl text-base font-semibold transition-all shadow-lg
+              px-6 py-3 rounded-xl text-sm font-semibold transition-all
               ${selectedTime
-                ? 'bg-[#0F4C81] text-white hover:bg-[#09355E] hover:shadow-xl'
-                : 'bg-slate-200 text-slate-400 cursor-not-allowed'
+                ? 'bg-[#0F4C81] text-white hover:bg-[#09355E] shadow-md'
+                : 'bg-gray-200 text-gray-400 cursor-not-allowed'
               }
             `}
           >
