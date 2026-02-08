@@ -314,52 +314,53 @@ export const PublicBookingPagePreview: React.FC<PublicBookingPagePreviewProps> =
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4" onClick={onClose}>
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 lg:p-6" onClick={onClose}>
       <div
-        className="bg-white rounded-2xl shadow-2xl ring-1 ring-black/10 w-full max-w-3xl max-h-[85vh] overflow-hidden flex flex-col animate-in fade-in zoom-in-95 duration-200"
+        className="bg-white rounded-2xl shadow-2xl ring-1 ring-black/10 w-full max-w-6xl h-[90vh] overflow-hidden flex flex-col animate-in fade-in zoom-in-95 duration-200"
         onClick={(e) => e.stopPropagation()}
       >
-        {/* Header - Compact */}
-        <div className="bg-gradient-to-r from-[#0F4C81] to-[#1673A8] text-white px-4 py-2">
+        {/* Header - Full Size */}
+        <div className="bg-gradient-to-r from-[#0F4C81] to-[#1673A8] text-white px-6 py-4">
           <div className="flex justify-between items-center">
             <button
               onClick={onClose}
-              className="p-1 hover:bg-white/10 rounded-full transition-colors"
+              className="p-2 hover:bg-white/10 rounded-full transition-colors"
             >
-              <X size={18} />
+              <X size={22} />
             </button>
             <div className="text-center">
-              <p className="text-[10px] font-medium text-blue-100 uppercase tracking-wide">Public Booking Page</p>
-              <p className="text-xs font-bold">Preview Mode</p>
+              <p className="text-xs font-medium text-blue-100 uppercase tracking-wide">Public Booking Page</p>
+              <p className="text-sm font-bold">Preview Mode</p>
             </div>
-            <div className="w-5" />
+            <div className="w-7" />
           </div>
         </div>
 
-        {/* Compact Clinician Info Row */}
-        <div className="px-4 py-2 border-b border-gray-100 flex items-center gap-3">
+        {/* Clinician Info Row - Larger */}
+        <div className="px-6 py-4 border-b border-gray-100 flex items-center gap-4">
           <img
             src={clinicianPhoto || DEFAULT_AVATAR}
             alt={clinicianName}
-            className="w-10 h-10 rounded-full object-cover border border-gray-200"
+            className="w-14 h-14 rounded-full object-cover border-2 border-gray-200"
           />
           <div className="min-w-0 flex-1">
-            <h2 className="text-sm font-bold text-slate-800 truncate">{clinicianName}</h2>
-            <p className="text-xs text-slate-500 truncate">{practiceName}</p>
+            <h2 className="text-lg font-bold text-slate-800">{clinicianName}</h2>
+            <p className="text-sm text-slate-500">{practiceName}</p>
           </div>
         </div>
 
-        {/* Appointment Type Selection - Compact Pills */}
-        <div className="px-4 py-2 border-b border-gray-100">
-          <div className="flex flex-wrap gap-1.5">
+        {/* Appointment Type Selection - Larger Pills */}
+        <div className="px-6 py-3 border-b border-gray-100">
+          <p className="text-xs font-semibold text-slate-600 uppercase tracking-wide mb-2">Select Appointment Type</p>
+          <div className="flex flex-wrap gap-2">
             {appointmentTypes.map((type) => (
               <button
                 key={type.id}
                 onClick={() => setSelectedAppointmentType(type)}
                 className={`
-                  px-2.5 py-1 rounded text-xs font-medium transition-all
+                  px-4 py-2 rounded-full text-sm font-medium transition-all
                   ${selectedAppointmentType?.id === type.id
-                    ? `${type.color} text-white shadow-sm`
+                    ? `${type.color} text-white shadow-md`
                     : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
                   }
                 `}
@@ -372,28 +373,28 @@ export const PublicBookingPagePreview: React.FC<PublicBookingPagePreviewProps> =
 
         {/* Main Content - Calendar and Time Slots Side by Side */}
         <div className="flex-1 overflow-y-auto">
-          <div className="grid grid-cols-1 md:grid-cols-2 divide-y md:divide-y-0 md:divide-x divide-gray-100">
+          <div className="grid grid-cols-1 md:grid-cols-2 divide-y md:divide-y-0 md:divide-x divide-gray-100 h-full">
             {/* Calendar Section */}
-            <div className="p-4">
+            <div className="p-6">
               {/* Month Navigation */}
-              <div className="flex items-center justify-between mb-3">
+              <div className="flex items-center justify-between mb-4">
                 <button
                   onClick={handlePrevMonth}
-                  className="p-1 hover:bg-slate-100 rounded transition-colors"
+                  className="p-2 hover:bg-slate-100 rounded-full transition-colors"
                 >
-                  <ChevronLeft size={16} className="text-slate-500" />
+                  <ChevronLeft size={20} className="text-slate-500" />
                 </button>
-                <h4 className="text-sm font-semibold text-slate-800">{monthName}</h4>
+                <h4 className="text-base font-semibold text-slate-800">{monthName}</h4>
                 <button
                   onClick={handleNextMonth}
-                  className="p-1 hover:bg-slate-100 rounded transition-colors"
+                  className="p-2 hover:bg-slate-100 rounded-full transition-colors"
                 >
-                  <ChevronRight size={16} className="text-slate-500" />
+                  <ChevronRight size={20} className="text-slate-500" />
                 </button>
               </div>
 
-              {/* Calendar Grid - Compact */}
-              <div className="grid grid-cols-7 gap-0.5 mb-1">
+              {/* Calendar Grid - Normal Size */}
+              <div className="grid grid-cols-7 gap-1 mb-2">
                 {['S', 'M', 'T', 'W', 'T', 'F', 'S'].map((day, idx) => (
                   <div key={idx} className="text-center text-[10px] font-semibold text-slate-400 py-1">
                     {day}
@@ -405,14 +406,14 @@ export const PublicBookingPagePreview: React.FC<PublicBookingPagePreviewProps> =
                     disabled={!isDateAvailable(day)}
                     onClick={() => day && handleDateSelect(day)}
                     className={`
-                      aspect-square rounded text-xs font-medium transition-all
+                      aspect-square rounded-lg text-sm font-semibold transition-all
                       ${day === null
                         ? 'invisible'
                         : !isDateAvailable(day)
                         ? 'text-slate-300 bg-slate-50 cursor-not-allowed'
                         : isSelectedDate(day)
-                        ? 'bg-[#0F4C81] text-white shadow-sm'
-                        : 'bg-blue-50 text-[#0F4C81] hover:bg-blue-100 cursor-pointer font-semibold'
+                        ? 'bg-[#0F4C81] text-white shadow-md'
+                        : 'bg-blue-50 text-[#0F4C81] hover:bg-blue-100 cursor-pointer'
                       }
                     `}
                   >
@@ -422,23 +423,25 @@ export const PublicBookingPagePreview: React.FC<PublicBookingPagePreviewProps> =
               </div>
             </div>
 
-            {/* Time Slots Section */}
-            <div className="p-4">
-              <h3 className="text-xs font-bold text-slate-700 mb-2">
-                {selectedDate === null ? 'Select a date' : `${monthName} ${selectedDate}`}
+            {/* Time Slots Section - Larger */}
+            <div className="p-6">
+              <h3 className="text-sm font-bold text-slate-700 mb-3">
+                {selectedDate === null ? 'Select a date' : `Available Times - ${monthName} ${selectedDate}`}
               </h3>
               {selectedDate === null ? (
-                <p className="text-xs text-slate-400 italic">Choose a date to see available times</p>
+                <div className="flex items-center justify-center h-40">
+                  <p className="text-sm text-slate-400">Choose a date to see available times</p>
+                </div>
               ) : availableSlots.length > 0 ? (
-                <div className="grid grid-cols-3 gap-1.5 max-h-[220px] overflow-y-auto pr-1">
+                <div className="grid grid-cols-3 gap-2 max-h-[300px] overflow-y-auto pr-2">
                   {availableSlots.map((time) => (
                     <button
                       key={time}
                       onClick={() => setSelectedTime(time)}
                       className={`
-                        px-2 py-1.5 rounded text-xs font-medium transition-all
+                        px-3 py-2.5 rounded-lg text-sm font-medium transition-all
                         ${selectedTime === time
-                          ? 'bg-[#0F4C81] text-white shadow-sm'
+                          ? 'bg-[#0F4C81] text-white shadow-md'
                           : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
                         }
                       `}
@@ -448,37 +451,37 @@ export const PublicBookingPagePreview: React.FC<PublicBookingPagePreviewProps> =
                   ))}
                 </div>
               ) : (
-                <p className="text-xs text-slate-500 italic">No available slots</p>
+                <p className="text-sm text-slate-500 italic">No available slots</p>
               )}
             </div>
           </div>
 
-          {/* Booking Summary - Compact */}
+          {/* Booking Summary - Larger */}
           {selectedTime && selectedDate && selectedAppointmentType && (
-            <div className="mx-4 mb-3 p-3 bg-blue-50 rounded-lg border border-blue-100">
-              <div className="flex items-center gap-2">
-                <div className="w-8 h-8 bg-[#0F4C81] rounded-full flex items-center justify-center shrink-0">
-                  <Check size={16} className="text-white" />
+            <div className="mx-6 mb-4 p-4 bg-blue-50 rounded-xl border border-blue-200">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 bg-[#0F4C81] rounded-full flex items-center justify-center shrink-0">
+                  <Check size={20} className="text-white" />
                 </div>
                 <div className="min-w-0 flex-1">
-                  <p className="text-xs font-semibold text-slate-800">
+                  <p className="text-sm font-semibold text-slate-800">
                     {monthName} {selectedDate} at {selectedTime}
                   </p>
-                  <p className="text-[10px] text-slate-500 truncate">{selectedAppointmentType.name} with {clinicianName}</p>
+                  <p className="text-xs text-slate-600">{selectedAppointmentType.name} with {clinicianName}</p>
                 </div>
               </div>
             </div>
           )}
         </div>
 
-        {/* Footer - Compact */}
-        <div className="px-4 py-3 bg-white border-t border-gray-200 flex items-center justify-between shrink-0">
-          <p className="text-[10px] text-slate-400">Powered by Vibrant Intelligence</p>
+        {/* Footer - Larger */}
+        <div className="px-6 py-4 bg-white border-t border-gray-200 flex items-center justify-between shrink-0">
+          <p className="text-xs text-slate-400">Powered by Vibrant Intelligence</p>
           <button
             onClick={handleBookAppointment}
             disabled={!selectedTime}
             className={`
-              px-5 py-2 rounded-lg text-sm font-semibold transition-all shadow-sm
+              px-6 py-3 rounded-xl text-base font-semibold transition-all shadow-md
               ${selectedTime
                 ? 'bg-[#0F4C81] text-white hover:bg-[#09355E]'
                 : 'bg-slate-200 text-slate-400 cursor-not-allowed'
