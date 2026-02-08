@@ -14,92 +14,143 @@ import { MOCK_PRACTICE_WALLET, MOCK_AT_RISK_PATIENTS, MOCK_TRANSACTIONS, MOCK_DO
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, LineChart, Line, ComposedChart, LabelList } from 'recharts';
 import { analyzeEngagement, queryPracticeInsights } from '../services/practiceGeminiService';
 
-// Helper function to render markdown-like responses
+// Helper function to render markdown-like responses with rich UI
 const renderMarkdownResponse = (text: string) => {
     const lines = text.split('\n');
-    const elements: JSX.Element[] = [];
-    let i = 0;
+    const sections: JSX.Element[] = [];
+    let currentListItems: string[] = [];
 
-    while (i < lines.length) {
+    // Helper to flush accumulated list items
+    const flushList = () => {
+        if (currentListItems.length > 0) {
+            sections.push(
+                <ul className="space-y-2 my-3">
+                    {currentListItems.map((item, idx) => (
+                        <li key={idx} className="flex items-start gap-2 text-sm text-slate-700">
+                            <span className="flex-shrink-0 w-1.5 h-1.5 rounded-full bg-brand-primary mt-1.5"></span>
+                            <span>{item}</span>
+                        </li>
+                    ))}
+                </ul>
+            );
+            currentListItems = [];
+        }
+    };
+
+    let currentTable: { rows: string[][], headers: string[] } | null = null;
+
+    // Helper to flush table
+    const flushTable = () => {
+        if (currentTable) {
+            sections.push(
+                <div className="my-4 rounded-lg border border-slate-200 overflow-hidden">
+                    <table className="w-full text-sm">
+                        <thead className="bg-slate-50">
+                            <tr>
+                                {currentTable.headers.map((header, idx) => (
+                                    <th key={idx} className="px-3 py-2 text-left text-xs font-semibold text-slate-600 uppercase tracking-wide">
+                                        {header}
+                                    </th>
+                                ))}
+                            </tr>
+                        </thead>
+                        <tbody className="divide-y divide-slate-100">
+                            {currentTable.rows.map((row, rowIdx) => (
+                                <tr key={rowIdx} className="hover:bg-slate-50/50 transition-colors">
+                                    {row.map((cell, cellIdx) => (
+                                        <td key={cellIdx} className="px-3 py-2.5 text-slate-700">
+                                            {cell}
+                                        </td>
+                                    ))}
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </div>
+            );
+            currentTable = null;
+        }
+    };
+
+    for (let i = 0; i < lines.length; i++) {
         const line = lines[i];
+        const trimmed = line.trim();
+
+        // Empty line - reset state
+        if (!trimmed) {
+            flushList();
+            flushTable();
+            continue;
+        }
 
         // Headers (## or ###)
-        if (line.startsWith('##')) {
-            const isMain = line.startsWith('###');
-            const headerText = line.replace(/^#+\s*/, '');
-            elements.push(
-                <h3 key={i} className={`font-bold text-slate-800 ${isMain ? 'text-base mt-4 mb-2' : 'text-lg mt-5 mb-2'}`}>
+        if (trimmed.startsWith('##')) {
+            flushList();
+            flushTable();
+            const headerText = trimmed.replace(/^#+\s*/, '');
+            const level = trimmed.startsWith('###') ? 'text-base' : 'text-lg';
+            sections.push(
+                <h3 className={`font-bold text-slate-800 ${level} mt-5 mb-3 flex items-center gap-2`}>
+                    <span className="w-1 h-6 bg-brand-primary rounded-full"></span>
                     {headerText}
                 </h3>
             );
         }
-        // Bold text with **
-        else if (line.includes('**') && line.trim().length > 0) {
-            const parts = line.split(/\*\*(.+?)\*\*/g);
-            elements.push(
-                <p key={i} className="my-1">
-                    {parts.map((part, idx) => {
-                        if (idx % 2 === 1) {
-                            return <strong key={idx} className="font-semibold text-slate-800">{part}</strong>;
-                        }
-                        return part;
-                    })}
+        // Numbered list (1., 2., etc.)
+        else if (/^\d+\./.test(trimmed)) {
+            flushList();
+            flushTable();
+            const itemText = trimmed.replace(/^\d+\.\s*/, '');
+            currentListItems.push(itemText);
+        }
+        // Bullet points with • or -
+        else if (trimmed.startsWith('•') || trimmed.startsWith('-')) {
+            flushTable();
+            const itemText = trimmed.replace(/^[\s•-]+\s*/, '');
+            currentListItems.push(itemText);
+        }
+        // Table rows
+        else if (trimmed.includes('|') && trimmed.includes('---')) {
+            // Table separator line - start new table
+            flushList();
+            if (i > 0 && lines[i-1].includes('|')) {
+                // Get headers from previous line
+                const headers = lines[i-1].split('|').map(h => h.trim()).filter(h => h);
+                currentTable = { rows: [], headers };
+            }
+        }
+        else if (trimmed.includes('|') && currentTable) {
+            const cells = trimmed.split('|').map(c => c.trim()).filter(c => c);
+            currentTable.rows.push(cells);
+        }
+        // Bold text with **text**
+        else if (trimmed.includes('**')) {
+            flushList();
+            flushTable();
+            const parts = trimmed.split(/\*\*(.+?)\*\*/g);
+            sections.push(
+                <p className="text-sm text-slate-700 my-2">
+                    {parts.map((part, idx) => (
+                        <span key={idx} className={idx % 2 === 1 ? 'font-bold text-slate-800' : ''}>
+                            {part}
+                        </span>
+                    ))}
                 </p>
             );
-        }
-        // Bullet points
-        else if (line.trim().startsWith('•') || line.trim().startsWith('-')) {
-            const bulletText = line.replace(/^[\s•-]+\s*/, '');
-            elements.push(
-                <p key={i} className="ml-2 my-1 text-slate-700">
-                    <span className="text-brand-primary mr-2">•</span>{bulletText}
-                </p>
-            );
-        }
-        // Tables
-        else if (line.includes('|')) {
-            const tableLines: string[] = [];
-            while (i < lines.length && lines[i].includes('|')) {
-                tableLines.push(lines[i]);
-                i++;
-            }
-            i--; // Adjust for outer increment
-
-            if (tableLines.length > 0) {
-                const rows = tableLines.map(line => line.split('|').filter(cell => cell.trim() !== ''));
-                const isHeader = tableLines[0].toLowerCase().includes('---');
-
-                elements.push(
-                    <div key={i} className="my-3 overflow-x-auto">
-                        <table className="min-w-full text-sm">
-                            <tbody>
-                                {rows.map((row, rowIdx) => {
-                                    const isHeaderRow = rowIdx === 0 || (rowIdx === 1 && isHeader);
-                                    return (
-                                        <tr key={rowIdx} className={isHeaderRow ? 'border-b-2 border-slate-200' : 'border-b border-slate-100'}>
-                                            {row.map((cell, cellIdx) => (
-                                                <td key={cellIdx} className={`py-1.5 px-2 ${cellIdx === 0 ? 'text-left font-medium' : 'text-left'} ${isHeaderRow ? 'font-semibold text-slate-700' : 'text-slate-600'}`}>
-                                                    {cell.trim()}
-                                                </td>
-                                            ))}
-                                        </tr>
-                                    );
-                                })}
-                            </tbody>
-                        </table>
-                    </div>
-                );
-            }
         }
         // Regular paragraph
-        else if (line.trim()) {
-            elements.push(<p key={i} className="my-1 text-slate-700">{line}</p>);
+        else {
+            flushList();
+            flushTable();
+            sections.push(<p className="text-sm text-slate-700 my-2">{trimmed}</p>);
         }
-
-        i++;
     }
 
-    return <div className="space-y-1">{elements}</div>;
+    // Flush any remaining content
+    flushList();
+    flushTable();
+
+    return <div className="space-y-1">{sections}</div>;
 };
 
 interface DashboardProps {
