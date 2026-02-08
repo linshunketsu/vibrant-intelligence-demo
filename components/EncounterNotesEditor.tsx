@@ -1955,8 +1955,8 @@ export const EncounterNotesEditor: React.FC<EncounterNotesEditorProps> = ({ onBa
       
       {/* Appointment Modal */}
       {isAppointmentModalOpen && (
-        <div className="fixed inset-0 z-[1000] flex items-center justify-center bg-slate-900/40 backdrop-blur-sm">
-           <div className="bg-white rounded-xl shadow-2xl w-full max-w-md overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+        <div className="fixed inset-0 z-[1000] flex items-center justify-center p-4">
+           <div className="bg-white rounded-xl shadow-2xl ring-1 ring-black/10 w-full max-w-md overflow-hidden animate-in fade-in zoom-in-95 duration-200">
               <div className="px-6 py-4 border-b border-gray-100 flex justify-between items-center bg-blue-50/50">
                   <h3 className="font-bold text-gray-800 flex items-center gap-2">
                      <Calendar className="text-[#0F4C81]" size={18} /> Schedule Appointment
@@ -2018,8 +2018,8 @@ export const EncounterNotesEditor: React.FC<EncounterNotesEditorProps> = ({ onBa
 
       {/* Order Modal */}
       {isOrderModalOpen && (
-        <div className="fixed inset-0 z-[1000] flex items-center justify-center bg-slate-900/40 backdrop-blur-sm">
-           <div className="bg-white rounded-xl shadow-2xl w-full max-w-md overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+        <div className="fixed inset-0 z-[1000] flex items-center justify-center p-4">
+           <div className="bg-white rounded-xl shadow-2xl ring-1 ring-black/10 w-full max-w-md overflow-hidden animate-in fade-in zoom-in-95 duration-200">
               <div className="px-6 py-4 border-b border-gray-100 flex justify-between items-center bg-emerald-50/50">
                   <h3 className="font-bold text-gray-800 flex items-center gap-2">
                      <FlaskConical className="text-emerald-600" size={18} /> Create Lab Order
@@ -2089,7 +2089,7 @@ export const EncounterNotesEditor: React.FC<EncounterNotesEditorProps> = ({ onBa
       )}
       {/* Signature Modal */}
       {showSignatureModal && (
-        <div className="fixed inset-0 z-[1000] flex items-center justify-center bg-slate-900/40 backdrop-blur-sm">
+        <div className="fixed inset-0 z-[1000] flex items-center justify-center p-4">
           <div className="bg-white rounded-xl shadow-2xl w-full max-w-lg overflow-hidden animate-in fade-in zoom-in-95 duration-200">
             <div className="px-6 py-4 border-b border-gray-100 flex justify-between items-center bg-emerald-50/50">
               <h3 className="font-bold text-gray-800 flex items-center gap-2">
@@ -2144,8 +2144,8 @@ export const EncounterNotesEditor: React.FC<EncounterNotesEditorProps> = ({ onBa
 
       {/* Co-Sign Request Modal */}
       {showCoSignModal && (
-        <div className="fixed inset-0 z-[1000] flex items-center justify-center bg-slate-900/40 backdrop-blur-sm">
-          <div className="bg-white rounded-xl shadow-2xl w-full max-w-md overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+        <div className="fixed inset-0 z-[1000] flex items-center justify-center p-4">
+          <div className="bg-white rounded-xl shadow-2xl ring-1 ring-black/10 w-full max-w-md overflow-hidden animate-in fade-in zoom-in-95 duration-200">
             <div className="px-6 py-4 border-b border-gray-100 flex justify-between items-center bg-blue-50/50">
               <h3 className="font-bold text-gray-800 flex items-center gap-2">
                 <Users className="text-blue-600" size={18} /> Request Co-Signature
