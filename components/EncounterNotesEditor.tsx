@@ -177,7 +177,22 @@ export const EncounterNotesEditor: React.FC<EncounterNotesEditorProps> = ({ onBa
   const [showCommentPopover, setShowCommentPopover] = useState(false);
   const [commentPosition, setCommentPosition] = useState({ x: 0, y: 0 });
   const [selectedText, setSelectedText] = useState('');
-  const [comments, setComments] = useState<{id: string, text: string, author: string, time: string, selection: string}[]>([]);
+  const [comments, setComments] = useState<{id: string, text: string, author: string, time: string, selection: string}[]>([
+    {
+      id: '1',
+      text: 'Patient mentioned they\'re not tolerating the new dosage well. Consider adjusting.',
+      author: 'Dr. Sarah Chen',
+      time: '10:30 AM',
+      selection: 'Patient reports occasional dizziness'
+    },
+    {
+      id: '2',
+      text: 'I reviewed the lab results - everything looks stable.',
+      author: 'Nurse Amy',
+      time: '9:15 AM',
+      selection: 'Lab results within normal limits'
+    }
+  ]);
   const [newComment, setNewComment] = useState('');
   const [showMentionMenu, setShowMentionMenu] = useState(false);
   const [mentionFilter, setMentionFilter] = useState('');
@@ -1697,10 +1712,27 @@ export const EncounterNotesEditor: React.FC<EncounterNotesEditorProps> = ({ onBa
                           ref={editorRef}
                           contentEditable={noteStatus === 'draft'}
                           onClick={handleEditorClick}
+                          onMouseUp={(e) => {
+                            handleEditorClick(e);
+                            setTimeout(() => {
+                              const selection = window.getSelection();
+                              const text = selection?.toString().trim();
+                              if (text && text.length > 0 && isCollaborationMode && noteStatus === 'draft') {
+                                const range = selection.getRangeAt(0);
+                                const rect = range.getBoundingClientRect();
+                                setSelectedText(text);
+                                setCommentPosition({
+                                  x: rect.left + rect.width / 2,
+                                  y: window.scrollY + rect.top - 10
+                                });
+                                setShowCommentPopover(true);
+                              }
+                            }, 10);
+                          }}
                           onKeyDown={handleEditorKeyDown}
                           onKeyUp={handleEditorKeyUp}
                           className="flex-1 w-full p-8 bg-white outline-none overflow-y-auto text-gray-700 leading-relaxed text-sm"
-                          data-placeholder={noteStatus === 'draft' ? "Start typing clinical notes... (Use 3 letters for items or $ for variables)" : ""}
+                          data-placeholder={noteStatus === 'draft' ? "Start typing clinical notes... (Use 3 letters for items or $ for variables). Select text to add comments." : ""}
                           style={noteStatus !== 'draft' ? { cursor: 'default' } : {}}
                        ></div>
 
