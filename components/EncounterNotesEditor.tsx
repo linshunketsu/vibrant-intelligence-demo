@@ -240,10 +240,11 @@ export const EncounterNotesEditor: React.FC<EncounterNotesEditorProps> = ({ onBa
       if (menuConfig.open) {
         setMenuConfig(prev => ({ ...prev, open: false }));
       }
-      // Close comment popover when clicking outside
+      // Close comment popover when clicking outside - but NOT when clicking in the editor
       if (showCommentPopover) {
         const target = e.target as HTMLElement;
-        if (!target.closest('.comment-popover') && !target.closest('.comment-highlight')) {
+        const isInEditor = editorRef.current?.contains(target);
+        if (!isInEditor && !target.closest('.comment-popover') && !target.closest('.comment-highlight')) {
           setShowCommentPopover(false);
         }
       }
@@ -259,23 +260,6 @@ export const EncounterNotesEditor: React.FC<EncounterNotesEditorProps> = ({ onBa
     window.addEventListener('click', handleGlobalClick);
     return () => window.removeEventListener('click', handleGlobalClick);
   }, [isTemplateMenuOpen, menuConfig.open, showCommentPopover, showMentionMenu, showAttachMenu]);
-
-  // Text selection for comments
-  useEffect(() => {
-    const handleSelectionChange = () => {
-      if (isCollaborationMode && noteStatus === 'draft') {
-        handleTextSelection();
-      }
-    };
-
-    document.addEventListener('mouseup', handleSelectionChange);
-    document.addEventListener('keyup', handleSelectionChange);
-
-    return () => {
-      document.removeEventListener('mouseup', handleSelectionChange);
-      document.removeEventListener('keyup', handleSelectionChange);
-    };
-  }, [isCollaborationMode, noteStatus]);
 
   const formatTime = (totalSeconds: number) => {
     const hours = Math.floor(totalSeconds / 3600);
@@ -1713,21 +1697,33 @@ export const EncounterNotesEditor: React.FC<EncounterNotesEditorProps> = ({ onBa
                           contentEditable={noteStatus === 'draft'}
                           onClick={handleEditorClick}
                           onMouseUp={(e) => {
-                            handleEditorClick(e);
+                            // Only handle mouseup for comments if in the editor content area
+                            if (noteStatus !== 'draft' || !isCollaborationMode) return;
+
                             setTimeout(() => {
                               const selection = window.getSelection();
                               const text = selection?.toString().trim();
-                              if (text && text.length > 0 && isCollaborationMode && noteStatus === 'draft') {
+
+                              // Only show popover for meaningful selections (more than 3 chars)
+                              if (text && text.length > 3) {
                                 const range = selection.getRangeAt(0);
                                 const rect = range.getBoundingClientRect();
+
                                 setSelectedText(text);
                                 setCommentPosition({
                                   x: rect.left + rect.width / 2,
-                                  y: window.scrollY + rect.top - 10
+                                  y: window.scrollY + rect.top + window.scrollY - 8
                                 });
                                 setShowCommentPopover(true);
+                              } else if (text.length === 0) {
+                                // Hide popover if selection was cleared
+                                setShowCommentPopover(false);
                               }
                             }, 10);
+                          }}
+                          onMouseDown={() => {
+                            // Hide popover when starting a new selection
+                            setShowCommentPopover(false);
                           }}
                           onKeyDown={handleEditorKeyDown}
                           onKeyUp={handleEditorKeyUp}
