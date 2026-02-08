@@ -1356,8 +1356,8 @@ export const PatientsView: React.FC = () => {
     // Scenario 2: Send message/follow-up
     const isFollowUpMsg = (lowerMsg.includes('send') || lowerMsg.includes('message')) && (lowerMsg.includes('follow-up') || lowerMsg.includes('patient'));
 
-    // Scenario 3: Summarize visit
-    const isSummarizeDemo = lowerMsg.includes('summarize') || (lowerMsg.includes('summary') && lowerMsg.includes('visit'));
+    // Scenario 3: Summarize visit / Generate visit summary
+    const isSummarizeDemo = lowerMsg.includes('summarize') || (lowerMsg.includes('summary') && lowerMsg.includes('visit')) || (lowerMsg.includes('generate') && lowerMsg.includes('visit')) || lowerMsg.includes('visit summary');
 
     // Scenario 4: Order lab test
     const isOrderLabDemo = (lowerMsg.includes('order') && (lowerMsg.includes('lab') || lowerMsg.includes('test') || lowerMsg.includes('gut')));
@@ -1505,25 +1505,194 @@ Dr. Johnson
                 )
             }]);
         } else if (isSummarizeDemo) {
-            setAiChatHistory(prev => [...prev, {
-                role: 'assistant',
-                text: (
-                    <div className="space-y-2">
-                        <div className="font-medium text-blue-800">Visit Summary for {activePatient?.name || 'Patient'}:</div>
-                        <div className="space-y-1.5 text-slate-700">
-                            <div>• <span className="font-semibold">Patient:</span> {activePatient?.age ?? '-'}yo {activePatient?.gender ?? '-'}</div>
-                            <div>• <span className="font-semibold">Status:</span> {activePatient?.workflowStatus === 'completed' ? 'Results Ready' : activePatient?.workflowStatus ?? 'Unknown'}</div>
-                            <div>• <span className="font-semibold">Recent Activity:</span></div>
-                            <div className="pl-4 space-y-1">
-                                <div>– Lab results completed and reviewed</div>
-                                <div>– Medications updated as needed</div>
-                                <div>– Follow-up scheduled for 3 months</div>
+            const today = new Date();
+            const followUpDate = new Date(Date.now() + 90 * 24 * 60 * 60 * 1000);
+
+            // Pre-compute document ID
+            const docId = `VW-${today.getFullYear()}${String(today.getMonth() + 1).padStart(2, '0')}${String(today.getDate()).padStart(2, '0')}-${Math.floor(Math.random() * 9000) + 1000}`;
+
+            // Chief complaint based on tags
+            const chiefComplaint = activePatient?.tags?.includes('Diabetic Management') ? 'Diabetes management follow-up' :
+                activePatient?.tags?.includes('High Risk') ? 'Cardiovascular risk assessment' :
+                activePatient?.tags?.includes('Thyroid Management') ? 'Thyroid function review' :
+                'Routine wellness examination and preventive care';
+
+            const visitSummary = (
+                <div className="bg-white rounded-lg border border-gray-200 p-6 space-y-6">
+                    {/* Header */}
+                    <div className="border-b border-gray-200 pb-4">
+                        <h3 className="text-lg font-bold text-gray-900">Vibrant Wellness Center</h3>
+                        <p className="text-sm text-gray-500">Visit Summary</p>
+                    </div>
+
+                    {/* Patient Info */}
+                    <div className="grid grid-cols-2 gap-4 text-sm">
+                        <div>
+                            <p className="text-gray-500">Patient Name</p>
+                            <p className="font-medium text-gray-900">{activePatient?.name || 'Patient'}</p>
+                        </div>
+                        <div>
+                            <p className="text-gray-500">Date of Birth</p>
+                            <p className="font-medium text-gray-900">{activePatient?.dob || 'N/A'} <span className="text-gray-400">(Age: {activePatient?.age || '-'}, {activePatient?.gender || 'N/A'})</span></p>
+                        </div>
+                        <div>
+                            <p className="text-gray-500">Visit Date</p>
+                            <p className="font-medium text-gray-900">{today.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' })}</p>
+                        </div>
+                        <div>
+                            <p className="text-gray-500">Provider</p>
+                            <p className="font-medium text-gray-900">Dr. Johnson</p>
+                        </div>
+                    </div>
+
+                    {/* Today's Visit */}
+                    <div>
+                        <h4 className="text-sm font-semibold text-gray-900 mb-2">Today's Visit</h4>
+                        <div className="bg-gray-50 rounded-lg p-3 text-sm">
+                            <p className="text-gray-700 mb-1"><span className="text-gray-500">Chief Complaint:</span> {chiefComplaint}</p>
+                            <p className="text-gray-500">Duration: 45 minutes · Room: Exam 3 · Status: <span className="text-green-600 font-medium">Complete</span></p>
+                        </div>
+                    </div>
+
+                    {/* Vital Signs */}
+                    <div>
+                        <h4 className="text-sm font-semibold text-gray-900 mb-2">Vital Signs</h4>
+                        <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                            <div className="bg-gray-50 rounded-lg p-2.5">
+                                <p className="text-xs text-gray-500">Blood Pressure</p>
+                                <p className="font-medium text-gray-900 text-sm">118/76 <span className="text-xs text-gray-400">mmHg</span></p>
+                                <span className="inline-block mt-1 text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded-full">Normal</span>
                             </div>
-                            <div className="mt-2 p-2 bg-blue-50 rounded-lg text-blue-800 text-[11px]">
-                                <span className="font-semibold">Quick Action:</span> Would you like me to draft the encounter note?
+                            <div className="bg-gray-50 rounded-lg p-2.5">
+                                <p className="text-xs text-gray-500">Heart Rate</p>
+                                <p className="font-medium text-gray-900 text-sm">72 <span className="text-xs text-gray-400">bpm</span></p>
+                                <span className="inline-block mt-1 text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded-full">Normal</span>
+                            </div>
+                            <div className="bg-gray-50 rounded-lg p-2.5">
+                                <p className="text-xs text-gray-500">Temperature</p>
+                                <p className="font-medium text-gray-900 text-sm">98.6<span className="text-xs text-gray-400">°F</span></p>
+                                <span className="inline-block mt-1 text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded-full">Normal</span>
+                            </div>
+                            <div className="bg-gray-50 rounded-lg p-2.5">
+                                <p className="text-xs text-gray-500">Weight</p>
+                                <p className="font-medium text-gray-900 text-sm">{activePatient?.gender === 'Male' ? '185' : '162'} <span className="text-xs text-gray-400">lbs</span></p>
+                            </div>
+                            <div className="bg-gray-50 rounded-lg p-2.5">
+                                <p className="text-xs text-gray-500">BMI</p>
+                                <p className="font-medium text-gray-900 text-sm">{activePatient?.gender === 'Male' ? '26.4' : '24.1'}</p>
+                                <span className="inline-block mt-1 text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded-full">Normal</span>
+                            </div>
+                            <div className="bg-gray-50 rounded-lg p-2.5">
+                                <p className="text-xs text-gray-500">O2 Saturation</p>
+                                <p className="font-medium text-gray-900 text-sm">98<span className="text-xs text-gray-400">%</span></p>
+                                <span className="inline-block mt-1 text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded-full">Normal</span>
                             </div>
                         </div>
                     </div>
+
+                    {/* Lab Results */}
+                    <div>
+                        <h4 className="text-sm font-semibold text-gray-900 mb-2">Lab Results</h4>
+                        <div className="bg-gray-50 rounded-lg divide-y divide-gray-200">
+                            <div className="p-3 flex justify-between items-center">
+                                <div>
+                                    <p className="text-sm font-medium text-gray-900">CMP Panel</p>
+                                    <p className="text-xs text-gray-500">Kidney and liver function</p>
+                                </div>
+                                <span className="text-xs bg-green-100 text-green-700 px-2 py-1 rounded-full">Normal</span>
+                            </div>
+                            <div className="p-3 flex justify-between items-center">
+                                <div>
+                                    <p className="text-sm font-medium text-gray-900">Lipid Panel</p>
+                                    <p className="text-xs text-gray-500">Cardiovascular risk</p>
+                                </div>
+                                <span className="text-xs bg-green-100 text-green-700 px-2 py-1 rounded-full">Optimal</span>
+                            </div>
+                            <div className="p-3 flex justify-between items-center">
+                                <div>
+                                    <p className="text-sm font-medium text-gray-900">TSH</p>
+                                    <p className="text-xs text-gray-500">Thyroid function</p>
+                                </div>
+                                <span className="text-xs bg-green-100 text-green-700 px-2 py-1 rounded-full">Normal</span>
+                            </div>
+                            {activePatient?.tags?.includes('Diabetic Management') && (
+                                <div className="p-3 flex justify-between items-center">
+                                    <div>
+                                        <p className="text-sm font-medium text-gray-900">HbA1c</p>
+                                        <p className="text-xs text-gray-500">Glucose control</p>
+                                    </div>
+                                    <div className="text-right">
+                                        <span className="text-xs bg-green-100 text-green-700 px-2 py-1 rounded-full">7.1%</span>
+                                        <p className="text-xs text-gray-500 mt-1">Down from 7.8%</p>
+                                    </div>
+                                </div>
+                            )}
+                        </div>
+                    </div>
+
+                    {/* Assessment */}
+                    <div>
+                        <h4 className="text-sm font-semibold text-gray-900 mb-2">Assessment</h4>
+                        <div className="bg-blue-50 border border-blue-100 rounded-lg p-4 space-y-2">
+                            <p className="text-sm text-gray-700"><span className="font-medium text-blue-900">General Health:</span> <span className="text-green-700 font-medium">Excellent</span> — All screening parameters are within normal limits.</p>
+                            <p className="text-sm text-gray-700"><span className="font-medium text-blue-900">Wellness & Prevention:</span> Well-managed. Continue your current healthy lifestyle habits.</p>
+                            <p className="text-sm text-gray-700"><span className="font-medium text-blue-900">Medication Compliance:</span> <span className="text-green-700 font-medium">{activePatient?.tags?.includes('VIP') ? 'Excellent' : 'Good'}</span> — Keep up the great work with your current medication routine.</p>
+                        </div>
+                    </div>
+
+                    {/* Treatment Plan */}
+                    <div>
+                        <h4 className="text-sm font-semibold text-gray-900 mb-2">Treatment Plan</h4>
+                        <div className="bg-gray-50 rounded-lg p-3 space-y-2">
+                            <div className="flex items-center gap-2 text-sm text-gray-700">
+                                <svg className="w-4 h-4 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path></svg>
+                                <span>Annual wellness exam completed</span>
+                            </div>
+                            <div className="flex items-center gap-2 text-sm text-gray-700">
+                                <svg className="w-4 h-4 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path></svg>
+                                <span>Age-appropriate screenings up to date</span>
+                            </div>
+                            <div className="flex items-center gap-2 text-sm text-gray-700">
+                                <svg className="w-4 h-4 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path></svg>
+                                <span>Continue balanced nutrition and regular exercise</span>
+                            </div>
+                            <div className="pt-2 border-t border-gray-200 mt-2">
+                                <p className="text-xs text-gray-500">Next Visit</p>
+                                <p className="text-sm font-medium text-gray-900">{followUpDate.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' })}</p>
+                                <p className="text-xs text-gray-400">(3 months from now)</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Patient Education */}
+                    <div>
+                        <h4 className="text-sm font-semibold text-gray-900 mb-2">Patient Education</h4>
+                        <ul className="text-sm text-gray-600 space-y-1">
+                            <li>• Diet and nutrition guidelines were reviewed</li>
+                            <li>• Importance of medication adherence was discussed</li>
+                            <li>• Warning signs that require immediate attention were explained</li>
+                            <li>• Patient portal access was confirmed</li>
+                        </ul>
+                    </div>
+
+                    {/* Footer */}
+                    <div className="border-t border-gray-200 pt-4 flex justify-between items-center">
+                        <div>
+                            <p className="text-xs text-gray-500">Electronically signed by Dr. Johnson, MD</p>
+                            <p className="text-xs text-gray-400">{today.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })} at {today.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })}</p>
+                        </div>
+                        <p className="text-xs text-gray-400">ID: {docId}</p>
+                    </div>
+                </div>
+            );
+
+            setAiChatHistory(prev => [...prev, {
+                role: 'assistant',
+                text: (
+                   <div className="space-y-3">
+                       <p className="font-medium text-blue-800">I've generated a comprehensive clinical visit summary for {activePatient?.name || 'this patient'}:</p>
+                       {visitSummary}
+                   </div>
                 )
             }]);
         } else {
