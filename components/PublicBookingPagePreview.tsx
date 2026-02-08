@@ -236,9 +236,9 @@ export const PublicBookingPagePreview: React.FC<PublicBookingPagePreviewProps> =
   // Confirmation Screen
   if (showConfirmation) {
     return (
-      <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4" onClick={handleDone}>
+      <div className="fixed inset-0 z-50 flex items-center justify-center p-4" onClick={handleDone}>
         <div
-          className="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden animate-in fade-in zoom-in-95 duration-200"
+          className="bg-white rounded-2xl shadow-2xl ring-1 ring-black/10 w-full max-w-md overflow-hidden animate-in fade-in zoom-in-95 duration-200"
           onClick={(e) => e.stopPropagation()}
         >
           {/* Success Header */}
@@ -314,9 +314,9 @@ export const PublicBookingPagePreview: React.FC<PublicBookingPagePreviewProps> =
   }
 
   return (
-    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4" onClick={onClose}>
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4" onClick={onClose}>
       <div
-        className="bg-white rounded-2xl shadow-2xl w-full max-w-3xl max-h-[85vh] overflow-hidden flex flex-col animate-in fade-in zoom-in-95 duration-200"
+        className="bg-white rounded-2xl shadow-2xl ring-1 ring-black/10 w-full max-w-3xl max-h-[85vh] overflow-hidden flex flex-col animate-in fade-in zoom-in-95 duration-200"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header - Compact */}
