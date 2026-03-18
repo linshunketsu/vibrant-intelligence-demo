@@ -5,7 +5,7 @@ import {
   Package, GitBranch, CheckCheck, Send, MoreVertical,
   Mars, Venus, CheckSquare, ClipboardList, UserCircle2,
   ShoppingCart, Truck, FlaskConical, ClipboardCheck, ArrowRight,
-  AlertCircle, Pill, StickyNote, Activity, Bell, CheckCircle2,
+  AlertCircle, Pill, StickyNote, Activity, Bell, Bot, CheckCircle2,
   AlertTriangle, XCircle, Zap, RefreshCcw, Check, Feather, MoreHorizontal,
   Copy, ArrowUp, RefreshCw, File, Download, Eye, Link as LinkIcon,
   ChevronDown, ChevronUp, DollarSign, Receipt, Shield, Smartphone,
@@ -15,6 +15,7 @@ import {
 } from 'lucide-react';
 import { EncounterNotesEditor } from './EncounterNotesEditor';
 import { NotificationCenter } from './NotificationCenter';
+import { FormulaApprovalPage } from './FormulaApprovalPage';
 import { SidebarAiAssistant } from './SidebarAiAssistant';
 import { OrderDiagnosticTestsModal } from './OrderDiagnosticTestsModal';
 import { CreateEventModal } from './CreateEventModal';
@@ -222,6 +223,57 @@ const WorkflowProgressBar: React.FC<{ status: 'on-track' | 'exception' | 'comple
                              </div>
                          );
                     })}
+                </div>
+            </div>
+        </div>
+    );
+};
+
+const FormulaApprovalChatCard: React.FC<{ onReview: () => void; isApproved: boolean }> = ({ onReview, isApproved }) => {
+    if (isApproved) {
+        return (
+            <div className="flex justify-center w-full my-6">
+                <div className="bg-emerald-50 rounded-xl p-6 shadow-sm border border-emerald-100 max-w-2xl w-full flex items-center gap-4 animate-in fade-in zoom-in duration-300">
+                    <div className="w-12 h-12 bg-emerald-100 rounded-full flex items-center justify-center shrink-0">
+                        <CheckCheck size={24} className="text-emerald-600" />
+                    </div>
+                    <div className="flex-1">
+                        <h4 className="text-emerald-900 font-bold">Formula Approved</h4>
+                        <p className="text-emerald-700 text-sm mt-0.5">Supplement shipment created successfully. Patient will receive the package in 3–5 business days.</p>
+                    </div>
+                </div>
+            </div>
+        );
+    }
+
+    return (
+        <div className="flex justify-center w-full my-6">
+            <div className="bg-white rounded-xl shadow-lg border-l-4 border-[#0F4C81] max-w-2xl w-full overflow-hidden ring-1 ring-black/5">
+                {/* Header */}
+                <div className="bg-[#0F4C81]/5 px-6 py-4 border-b border-[#0F4C81]/10 flex items-start gap-3">
+                    <div className="w-9 h-9 rounded-full bg-indigo-100 text-indigo-600 flex items-center justify-center shrink-0 mt-0.5">
+                        <Bot size={18} />
+                    </div>
+                    <div className="flex-1">
+                        <div className="flex items-center gap-2 mb-0.5">
+                            <span className="text-[10px] font-bold text-[#0F4C81] bg-[#0F4C81]/10 px-2 py-0.5 rounded-full uppercase tracking-wide">Gut Health Program</span>
+                            <span className="text-[10px] text-slate-400">Step 3 of 15</span>
+                        </div>
+                        <h3 className="text-slate-900 font-bold text-base">Formula Approval Required</h3>
+                        <p className="text-slate-500 text-xs mt-0.5">System has calculated a personalized supplement formula based on Gut Zoomer 5.1 results.</p>
+                    </div>
+                </div>
+
+                {/* Footer */}
+                <div className="px-6 py-4 bg-slate-50 border-t border-slate-100 flex items-center justify-between gap-4">
+                    <p className="text-[11px] text-slate-400">Auto-approves in 1 hr if no action taken.</p>
+                    <button
+                        onClick={onReview}
+                        className="px-5 py-2 bg-[#0F4C81] hover:bg-[#09355E] text-white text-sm font-bold rounded-lg transition-colors shadow-sm flex items-center gap-2 shrink-0"
+                    >
+                        Review &amp; Approve Formula
+                        <ArrowRight size={15} />
+                    </button>
                 </div>
             </div>
         </div>
@@ -449,6 +501,21 @@ const PinnedCardRenderer: React.FC<{ item: PinnedItem; onUnpin: () => void }> = 
 // --- Mock Data ---
 
 const PATIENTS: Patient[] = [
+  // === MAXIMILIANA MONTMORESY ===
+  // GHP patient: Gut Health Program enrolled, formula approval required
+  {
+    id: '10',
+    name: 'Maximiliana Montmoresy',
+    initials: 'MM',
+    time: '14 mins ago',
+    snippet: 'Gut Health Program — Formula approval required',
+    unreadCount: 1,
+    gender: 'Female',
+    dob: 'Mar-14-1988',
+    age: 38,
+    workflowStatus: 'exception',
+    tags: ['Gut Health Program', 'Active Enrollment', 'Step 3']
+  },
   // === KEVIN JOHNSON ===
   // High-complexity: Diabetes, hypertension, active program, balance due
   {
@@ -1030,7 +1097,8 @@ export const PatientsView: React.FC = () => {
   const [activePatientId, setActivePatientId] = useState('3');
   const [chatInput, setChatInput] = useState('');
   const [isActionMenuOpen, setIsActionMenuOpen] = useState(false);
-  const [viewMode, setViewMode] = useState<'dashboard' | 'encounter_note' | 'notifications'>('dashboard');
+  const [viewMode, setViewMode] = useState<'dashboard' | 'encounter_note' | 'notifications' | 'formula_approval'>('dashboard');
+  const [formulaApproved, setFormulaApproved] = useState(false);
   const [activeTab, setActiveTab] = useState<'basics' | 'health' | 'calendar' | 'billing' | null>(null);
   const [pinnedItems, setPinnedItems] = useState<PinnedItem[]>([]);
   const [showOrderModal, setShowOrderModal] = useState(false);
@@ -1967,6 +2035,22 @@ Dr. Johnson
           { type: 'exception', title: 'Test Not Performed (TNP)', reason: 'Sample Rejected: Gross Hemolysis detected during centrifugation.', suggestion: 'A redraw is required to proceed with this workflow.' }
       ];
 
+      if (id === '10') return [
+          { type: 'separator', date: '03-01-2026' },
+          { type: 'event', icon: ShoppingCart, title: 'GHP Enrolled — Gut Zoomer 5.1 Ordered', variant: 'success', date: '03-01-2026 09:00 AM', details: 'Auto-ordered by Gut Health Program workflow.' },
+          { type: 'chat', sender: 'patient', senderName: 'Maximiliana Montmoresy', message: 'Hi! I just got enrolled in the Gut Health Program. Really excited to start — when should I expect the test kit?', timestamp: '09:45 AM', channel: 'portal', initials: 'MM' },
+          { type: 'chat', sender: 'provider', senderName: 'Irene Hoffman', message: 'Welcome to the program, Maximiliana! Your Gut Zoomer 5.1 kit will arrive in 3–5 business days. Once you collect and return the sample, we\'ll get your results in about 2 weeks.', timestamp: '10:15 AM', channel: 'portal', initials: 'IH' },
+          { type: 'separator', date: '03-05-2026' },
+          { type: 'event', icon: Truck, title: 'Gut Zoomer 5.1 Kit Delivered', variant: 'success', date: '03-05-2026 02:30 PM', details: 'Delivered via FedEx. Patient notified via portal.' },
+          { type: 'separator', date: '03-10-2026' },
+          { type: 'event', icon: Package, title: 'Kit Returned to Lab', variant: 'success', date: '03-10-2026 11:00 AM', details: 'Sample scanned at Lab Intake. Processing begins.' },
+          { type: 'separator', date: '03-15-2026' },
+          { type: 'event', icon: ClipboardCheck, title: 'Gut Zoomer 5.1 Report Ready', variant: 'success', date: '03-15-2026 09:30 AM', details: 'Brief Report generated and shared with patient via portal.' },
+          { type: 'event', icon: ShoppingCart, title: 'Supplement Order Created', variant: 'info', date: '03-15-2026 09:31 AM', details: 'Gut Health Supplement Package (2mo) auto-ordered. Formula calculation in progress.' },
+          { type: 'separator', date: 'Today' },
+          { type: 'formula_approval' },
+      ];
+
       if (id === '1') return [
           { type: 'separator', date: '02-01-2026' },
           { type: 'event', icon: ShoppingCart, title: 'Order Created', variant: 'success', date: '09:00 AM', details: 'Standard Panel' },
@@ -1999,6 +2083,7 @@ Dr. Johnson
                 console.log('Rendering item:', item.type, item);
                 if (item.type === 'separator') return <DateSeparator key={idx} date={item.date} />;
                 if (item.type === 'exception') return <ExceptionCard key={idx} title={item.title} reason={item.reason} suggestion={item.suggestion} />;
+                if (item.type === 'formula_approval') return <FormulaApprovalChatCard key={idx} onReview={() => setViewMode('formula_approval')} isApproved={formulaApproved} />;
                 if (item.type === 'event') return <SystemEventCard key={idx} icon={item.icon} title={item.title} variant={item.variant} date={item.date} details={item.details} actionLabel={item.actionLabel} />;
                 if (item.type === 'chat') {
                     try {
@@ -2031,6 +2116,16 @@ Dr. Johnson
     return <EncounterNotesEditor onBack={() => setViewMode('dashboard')} patient={activePatient} />;
   }
 
+  if (viewMode === 'formula_approval') {
+    return (
+      <FormulaApprovalPage
+        patient={activePatient}
+        onBack={() => setViewMode('dashboard')}
+        onApprove={() => { setFormulaApproved(true); setViewMode('dashboard'); }}
+      />
+    );
+  }
+
   return (
     <>
     <div className="flex h-full bg-white">
@@ -2038,12 +2133,20 @@ Dr. Johnson
       {/* 1. Left Sidebar: Patient List */}
       <div className="w-80 bg-white border-r border-gray-200 flex flex-col shrink-0">
          <div className="px-4 pt-4 pb-2 border-b border-gray-100">
-             <button 
+             <button
                 onClick={() => setViewMode(viewMode === 'notifications' ? 'dashboard' : 'notifications')}
-                className={`w-full py-2.5 rounded-lg text-sm font-bold flex items-center justify-center gap-2 transition-all shadow-sm ${viewMode === 'notifications' ? 'bg-blue-50 text-[#0F4C81] border border-blue-100' : 'bg-white border border-gray-200 text-gray-700 hover:bg-gray-50'}`}
+                className={`w-full p-3 rounded-xl text-left flex items-start gap-3 transition-all border ${viewMode === 'notifications' ? 'bg-[#0F4C81]/10 border-[#0F4C81]/30' : 'bg-slate-50 border-slate-200 hover:border-slate-300 hover:bg-slate-100'}`}
              >
-                <Bell size={16} className={viewMode === 'notifications' ? 'fill-current' : ''} />
-                Notifications <span className="bg-red-500 text-white text-[10px] px-1.5 py-0.5 rounded-full min-w-[1.25rem]">3</span>
+                <div className="w-9 h-9 rounded-full bg-indigo-100 text-indigo-600 flex items-center justify-center shrink-0 mt-0.5">
+                   <Bot size={18} />
+                </div>
+                <div className="flex-1 min-w-0">
+                   <p className="text-xs font-bold text-slate-700 leading-tight">Hey, I'm monitoring your workflows.</p>
+                   <p className="text-[10px] text-slate-500 mt-0.5">System running smoothly.</p>
+                   <div className="mt-1.5">
+                      <span className="bg-red-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full">3 alerts</span>
+                   </div>
+                </div>
              </button>
          </div>
          <div className="p-4 space-y-3 border-b border-gray-100">
@@ -2073,7 +2176,10 @@ Dr. Johnson
 
       {/* 2. Main Content Area Switcher */}
       {viewMode === 'notifications' ? (
-          <NotificationCenter />
+          <NotificationCenter
+              onClose={() => setViewMode('dashboard')}
+              onFormulaApproval={() => { setActivePatientId('10'); setViewMode('formula_approval'); }}
+          />
       ) : (
           <>
             {/* Center: Detail Area */}
