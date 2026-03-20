@@ -1097,8 +1097,9 @@ export const PatientsView: React.FC = () => {
   const [activePatientId, setActivePatientId] = useState('3');
   const [chatInput, setChatInput] = useState('');
   const [isActionMenuOpen, setIsActionMenuOpen] = useState(false);
-  const [viewMode, setViewMode] = useState<'dashboard' | 'encounter_note' | 'notifications' | 'formula_approval'>('dashboard');
+  const [viewMode, setViewMode] = useState<'dashboard' | 'encounter_note' | 'notifications'>('dashboard');
   const [formulaApproved, setFormulaApproved] = useState(false);
+  const [showFormulaApproval, setShowFormulaApproval] = useState(false);
   const [activeTab, setActiveTab] = useState<'basics' | 'health' | 'calendar' | 'billing' | null>(null);
   const [pinnedItems, setPinnedItems] = useState<PinnedItem[]>([]);
   const [showOrderModal, setShowOrderModal] = useState(false);
@@ -2083,7 +2084,7 @@ Dr. Johnson
                 console.log('Rendering item:', item.type, item);
                 if (item.type === 'separator') return <DateSeparator key={idx} date={item.date} />;
                 if (item.type === 'exception') return <ExceptionCard key={idx} title={item.title} reason={item.reason} suggestion={item.suggestion} />;
-                if (item.type === 'formula_approval') return <FormulaApprovalChatCard key={idx} onReview={() => setViewMode('formula_approval')} isApproved={formulaApproved} />;
+                if (item.type === 'formula_approval') return <FormulaApprovalChatCard key={idx} onReview={() => setShowFormulaApproval(true)} isApproved={formulaApproved} />;
                 if (item.type === 'event') return <SystemEventCard key={idx} icon={item.icon} title={item.title} variant={item.variant} date={item.date} details={item.details} actionLabel={item.actionLabel} />;
                 if (item.type === 'chat') {
                     try {
@@ -2116,15 +2117,7 @@ Dr. Johnson
     return <EncounterNotesEditor onBack={() => setViewMode('dashboard')} patient={activePatient} />;
   }
 
-  if (viewMode === 'formula_approval') {
-    return (
-      <FormulaApprovalPage
-        patient={activePatient}
-        onBack={() => setViewMode('dashboard')}
-        onApprove={() => { setFormulaApproved(true); setViewMode('dashboard'); }}
-      />
-    );
-  }
+
 
   return (
     <>
@@ -2178,7 +2171,7 @@ Dr. Johnson
       {viewMode === 'notifications' ? (
           <NotificationCenter
               onClose={() => setViewMode('dashboard')}
-              onFormulaApproval={() => { setActivePatientId('10'); setViewMode('formula_approval'); }}
+              onFormulaApproval={() => { setActivePatientId('10'); setShowFormulaApproval(true); }}
           />
       ) : (
           <>
@@ -2296,6 +2289,15 @@ Dr. Johnson
       )}
 
     </div>
+
+    {/* Formula Approval Modal */}
+    {showFormulaApproval && (
+      <FormulaApprovalPage
+        patient={activePatient}
+        onBack={() => setShowFormulaApproval(false)}
+        onApprove={() => { setFormulaApproved(true); setShowFormulaApproval(false); }}
+      />
+    )}
 
     {/* Order Diagnostic Tests Modal */}
     <OrderDiagnosticTestsModal
